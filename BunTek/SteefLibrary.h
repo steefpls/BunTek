@@ -15,7 +15,7 @@
 #define true 0x1
 
 bool debug = false;
-float gravity = -100;
+float gravity = 500;
 
 
 void draw_framerate(void)
@@ -29,7 +29,6 @@ void draw_framerate(void)
 	char buffer[100];
 	sprintf_s(buffer, 100, "FPS: %f \n Frametime: %f", CP_System_GetFrameRate(), CP_System_GetDt());
 	CP_Font_DrawText(buffer, 20, 20);
-
 }
 
 struct vector2
@@ -64,9 +63,10 @@ struct circleGameObject
 	GameObject gameObject;
 	float radius;
 	bool outline;
+	float bounciness;
 };
 
-struct circleGameObject CreateCircleGameObject(Vector2 pos, Vector2 vel, float angle, CP_Color color, float radius, bool outline, float mass)
+struct circleGameObject CreateCircleGameObject(Vector2 pos, Vector2 vel, float angle, CP_Color color, float radius, bool outline, float mass, float bounciness)
 {
 	CircleGameObject c;
 	
@@ -79,6 +79,7 @@ struct circleGameObject CreateCircleGameObject(Vector2 pos, Vector2 vel, float a
 	c.gameObject.color = color;
 	c.outline = outline;
 	c.gameObject.mass = mass;
+	c.bounciness = bounciness;
 
 	return c;
 }
@@ -187,12 +188,11 @@ bool CircleCol(CircleGameObject* c1, CircleGameObject* c2)
 			velocityComponentPerpendicularToTangent.y = relativeVelocity.y - velocityComponentOnTangent.y;
 
 			//Calculate new velocity
-			float newVelX1 = c1->gameObject.velocity.x - 2 * (velocityComponentPerpendicularToTangent.x) * (c2->gameObject.mass / (c1->gameObject.mass + c2->gameObject.mass));
-			float newVelY1 = c1->gameObject.velocity.y - 2 * (velocityComponentPerpendicularToTangent.y) * (c2->gameObject.mass / (c1->gameObject.mass + c2->gameObject.mass));
-			float newVelX2 = c2->gameObject.velocity.x + 2 * (velocityComponentPerpendicularToTangent.x) * (c1->gameObject.mass / (c1->gameObject.mass + c2->gameObject.mass));
-			float newVelY2 = c2->gameObject.velocity.y + 2 * (velocityComponentPerpendicularToTangent.y) * (c1->gameObject.mass / (c1->gameObject.mass + c2->gameObject.mass));
+			float newVelX1 = c1->gameObject.velocity.x - 2 * (velocityComponentPerpendicularToTangent.x) * (c2->gameObject.mass / (c1->gameObject.mass + c2->gameObject.mass) * c1->bounciness);
+			float newVelY1 = c1->gameObject.velocity.y - 2 * (velocityComponentPerpendicularToTangent.y) * (c2->gameObject.mass / (c1->gameObject.mass + c2->gameObject.mass) * c1->bounciness);
+			float newVelX2 = c2->gameObject.velocity.x + 2 * (velocityComponentPerpendicularToTangent.x) * (c1->gameObject.mass / (c1->gameObject.mass + c2->gameObject.mass) * c2->bounciness);
+			float newVelY2 = c2->gameObject.velocity.y + 2 * (velocityComponentPerpendicularToTangent.y) * (c1->gameObject.mass / (c1->gameObject.mass + c2->gameObject.mass) * c2->bounciness);
 
-			//printf("\nNew Circle 1 velocity:%f,%f\nNew Circle 2 velocity:%f,%f\n\n", newVelX1, newVelY1, newVelX2, newVelY2);
 
 			c1->gameObject.velocity.x = newVelX1;
 			c1->gameObject.velocity.y = newVelY1;
@@ -219,19 +219,19 @@ void CirclePhys(CircleGameObject* c1) {
 
 	if (c1->gameObject.position.x + c1->radius > CP_System_GetWindowWidth() ) {
 		c1->gameObject.position.x = CP_System_GetWindowWidth() - c1->radius;
-		c1->gameObject.velocity.x *= -1;
+		c1->gameObject.velocity.x *= -1 * c1->bounciness;
 	}
 	else if (c1->gameObject.position.x - c1->radius < 0) {
 		c1->gameObject.position.x = 0+ c1->radius;
-		c1->gameObject.velocity.x *= -1;
+		c1->gameObject.velocity.x *= -1 * c1->bounciness;
 	}
 	if (c1->gameObject.position.y + c1->radius > CP_System_GetWindowHeight()) {
 		c1->gameObject.position.y = CP_System_GetWindowHeight() - c1->radius;
-		c1->gameObject.velocity.y *= -1;
+		c1->gameObject.velocity.y *= -1 * c1->bounciness;
 	}
 	else if (c1->gameObject.position.y - c1->radius < 0) {
 		c1->gameObject.position.y = 0 + c1->radius;
-		c1->gameObject.velocity.y *= -1;
+		c1->gameObject.velocity.y *= -1 * c1->bounciness;
 	}
 }
 

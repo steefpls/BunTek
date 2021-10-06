@@ -27,26 +27,19 @@ void CalculateAllPhysics(void);
 CircleGameObject CircleGameObjectArray[50];
 
 //Initialize Variables
-CircleGameObject ctest;
-CircleGameObject ctest2;
+
 
 
 void game_init(void)
 {
     if (debug) {
         CP_System_ShowConsole();
-        
     }
 
-    ctest = CreateCircleGameObject(newVector2(300,320),newVector2(50,0), 0, CP_Color_Create(0, 0, 0, 255), 30,false,15);
-    ctest2 = CreateCircleGameObject(newVector2(700, 300), newVector2(-50, 0), 0, CP_Color_Create(25, 25, 25, 255), 20, false,10);
-
-    CircleGameObjectArray[0] = ctest;
-    CircleGameObjectArray[1] = ctest2;
     
     for (int i = 0; i < 50; i++) {
         float scale = CP_Random_RangeFloat(5, 40);
-        CircleGameObject tempc = CreateCircleGameObject(newVector2(CP_Random_RangeFloat(50, 1220), CP_Random_RangeFloat(50, 680)), newVector2(CP_Random_RangeFloat(-100, 100), CP_Random_RangeFloat(-100, 100)), 0, CP_Color_Create(CP_Random_RangeInt(0, 255), CP_Random_RangeInt(0, 255), CP_Random_RangeInt(0, 255), 255), scale, false, scale);
+        CircleGameObject tempc = CreateCircleGameObject(newVector2(CP_Random_RangeFloat(50, 1220), CP_Random_RangeFloat(50, 680)), newVector2(CP_Random_RangeFloat(-100, 100), CP_Random_RangeFloat(-100, 100)), 0, CP_Color_Create(CP_Random_RangeInt(0, 255), CP_Random_RangeInt(0, 255), CP_Random_RangeInt(0, 255), 255), scale, false, scale,0.95f);
         CircleGameObjectArray[i] = tempc;
     }
 
@@ -59,17 +52,6 @@ void game_update(void)
     CP_Graphics_ClearBackground(CP_Color_Create(50, 50, 50, 255));
     DrawAllShapes();
     CalculateAllPhysics();
-
-    if (CP_Input_MouseTriggered(MOUSE_BUTTON_1))
-    {
-        ctest.gameObject.position.x = CP_Input_GetMouseX();
-        ctest.gameObject.position.y = CP_Input_GetMouseY();
-    }
-    if (CP_Input_MouseTriggered(MOUSE_BUTTON_2))
-    {
-        ctest2.gameObject.position.x = CP_Input_GetMouseX();
-        ctest2.gameObject.position.y = CP_Input_GetMouseY();
-    }
 
 
 

@@ -14,7 +14,7 @@
 #define false 0x0
 #define true 0x1
 
-bool debug = false;
+bool debug = true;
 float gravity = 500;
 
 
@@ -69,7 +69,8 @@ struct circleGameObject
 struct circleGameObject CreateCircleGameObject(Vector2 pos, Vector2 vel, float angle, CP_Color color, float radius, bool outline, float mass, float bounciness)
 {
 	CircleGameObject c;
-	
+
+	c.gameObject.isActive = true;
 	c.gameObject.position.x = pos.x;
 	c.gameObject.position.y = pos.y;
 	c.gameObject.velocity.x = vel.x;
@@ -95,6 +96,15 @@ struct boxGameObject
 
 };
 
+struct boxGameObject CreateBoxGameObject(Vector2 position) {
+	BoxGameObject b;
+	b.gameObject.isActive = true;
+	b.gameObject.position = position;
+	
+
+	return b;
+}
+
 struct particle
 {
 	GameObject gameObject;
@@ -112,8 +122,24 @@ Vector2 Normalize(Vector2 v1) {
 	float length = sqrtf(v1.x * v1.x + v1.y * v1.y);
 	return newVector2(v1.x / (length), v1.y / (length));
 }
+Vector2 VectorAdd(Vector2 v1, Vector2 v2) {
 
+	return newVector2(v1.x + v2.x, v1.y + v2.y);
+}
+Vector2 VectorMinus(Vector2 v1, Vector2 v2) {
+	return newVector2(v1.x - v2.x, v1.y - v2.y);
+}
+Vector2 VectorMultiply(Vector2 v1, float f1) {
+	return newVector2(v1.x *f1, v1.y *f1);
+}
+Vector2 VectorDivide(Vector2 v1, float f1) {
+	return newVector2(v1.x / f1, v1.y / f1);
+}
 
+void AddForce(GameObject* g, Vector2 force) {
+	g->velocity.x += force.x;
+	g->velocity.y += force.y;
+}
 
 bool CircleCol(CircleGameObject* c1, CircleGameObject* c2)
 {
@@ -213,6 +239,7 @@ bool CircleCol(CircleGameObject* c1, CircleGameObject* c2)
 
 void CirclePhys(CircleGameObject* c1) {
 	c1->gameObject.velocity.y += gravity * FrameTime;
+	//AddForce(&c1->gameObject, newVector2(0, gravity * FrameTime));
 
 	c1->gameObject.position.x += c1->gameObject.velocity.x * FrameTime;
 	c1->gameObject.position.y += c1->gameObject.velocity.y * FrameTime;

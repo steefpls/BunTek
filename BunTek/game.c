@@ -24,8 +24,10 @@ void DrawAllShapes(void);
 void CalculateAllPhysics(void);
 
 //Initialize arrays
-CircleGameObject CircleGameObjectArray[50];
 
+#define CircleGameObjectArrayLength 1000
+
+CircleGameObject CircleGameObjectArray[CircleGameObjectArrayLength];
 //Initialize Variables
 
 
@@ -37,8 +39,9 @@ void game_init(void)
     }
 
     
-    for (int i = 0; i < 50; i++) {
-        float scale = CP_Random_RangeFloat(5, 40);
+    
+    for (int i = 0; i < 100; i++) {
+        float scale = CP_Random_RangeFloat(1, 2);
         CircleGameObject tempc = CreateCircleGameObject(newVector2(CP_Random_RangeFloat(50, 1220), CP_Random_RangeFloat(50, 680)), newVector2(CP_Random_RangeFloat(-100, 100), CP_Random_RangeFloat(-100, 100)), 0, CP_Color_Create(CP_Random_RangeInt(0, 255), CP_Random_RangeInt(0, 255), CP_Random_RangeInt(0, 255), 255), scale, false, scale,0.95f);
         CircleGameObjectArray[i] = tempc;
     }
@@ -65,15 +68,18 @@ void game_update(void)
 
 void DrawAllShapes(void)
 {
-    for (int i = 0; i < sizeof(CircleGameObjectArray) / sizeof(CircleGameObjectArray[0]); i++)
+    for (int i = 0; i < CircleGameObjectArrayLength; i++)
     {
         CircleGameObject* x = &CircleGameObjectArray[i];
-        if (x == NULL) {
-            break;
+
+       
+        if ( x->radius == 0.0f) // If radius of thing is 0
+        {
+            
         }
         else {
             CP_Settings_Fill(x->gameObject.color);
-            
+
             if (x->outline) {
                 CP_Settings_Stroke(CP_Color_Create(0, 0, 0, 255));
             }
@@ -86,45 +92,49 @@ void DrawAllShapes(void)
                 CP_Graphics_DrawLine(x->gameObject.position.x, x->gameObject.position.y, x->gameObject.position.x + x->gameObject.velocity.x, x->gameObject.position.y + x->gameObject.velocity.y);
             }
         }
+            
+        
+        
     }
 }
 
 void CalculateAllPhysics(void)
 {
     
-    //Calculating circle-circle physics
-    for (int i = 0; i < sizeof(CircleGameObjectArray) / sizeof(CircleGameObjectArray[0]); i++)
+    //Calculating circle physics
+    for (int i = 0; i < CircleGameObjectArrayLength; i++)
     {
-        if (&CircleGameObjectArray[i] == NULL)
+        if (CircleGameObjectArray[i].radius == 0.0f) // If radius of thing is 0
         {
             break;
         }
+                
         CirclePhys(&CircleGameObjectArray[i]);
     }
 
     //Checking circle-circle collision
-    for (int i = 0; i < sizeof(CircleGameObjectArray) / sizeof(CircleGameObjectArray[0]); i++)
+    for (int i = 0; i < CircleGameObjectArrayLength; i++)
     {
         CircleGameObject* c1 = &CircleGameObjectArray[i];
-        if (c1 == NULL) 
+        if (CircleGameObjectArray[i].radius == 0.0f) // TODO: SUB WITH CODE THAT DETECTS END OF ARRAY
         {
-            printf("End of array detected");
+            //End of Array
             break;
         }
         else 
         {
-            for (int o = 0; o < sizeof(CircleGameObjectArray) / sizeof(CircleGameObjectArray[0]); o++)
+            for (int o = i+1; o < CircleGameObjectArrayLength; o++)
             {
                 CircleGameObject* c2 = &CircleGameObjectArray[o];
-                if (c2 == NULL) 
+                if (CircleGameObjectArray[o].radius == 0.0f) // TODO: SUB WITH CODE THAT DETECTS END OF ARRAY
                 {
+                    //End of Array
                     break;
                 }
                 else 
                 {
                     if (c1 == c2) 
                     {
-                     
                         continue;
                     }
                     else 

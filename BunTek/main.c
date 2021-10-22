@@ -14,8 +14,8 @@
 #include <stdio.h>
 #include "cprocessing.h"
 
-int recommendedWidth = 1280;
-int recommendedHeight = 720;
+int recommendedWidth = 1920;
+int recommendedHeight = 1080;
 
 /*Forward declarations*/
 
@@ -26,6 +26,7 @@ void game_exit(void);
 int main(void)
 {
     CP_System_SetFrameRate(165.0f);
+    //CP_System_Fullscreen();
     CP_System_SetWindowSize(recommendedWidth, recommendedHeight);
 
     CP_Engine_SetNextGameState(game_init, game_update, game_exit);

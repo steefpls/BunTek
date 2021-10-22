@@ -42,10 +42,10 @@
 *.pdb
 
 # Build results
-x64/
-x86/
+BunTek/x64/
+BunTek/x86/
 # Visual Studio 2015/2017 cache/options directory
-.vs/
+BunTek/.vs/
 
 # Kernel Module Compile Results
 *.mod*

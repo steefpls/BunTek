@@ -180,169 +180,217 @@ Vector2 TranslatePointOnBox(Vector2 BoxPosition, Vector2 BoxRotation, Vector2 Po
 	return WorldPoint;
 }
 
-bool CircleCol(CircleGameObject* c1, CircleGameObject* c2)
+bool CircleCol(CircleGameObject* c1, CircleGameObject* c2, bool doPhysics)
 {
-	float c1X = c1->gameObject.position.x;
-	float c1Y = c1->gameObject.position.y;
-	float c2X = c2->gameObject.position.x;
-	float c2Y = c2->gameObject.position.y;
-	//printf("\nCircle1pos: %f,%f\nCircle2pos: %f,%f\n",c1X,c1Y,c2X,c2Y);
-	//Are the two circles close? Do significantly cheaper bounding box check first
-	bool inBoundingBox = c1X + c1->radius + c2->radius > c2X
-		&& c1X < c2X + c1->radius + c2->radius
-		&& c1Y + c1->radius + c2->radius > c2Y
-		&& c1Y < c2Y + c1->radius + c2->radius;
+	if (doPhysics) {
+		float c1X = c1->gameObject.position.x;
+		float c1Y = c1->gameObject.position.y;
+		float c2X = c2->gameObject.position.x;
+		float c2Y = c2->gameObject.position.y;
+		//printf("\nCircle1pos: %f,%f\nCircle2pos: %f,%f\n",c1X,c1Y,c2X,c2Y);
+		//Are the two circles close? Do significantly cheaper bounding box check first
+		bool inBoundingBox = c1X + c1->radius + c2->radius > c2X
+			&& c1X < c2X + c1->radius + c2->radius
+			&& c1Y + c1->radius + c2->radius > c2Y
+			&& c1Y < c2Y + c1->radius + c2->radius;
 
-	if (inBoundingBox)
-	{
-		float dist = DistBetween(c1->gameObject.position, c2->gameObject.position);
-		//Check for Collision
-		float totalRadius = c1->radius + c2->radius;
+		if (inBoundingBox)
+		{
+			float dist = DistBetween(c1->gameObject.position, c2->gameObject.position);
+			//Check for Collision
+			float totalRadius = c1->radius + c2->radius;
 
-		//If collided
-		if (dist < totalRadius) {
-			
-			//Reposition appropriately
-			float distX = c1->gameObject.position.x - c2->gameObject.position.x;
-			float distY = c1->gameObject.position.y - c2->gameObject.position.y;
+			//If collided
+			if (dist < totalRadius) {
 
-			float radiiSum = c1->radius + c2->radius;
+				//Reposition appropriately
+				float distX = c1->gameObject.position.x - c2->gameObject.position.x;
+				float distY = c1->gameObject.position.y - c2->gameObject.position.y;
 
-			float unitX = distX / dist;
-			float unitY = distY / dist;
+				float radiiSum = c1->radius + c2->radius;
 
-			c1->gameObject.position.x = c2->gameObject.position.x + (radiiSum)*unitX;
-			c1->gameObject.position.y = c2->gameObject.position.y + (radiiSum)*unitY;
+				float unitX = distX / dist;
+				float unitY = distY / dist;
 
-			//Do correct physics
-			float collisionPointX = ((c1X * c2->radius) + (c2X * c1->radius)) / (c1->radius+c2->radius);
-			float collisionPointY = ((c1Y * c2->radius) + (c2Y * c1->radius)) / (c1->radius + c2->radius);
+				c1->gameObject.position.x = c2->gameObject.position.x + (radiiSum)*unitX;
+				c1->gameObject.position.y = c2->gameObject.position.y + (radiiSum)*unitY;
 
-			// circle1.Velocity.X -= velocityComponentPerpendicularToTangent.X; PSEUDOCODE FOR NEW VELOCITY
-			Vector2 perpVector;
-			perpVector.x = (c2X - c1X);
-			perpVector.y = (c2Y - c1Y);
+				//Do correct physics
+				float collisionPointX = ((c1X * c2->radius) + (c2X * c1->radius)) / (c1->radius + c2->radius);
+				float collisionPointY = ((c1Y * c2->radius) + (c2Y * c1->radius)) / (c1->radius + c2->radius);
 
-			Vector2 tanVector;		
-			tanVector.y = -(c2X - c1X);
-			tanVector.x = (c2Y - c1Y);
-			tanVector = Normalize(tanVector);
+				// circle1.Velocity.X -= velocityComponentPerpendicularToTangent.X; PSEUDOCODE FOR NEW VELOCITY
+				Vector2 perpVector;
+				perpVector.x = (c2X - c1X);
+				perpVector.y = (c2Y - c1Y);
 
-			if (debug) {
-				//Tangent Vector is white
-				CP_Settings_Stroke(CP_Color_Create(255, 255, 255, 255));
-				CP_Graphics_DrawLine(collisionPointX - tanVector.x * 50 / 2, collisionPointY - tanVector.y*50 / 2, collisionPointX + tanVector.x * 50 / 2, collisionPointY + tanVector.y * 50 / 2);
-				//Perp Vector is Green
-				CP_Settings_Stroke(CP_Color_Create(0, 255, 0, 255));
-				CP_Graphics_DrawLine(collisionPointX - perpVector.x / 2, collisionPointY - perpVector.y / 2, collisionPointX + perpVector.x / 2, collisionPointY + perpVector.y / 2);
+				Vector2 tanVector;
+				tanVector.y = -(c2X - c1X);
+				tanVector.x = (c2Y - c1Y);
+				tanVector = Normalize(tanVector);
 
-				//draw colliding point
-				CP_Settings_Stroke(CP_Color_Create(255, 255, 255, 255));
-				CP_Graphics_DrawCircle(collisionPointX, collisionPointY, 5);
+				if (debug) {
+					//Tangent Vector is white
+					CP_Settings_Stroke(CP_Color_Create(255, 255, 255, 255));
+					CP_Graphics_DrawLine(collisionPointX - tanVector.x * 50 / 2, collisionPointY - tanVector.y * 50 / 2, collisionPointX + tanVector.x * 50 / 2, collisionPointY + tanVector.y * 50 / 2);
+					//Perp Vector is Green
+					CP_Settings_Stroke(CP_Color_Create(0, 255, 0, 255));
+					CP_Graphics_DrawLine(collisionPointX - perpVector.x / 2, collisionPointY - perpVector.y / 2, collisionPointX + perpVector.x / 2, collisionPointY + perpVector.y / 2);
+
+					//draw colliding point
+					CP_Settings_Stroke(CP_Color_Create(255, 255, 255, 255));
+					CP_Graphics_DrawCircle(collisionPointX, collisionPointY, 5);
+				}
+
+				Vector2 relativeVelocity = newVector2(c1->gameObject.velocity.x - c2->gameObject.velocity.x, c1->gameObject.velocity.y - c2->gameObject.velocity.y);
+				float length = DotProd(relativeVelocity, tanVector);
+
+				Vector2 velocityComponentOnTangent;
+				velocityComponentOnTangent.x = tanVector.x * length;
+				velocityComponentOnTangent.y = tanVector.y * length;
+
+				Vector2 velocityComponentPerpendicularToTangent;
+				velocityComponentPerpendicularToTangent.x = relativeVelocity.x - velocityComponentOnTangent.x;
+				velocityComponentPerpendicularToTangent.y = relativeVelocity.y - velocityComponentOnTangent.y;
+
+				//Calculate new velocity
+				float newVelX1 = c1->gameObject.velocity.x - 2 * (velocityComponentPerpendicularToTangent.x) * (c2->gameObject.mass / (c1->gameObject.mass + c2->gameObject.mass) * c1->gameObject.bounciness);
+				float newVelY1 = c1->gameObject.velocity.y - 2 * (velocityComponentPerpendicularToTangent.y) * (c2->gameObject.mass / (c1->gameObject.mass + c2->gameObject.mass) * c1->gameObject.bounciness);
+				float newVelX2 = c2->gameObject.velocity.x + 2 * (velocityComponentPerpendicularToTangent.x) * (c1->gameObject.mass / (c1->gameObject.mass + c2->gameObject.mass) * c2->gameObject.bounciness);
+				float newVelY2 = c2->gameObject.velocity.y + 2 * (velocityComponentPerpendicularToTangent.y) * (c1->gameObject.mass / (c1->gameObject.mass + c2->gameObject.mass) * c2->gameObject.bounciness);
+
+
+				c1->gameObject.velocity.x = newVelX1;
+				c1->gameObject.velocity.y = newVelY1;
+				c2->gameObject.velocity.x = newVelX2;
+				c2->gameObject.velocity.y = newVelY2;
 			}
 
-			Vector2 relativeVelocity = newVector2(c1->gameObject.velocity.x - c2->gameObject.velocity.x, c1->gameObject.velocity.y - c2->gameObject.velocity.y);
-			float length = DotProd(relativeVelocity, tanVector);
-
-			Vector2 velocityComponentOnTangent;
-			velocityComponentOnTangent.x = tanVector.x * length;
-			velocityComponentOnTangent.y = tanVector.y * length;
-
-			Vector2 velocityComponentPerpendicularToTangent;
-			velocityComponentPerpendicularToTangent.x = relativeVelocity.x - velocityComponentOnTangent.x;
-			velocityComponentPerpendicularToTangent.y = relativeVelocity.y - velocityComponentOnTangent.y;
-
-			//Calculate new velocity
-			float newVelX1 = c1->gameObject.velocity.x - 2 * (velocityComponentPerpendicularToTangent.x) * (c2->gameObject.mass / (c1->gameObject.mass + c2->gameObject.mass) * c1->gameObject.bounciness);
-			float newVelY1 = c1->gameObject.velocity.y - 2 * (velocityComponentPerpendicularToTangent.y) * (c2->gameObject.mass / (c1->gameObject.mass + c2->gameObject.mass) * c1->gameObject.bounciness);
-			float newVelX2 = c2->gameObject.velocity.x + 2 * (velocityComponentPerpendicularToTangent.x) * (c1->gameObject.mass / (c1->gameObject.mass + c2->gameObject.mass) * c2->gameObject.bounciness);
-			float newVelY2 = c2->gameObject.velocity.y + 2 * (velocityComponentPerpendicularToTangent.y) * (c1->gameObject.mass / (c1->gameObject.mass + c2->gameObject.mass) * c2->gameObject.bounciness);
-
-
-			c1->gameObject.velocity.x = newVelX1;
-			c1->gameObject.velocity.y = newVelY1;
-			c2->gameObject.velocity.x = newVelX2;
-			c2->gameObject.velocity.y = newVelY2;
+			return (dist < totalRadius);
 		}
 
-		return (dist < totalRadius);
+		else {
+			return false;
+		}
 	}
-
 	else {
+		float c1X = c1->gameObject.position.x;
+		float c1Y = c1->gameObject.position.y;
+		float c2X = c2->gameObject.position.x;
+		float c2Y = c2->gameObject.position.y;
+		
+		//Are the two circles close? Do significantly cheaper bounding box check first
+		bool inBoundingBox = c1X + c1->radius + c2->radius > c2X
+			&& c1X < c2X + c1->radius + c2->radius
+			&& c1Y + c1->radius + c2->radius > c2Y
+			&& c1Y < c2Y + c1->radius + c2->radius;
+
+		if (inBoundingBox) {
+			if (DistBetweenSquared(c1->gameObject.position, c2->gameObject.position) < c1->radius * c1->radius + c2->radius * c2->radius) {
+				return true;
+			}
+		}
 		return false;
 	}
 
 }
 
 // Call this function to collide a circle with a point, then do physics
-void CirclePointCol(CircleGameObject* c1, Vector2 p1) {
+bool CirclePointCol(CircleGameObject* c1, Vector2 p1, bool doPhysics) {
 	float c1X = c1->gameObject.position.x;
 	float c1Y = c1->gameObject.position.y;
 	float c2X = p1.x;
 	float c2Y = p1.y;
 
-	float dist = DistBetween(c1->gameObject.position, p1);
-	//Reposition appropriately
-	float distX = c1->gameObject.position.x - p1.x;
-	float distY = c1->gameObject.position.y - p1.y;
+	bool collided = false;
 
-	float radiiSum = c1->radius;
+	if (!doPhysics) {
+		//Are the two circles close? Do significantly cheaper bounding box check first
+		bool inBoundingBox = c1X + c1->radius  > c2X
+			&& c1X < c2X + c1->radius 
+			&& c1Y + c1->radius > c2Y
+			&& c1Y < c2Y + c1->radius;
 
-	float unitX = distX / dist;
-	float unitY = distY / dist;
-
-	c1->gameObject.position.x = p1.x + (radiiSum)*unitX;
-	c1->gameObject.position.y = p1.y + (radiiSum)*unitY;
-
-	//Do correct physics
-	float collisionPointX = ( (c2X * c1->radius)) / (c1->radius );
-	float collisionPointY = ( (c2Y * c1->radius)) / (c1->radius );
-
-	// circle1.Velocity.X -= velocityComponentPerpendicularToTangent.X; PSEUDOCODE FOR NEW VELOCITY
-	Vector2 perpVector;
-	perpVector.x = (c2X - c1X);
-	perpVector.y = (c2Y - c1Y);
-
-	Vector2 tanVector;
-	tanVector.y = -(c2X - c1X);
-	tanVector.x = (c2Y - c1Y);
-	tanVector = Normalize(tanVector);
-
-	if (debug) {
-		//Tangent Vector is white
-		CP_Settings_Stroke(CP_Color_Create(255, 255, 255, 255));
-		CP_Graphics_DrawLine(collisionPointX - tanVector.x * 50 / 2, collisionPointY - tanVector.y * 50 / 2, collisionPointX + tanVector.x * 50 / 2, collisionPointY + tanVector.y * 50 / 2);
-		//Perp Vector is Green
-		CP_Settings_Stroke(CP_Color_Create(0, 255, 0, 255));
-		CP_Graphics_DrawLine(collisionPointX - perpVector.x / 2, collisionPointY - perpVector.y / 2, collisionPointX + perpVector.x / 2, collisionPointY + perpVector.y / 2);
-
-		//draw colliding point
-		CP_Settings_Stroke(CP_Color_Create(255, 255, 255, 255));
-		CP_Graphics_DrawCircle(collisionPointX, collisionPointY, 5);
+		if (inBoundingBox) {
+			if (DistBetweenSquared(c1->gameObject.position, p1) < c1->radius * c1->radius) {
+				collided =  true;
+			}
+			else {
+				collided = false;
+			}
+		}
+		else {
+			collided = false;
+		}
+		
 	}
-
-	Vector2 relativeVelocity = c1->gameObject.velocity;
-	float length = DotProd(relativeVelocity, tanVector);
-
-	Vector2 velocityComponentOnTangent;
-	velocityComponentOnTangent.x = tanVector.x * length;
-	velocityComponentOnTangent.y = tanVector.y * length;
-
-	Vector2 velocityComponentPerpendicularToTangent;
-	velocityComponentPerpendicularToTangent.x = relativeVelocity.x - velocityComponentOnTangent.x;
-	velocityComponentPerpendicularToTangent.y = relativeVelocity.y - velocityComponentOnTangent.y;
-
-	//Calculate new velocity
-	float newVelX1 = c1->gameObject.velocity.x - 2 * (velocityComponentPerpendicularToTangent.x);
-	float newVelY1 = c1->gameObject.velocity.y - 2 * (velocityComponentPerpendicularToTangent.y);
+	if (collided) {
 
 
-	c1->gameObject.velocity.x = newVelX1;
-	c1->gameObject.velocity.y = newVelY1;
+		float dist = DistBetween(c1->gameObject.position, p1);
+		//Reposition appropriately
+		float distX = c1->gameObject.position.x - p1.x;
+		float distY = c1->gameObject.position.y - p1.y;
+
+		float radiiSum = c1->radius;
+
+		float unitX = distX / dist;
+		float unitY = distY / dist;
+
+		c1->gameObject.position.x = p1.x + (radiiSum)*unitX;
+		c1->gameObject.position.y = p1.y + (radiiSum)*unitY;
+
+		//Do correct physics
+		float collisionPointX = ((c2X * c1->radius)) / (c1->radius);
+		float collisionPointY = ((c2Y * c1->radius)) / (c1->radius);
+
+		// circle1.Velocity.X -= velocityComponentPerpendicularToTangent.X; PSEUDOCODE FOR NEW VELOCITY
+		Vector2 perpVector;
+		perpVector.x = (c2X - c1X);
+		perpVector.y = (c2Y - c1Y);
+
+		Vector2 tanVector;
+		tanVector.y = -(c2X - c1X);
+		tanVector.x = (c2Y - c1Y);
+		tanVector = Normalize(tanVector);
+
+		if (debug) {
+			//Tangent Vector is white
+			CP_Settings_Stroke(CP_Color_Create(255, 255, 255, 255));
+			CP_Graphics_DrawLine(collisionPointX - tanVector.x * 50 / 2, collisionPointY - tanVector.y * 50 / 2, collisionPointX + tanVector.x * 50 / 2, collisionPointY + tanVector.y * 50 / 2);
+			//Perp Vector is Green
+			CP_Settings_Stroke(CP_Color_Create(0, 255, 0, 255));
+			CP_Graphics_DrawLine(collisionPointX - perpVector.x / 2, collisionPointY - perpVector.y / 2, collisionPointX + perpVector.x / 2, collisionPointY + perpVector.y / 2);
+
+			//draw colliding point
+			CP_Settings_Stroke(CP_Color_Create(255, 255, 255, 255));
+			CP_Graphics_DrawCircle(collisionPointX, collisionPointY, 5);
+		}
+
+		Vector2 relativeVelocity = c1->gameObject.velocity;
+		float length = DotProd(relativeVelocity, tanVector);
+
+		Vector2 velocityComponentOnTangent;
+		velocityComponentOnTangent.x = tanVector.x * length;
+		velocityComponentOnTangent.y = tanVector.y * length;
+
+		Vector2 velocityComponentPerpendicularToTangent;
+		velocityComponentPerpendicularToTangent.x = relativeVelocity.x - velocityComponentOnTangent.x;
+		velocityComponentPerpendicularToTangent.y = relativeVelocity.y - velocityComponentOnTangent.y;
+
+		//Calculate new velocity
+		float newVelX1 = c1->gameObject.velocity.x - 2 * (velocityComponentPerpendicularToTangent.x);
+		float newVelY1 = c1->gameObject.velocity.y - 2 * (velocityComponentPerpendicularToTangent.y);
+
+
+		c1->gameObject.velocity.x = newVelX1;
+		c1->gameObject.velocity.y = newVelY1;
+	}
+	return collided;
 }
 
 // Call this to check for Circle to rotated Rectangle Collision, and apply appropriate physics
-bool CircleRectCol(CircleGameObject* c1, BoxGameObject* b1) {
+bool CircleRectCol(CircleGameObject* c1, BoxGameObject* b1, bool doPhysics) {
 	
 	Vector2 boxTopLeft = b1->gameObject.position;
 	Vector2 boxTopRight = newVector2(boxTopLeft.x+ b1->width*cosf(b1->gameObject.angle/180*PI), boxTopLeft.y + b1->width * sinf(b1->gameObject.angle / 180 * PI));
@@ -350,6 +398,7 @@ bool CircleRectCol(CircleGameObject* c1, BoxGameObject* b1) {
 	Vector2 boxBottomRight = newVector2(boxTopLeft.x + b1->width * cosf(b1->gameObject.angle / 180 * PI)+b1->height * cosf((b1->gameObject.angle + 90) / 180 * PI), boxTopLeft.y + b1->width * sinf(b1->gameObject.angle / 180 * PI)+ b1->height * sinf((b1->gameObject.angle + 90) / 180 * PI));
 	Vector2 boxCenter = newVector2((boxTopLeft.x+boxBottomRight.x)/2, (boxTopLeft.y + boxBottomRight.y) / 2);
 
+	
 	float boxWidth = b1->width;
 	
 
@@ -394,6 +443,9 @@ bool CircleRectCol(CircleGameObject* c1, BoxGameObject* b1) {
 			collidedTop = true;
 		}
 
+		
+		
+
 		//If circle center is inside rect
 		if (confirmedY && confirmedX) {
 			float angbet = (AngBet(c1->gameObject.position, boxCenter)/PI*180)-b1->gameObject.angle;
@@ -423,11 +475,14 @@ bool CircleRectCol(CircleGameObject* c1, BoxGameObject* b1) {
 				confirmedY = false;
 				collidedTop = true;
 			}
-
 		}
 
 		if (confirmedX && !confirmedY) {
+			if (!doPhysics) {
+				return true;
+			}
 			if (collidedTop) { // collided on top vertex
+				
 				Vector2 NewLocation;
 				Vector2 ReversedBallVelocity = Normalize(VectorMultiply(c1->gameObject.velocity, -1)); // Reversed Velocity of magnitude 1
 				
@@ -475,8 +530,12 @@ bool CircleRectCol(CircleGameObject* c1, BoxGameObject* b1) {
 					CP_Graphics_DrawCircle(NewLocation.x, NewLocation.y, c1->radius * 2);
 				}
 			}
+			return true;
 		}
 		else if (confirmedY && !confirmedX) {
+			if (!doPhysics) {
+				return true;
+			}
 			if (collidedLeft) { //collided on left vertex
 				Vector2 NewLocation;
 				Vector2 ReversedBallVelocity = Normalize(VectorMultiply(c1->gameObject.velocity, -1)); // Reversed Velocity of magnitude 1
@@ -525,7 +584,7 @@ bool CircleRectCol(CircleGameObject* c1, BoxGameObject* b1) {
 					CP_Graphics_DrawCircle(NewLocation.x, NewLocation.y, c1->radius * 2);
 				}
 			}
-
+			return true;
 		}
 		
 		else {
@@ -533,16 +592,28 @@ bool CircleRectCol(CircleGameObject* c1, BoxGameObject* b1) {
 				if (collidedLeft) {
 					//check top left point for collision
 					if (DistBetweenSquared(boxTopLeft, c1->gameObject.position) < c1->radius * c1->radius) {
-						//Collided with top left point!
-						CirclePointCol(c1, boxTopLeft);
+						if (!doPhysics) {
+							return true;
+						}
+						else {
+							//Collided with top left point!
+							CirclePointCol(c1, boxTopLeft, true);
+							return true;
+						}
 					}
 
 				}
 				else {
 					//check top right point for collision
 					if (DistBetweenSquared(boxTopRight, c1->gameObject.position) < c1->radius * c1->radius) {
-						//Collided with top right point!
-						CirclePointCol(c1, boxTopRight);
+						if (!doPhysics) {
+							return true;
+						}
+						else {
+							//Collided with top right point!
+							CirclePointCol(c1, boxTopRight, true);
+							return true;
+						}
 					}
 				}
 			}
@@ -550,22 +621,34 @@ bool CircleRectCol(CircleGameObject* c1, BoxGameObject* b1) {
 				if (collidedLeft) {
 					//check bottom left point for collision
 					if (DistBetweenSquared(boxBottomLeft, c1->gameObject.position) < c1->radius * c1->radius) {
-						//Collided with bottom Left point!
-						CirclePointCol(c1, boxBottomLeft);
+						if (!doPhysics) {
+							return true;
+						}
+						else {
+							//Collided with bottom Left point!
+							CirclePointCol(c1, boxBottomLeft, true);
+							return true;
+						}
 					}
 				}
 				else {
 					//check bottom right point for collision
 					if (DistBetweenSquared(boxBottomRight, c1->gameObject.position) < c1->radius * c1->radius) {
-						//Collided with bottom Right point!
-						CirclePointCol(c1, boxBottomRight);
+						if (!doPhysics) {
+							return true;
+						}
+						else {
+							//Collided with bottom Right point!
+							CirclePointCol(c1, boxBottomRight, true);
+							return true;
+						}
 					}
 				}
 			}
 		}
 	}
 
-	return true;
+	return false;
 }
 
 

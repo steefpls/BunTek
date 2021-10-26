@@ -212,7 +212,7 @@ void CalculateAllPhysics(void)
                     }
                     else 
                     {
-                        if (CircleCol(c1, c2))  //If circle collides with cicle
+                        if (CircleCol(c1, c2, true))  //If circle collides with cicle
                         {
                            
                             
@@ -238,7 +238,7 @@ void CalculateAllPhysics(void)
                     break;
                 }
                 else {
-                    if (CircleRectCol(c1, b1)) {
+                    if (CircleRectCol(c1, b1, true)) {
 
                     }
                 }

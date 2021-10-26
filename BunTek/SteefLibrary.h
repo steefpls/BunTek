@@ -180,6 +180,7 @@ Vector2 TranslatePointOnBox(Vector2 BoxPosition, Vector2 BoxRotation, Vector2 Po
 	return WorldPoint;
 }
 
+//Call this function to check if a circle collides with another circle. Set bool doPhysics to true to make them bounce off each other.
 bool CircleCol(CircleGameObject* c1, CircleGameObject* c2, bool doPhysics)
 {
 	if (doPhysics) {
@@ -295,7 +296,7 @@ bool CircleCol(CircleGameObject* c1, CircleGameObject* c2, bool doPhysics)
 
 }
 
-// Call this function to collide a circle with a point, then do physics
+// Call this function to check if a circle collides with a point. Set bool doPhysics to true to make the circle bounce off the point. Useful for buttons and UI, but remember to set doPhysics to false.
 bool CirclePointCol(CircleGameObject* c1, Vector2 p1, bool doPhysics) {
 	float c1X = c1->gameObject.position.x;
 	float c1Y = c1->gameObject.position.y;
@@ -389,7 +390,7 @@ bool CirclePointCol(CircleGameObject* c1, Vector2 p1, bool doPhysics) {
 	return collided;
 }
 
-// Call this to check for Circle to rotated Rectangle Collision, and apply appropriate physics
+// Call this function to check if a circle collides with a rotated or normal rect. Set bool doPhysics to true to make the cirlce bounce off the rect.
 bool CircleRectCol(CircleGameObject* c1, BoxGameObject* b1, bool doPhysics) {
 	
 	Vector2 boxTopLeft = b1->gameObject.position;
@@ -651,8 +652,34 @@ bool CircleRectCol(CircleGameObject* c1, BoxGameObject* b1, bool doPhysics) {
 	return false;
 }
 
+// Call this function to check if a point is colliding with a Box Game Object. Useful for buttons and UI.
+bool PointRectCol(Vector2 p1, BoxGameObject* b1) {
+	Vector2 boxTopLeft = b1->gameObject.position;
+	Vector2 boxTopRight = newVector2(boxTopLeft.x + b1->width * cosf(b1->gameObject.angle / 180 * PI), boxTopLeft.y + b1->width * sinf(b1->gameObject.angle / 180 * PI));
+	Vector2 boxBottomLeft = newVector2(boxTopLeft.x + b1->height * cosf((b1->gameObject.angle + 90) / 180 * PI), boxTopLeft.y + b1->height * sinf((b1->gameObject.angle + 90) / 180 * PI));
+	
+	Vector2 boxCenter = newVector2((boxTopRight.x + boxBottomLeft.x) / 2, (boxTopRight.y + boxBottomLeft.y) / 2);
 
+	float boxWidth = b1->width;
+	float boxHeight = b1->height;
 
+	Vector2 VectorDist = VectorMinus(p1, boxCenter);
+
+	//Check within X bounds
+	float dotprodx = DotProd(Normalize(VectorMinus(boxTopLeft, boxTopRight)), VectorDist);
+	float dotprody = DotProd(Normalize(VectorMinus(boxTopLeft, boxBottomLeft)), VectorDist);
+
+	// Check if collided
+	bool collided = false;
+
+	if ((dotprodx < boxWidth / 2  && dotprodx > -(boxWidth / 2 )) && (dotprody< boxHeight / 2  && dotprody > -(boxHeight / 2 ))) {
+		collided = true;
+	}
+	else {
+		collided = false;
+	}
+	return collided;
+}
 
 
 void CirclePhys(CircleGameObject* c1) {

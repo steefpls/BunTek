@@ -223,6 +223,7 @@ void CalculateAllPhysics(void)
         }
         
     }
+
     //Checking box-circle collision
     for (int x = 0; x < LineArrayLength; x++) {
         BoxGameObject* b1 = &LineArray[x];

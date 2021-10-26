@@ -562,8 +562,6 @@ bool CircleRectCol(CircleGameObject* c1, BoxGameObject* b1) {
 					}
 				}
 			}
-
-
 		}
 	}
 

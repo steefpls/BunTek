@@ -6,11 +6,15 @@
 
 #define ButtonObject struct buttonObject
 
+#define LerpDuration 1.0f
+
 #define LineArrayLength 1000
 #define CircleGameObjectArrayLength 1000
 #define BoxGameObjectArrayLength 1000
 #define ButtonObjectArrayLength 50
 #define TextLimit 100
+
+float TimeElapse = 0;
 
 //names of the screen
 typedef enum{
@@ -61,11 +65,13 @@ ButtonObject CreateButtonObject(Vector2 position, float width, float height,floa
 //transition to black
 bool screen_transition_to_black(int* transition_oppacity) {
 	//fade to black
-	*transition_oppacity = CP_Math_LerpInt(*transition_oppacity, 255, FrameTime*10);
+	TimeElapse += FrameTime*0.5f;
+	*transition_oppacity = CP_Math_LerpInt(*transition_oppacity, 255, TimeElapse/LerpDuration);
 	CP_Math_ClampInt(*transition_oppacity, 0, 255);
 	CP_Settings_Fill(CP_Color_Create(0, 0, 0, *transition_oppacity));
 	CP_Graphics_DrawRectAdvanced(0, 0, (float)CP_System_GetWindowWidth(), (float)CP_System_GetWindowHeight(), 0, 0);
-	if (*transition_oppacity >= 230) {
+	if (*transition_oppacity == 255) {
+		TimeElapse = 0;
 		return true;
 	}
 	return false;
@@ -73,11 +79,13 @@ bool screen_transition_to_black(int* transition_oppacity) {
 //transition from black
 bool screen_transition_from_black(int* transition_oppacity) {
 	//fade from black
-	*transition_oppacity = CP_Math_LerpInt(*transition_oppacity, 0, FrameTime);
-	CP_Math_ClampInt(*transition_oppacity, 0, 255);
+	TimeElapse += FrameTime * 0.5f;
+	*transition_oppacity = CP_Math_LerpInt(*transition_oppacity, 0, TimeElapse/LerpDuration);
+	CP_Math_ClampInt(*transition_oppacity, 0 , 255);
 	CP_Settings_Fill(CP_Color_Create(0, 0, 0, *transition_oppacity));
 	CP_Graphics_DrawRectAdvanced(0, 0, (float)CP_System_GetWindowWidth(), (float)CP_System_GetWindowHeight(), 0, 0);
-	if (*transition_oppacity <= 5) {
+	if (*transition_oppacity == 0) {
+		TimeElapse = 0;
 		return true;
 	}
 	return false;
@@ -95,6 +103,8 @@ void screen_transition(bool* isScreenTransiting, int* transition_oppacity, Scree
 			*isScreenTransiting = !screen_transition_from_black(transition_oppacity);
 		}
 	}
+	printf("Opacity: %i\n", *transition_oppacity);
+	printf("time: %f\n", TimeElapse);
 }
 
 

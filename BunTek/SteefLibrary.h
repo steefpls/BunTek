@@ -707,4 +707,8 @@ void CirclePhys(CircleGameObject* c1) {
 }
 
 
+// Call this function to draw an image over a boxGameObject for UI
+void DrawBoxImage(CP_Image image, BoxGameObject b, int alpha) {
+	CP_Image_DrawAdvanced(image, b.gameObject.position.x, b.gameObject.position.y, b.width, b.height, alpha, b.gameObject.angle);
+}
 

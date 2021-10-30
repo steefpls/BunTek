@@ -36,7 +36,7 @@ void AddLine(void);
 bool CheckAllButtons(void);
 void TriggerButtonEffects(ButtonObject* x);
 void Initialize_Screens(void);
-
+void Initialize_Sprites(void);
 //Initialize array
 Screen screen_array[Total_screen_number];
 
@@ -52,13 +52,16 @@ Screen* current_screen = &Current_screen;
 //transition control
 int transition_oppacity = 0;
 bool isScreenTransiting = false;
-
 bool isgamepaused = false;
+
+//Sprites
+CP_Image TestDoge = NULL;
 
 
 
 void game_init(void)
 {
+    Initialize_Sprites();
     CP_Font_Set(CP_Font_GetDefault());
     if (debug) {
         CP_System_ShowConsole();
@@ -76,6 +79,8 @@ void game_update(void)
 {
     CP_Graphics_ClearBackground(CP_Color_Create(50, 50, 50, 255));
     MousePos = newVector2(CP_Input_GetMouseX(), CP_Input_GetMouseY());
+    
+
     if (!isScreenTransiting) {//not transitioning to new screen
         //check for button Click and return bool, also run the buttons effect if any
         ButtonClicked = CheckAllButtons();
@@ -88,7 +93,6 @@ void game_update(void)
     }
     DrawAllShapes();
     screen_transition(&isScreenTransiting, &transition_oppacity, &Current_screen_name, &Next_screen_name, current_screen, screen_array);
-    printf("Mouse 1 held: %d\n", Mouse1Held);
     // Profiling info and frameRate testing
     if (debug) draw_framerate();
 }
@@ -465,7 +469,9 @@ void Initialize_Screens(void) {
     screen_array[Test_Room].CircleArrayLengthCounter = 0;
     screen_array[Test_Room].ButtonObjectArray[0] = CreateButtonObject(newVector2(10, 10), 100, 100, 0, 0, CP_Color_Create(255, 255, 255, 200), Move_to_main_Menu, "Move to Main Menu");
 }
-
+void Initialize_Sprites(void) {
+    TestDoge = CP_Image_Load("./Sprites/MahLe.jpg");
+}
 void game_exit(void)
 {
 

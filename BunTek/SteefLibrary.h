@@ -87,6 +87,8 @@ struct circleGameObject CreateCircleGameObject(Vector2 pos, Vector2 vel, float a
 	return c;
 }
 
+
+
 struct boxGameObject
 {
 	// Main properties
@@ -153,6 +155,7 @@ Vector2 VectorProject(Vector2 v1, Vector2 v2) { //Finds projection of v1 on v2
 float AngBet(Vector2 p1, Vector2 p2) {
 	return atan2f(p1.y - p2.y, p1.x - p2.x);
 }
+
 
 void AddForce(GameObject* g, Vector2 force) {
 	g->velocity.x += force.x;
@@ -677,7 +680,7 @@ bool PointRectCol(Vector2 p1, BoxGameObject* b1) {
 	return collided;
 }
 
-// Call this function to do gravity & air resistance on a circle object
+
 void CirclePhys(CircleGameObject* c1) {
 	c1->gameObject.velocity.y += gravity * FrameTime;
 	//AddForce(&c1->gameObject, newVector2(0, gravity * FrameTime));

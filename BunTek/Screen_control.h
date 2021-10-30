@@ -22,13 +22,38 @@ typedef enum{
 	Test_Room,
 	Splash_screen,
 	Main_menu,
+	Level_Select,
+	Level_1,
+	Level_2,
+	Level_3,
+	Level_4,
+	Level_5,
+	Level_6,
+	Level_7,
+	Level_8,
+	Level_9,
+	Level_10,
+	Options,
 	//V make sure this is last in the ENUM
 	Total_screen_number,
 } Screen_name;
 
 typedef enum {
 	Move_to_test_room,
+	Move_to_Level_Select,
+	Move_to_Level_1,
+	Move_to_Level_2,
+	Move_to_Level_3,
+	Move_to_Level_4,
+	Move_to_Level_5,
+	Move_to_Level_6,
+	Move_to_Level_7,
+	Move_to_Level_8,
+	Move_to_Level_9,
+	Move_to_Level_10,
 	Move_to_test_Menu,
+	Move_to_main_Menu,
+	Move_to_options,
 	Pause_Game,
 } Button_effects;
 
@@ -90,6 +115,7 @@ bool screen_transition_from_black(int* transition_oppacity) {
 	}
 	return false;
 }
+
 //transition Control
 void screen_transition(bool* isScreenTransiting, int* transition_oppacity, Screen_name* Current_screen_name, Screen_name* Next_screen_name, Screen* current_screen, const Screen* screen_array) {
 	if (*isScreenTransiting) {//transitioning to new screen
@@ -99,10 +125,16 @@ void screen_transition(bool* isScreenTransiting, int* transition_oppacity, Scree
 				*current_screen = screen_array[*Current_screen_name];
 			}
 		}
+		else if (*Next_screen_name == Options)
+		{
+			CP_Settings_Fill(CP_Color_Create(255, 255, 255, 0));
+			CP_Graphics_DrawRectAdvanced(0, 0, (float)CP_System_GetWindowWidth(), (float)CP_System_GetWindowHeight(), 0, 0);
+		}
 		else {
 			*isScreenTransiting = !screen_transition_from_black(transition_oppacity);
 		}
 	}
+
 	printf("Opacity: %i\n", *transition_oppacity);
 	printf("time: %f\n", TimeElapse);
 }

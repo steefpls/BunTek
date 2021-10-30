@@ -12,6 +12,7 @@
  * Copyright © 2020 DigiPen, All rights reserved.
 * ---------------------------------------------------------*/
 #include "Screen_control.h"
+#include <gl/GL.h>
 //Initialize variables
 bool Mouse1Held = false; //mouse held bool for previous frame
 Vector2 MousePosPrev;
@@ -40,7 +41,7 @@ void Initialize_Screens(void);
 Screen screen_array[Total_screen_number];
 
 //Initialize Screen control
-Screen_name Start_Screen = Test_Menu;
+Screen_name Start_Screen = Main_menu;
 Screen_name Current_screen_name;
 Screen_name Next_screen_name;
 
@@ -296,6 +297,71 @@ void TriggerButtonEffects(ButtonObject* x) {
     //check what is the buttons effect and run accordingly
     switch (x->button_effect)
     {
+    case Move_to_options:
+        isgamepaused = true;
+        Next_screen_name = Options;
+        isScreenTransiting = false;
+        break;
+    case Move_to_main_Menu:
+        isgamepaused = false;
+        Next_screen_name = Main_menu;
+        isScreenTransiting = true;
+        break;
+    case Move_to_Level_Select:
+        isgamepaused = false;
+        Next_screen_name = Level_Select;
+        isScreenTransiting = true;
+        break;
+    case Move_to_Level_1:
+        isgamepaused = false;
+        Next_screen_name = Level_1;
+        isScreenTransiting = true;
+        break;
+    case Move_to_Level_2:
+        isgamepaused = false;
+        Next_screen_name = Level_2;
+        isScreenTransiting = true;
+        break;
+    case Move_to_Level_3:
+        isgamepaused = false;
+        Next_screen_name = Level_3;
+        isScreenTransiting = true;
+        break;
+    case Move_to_Level_4:
+        isgamepaused = false;
+        Next_screen_name = Level_4;
+        isScreenTransiting = true;
+        break;
+    case Move_to_Level_5:
+        isgamepaused = false;
+        Next_screen_name = Level_5;
+        isScreenTransiting = true;
+        break;
+    case Move_to_Level_6:
+        isgamepaused = false;
+        Next_screen_name = Level_6;
+        isScreenTransiting = true;
+        break;
+    case Move_to_Level_7:
+        isgamepaused = false;
+        Next_screen_name = Level_7;
+        isScreenTransiting = true;
+        break;
+    case Move_to_Level_8:
+        isgamepaused = false;
+        Next_screen_name = Level_8;
+        isScreenTransiting = true;
+        break;
+    case Move_to_Level_9:
+        isgamepaused = false;
+        Next_screen_name = Level_9;
+        isScreenTransiting = true;
+        break;
+    case Move_to_Level_10:
+        isgamepaused = false;
+        Next_screen_name = Level_10;
+        isScreenTransiting = true;
+        break;
     case Move_to_test_room:
         isgamepaused = false;
         Next_screen_name = Test_Room;
@@ -315,9 +381,24 @@ void TriggerButtonEffects(ButtonObject* x) {
 }
 
 void Initialize_Screens(void) {
-    //Create Test menu screen
-    screen_array[Test_Menu].ButtonObjectArrayLengthCounter = 0;
-    screen_array[Test_Menu].ButtonObjectArray[0] = CreateButtonObject(newVector2(10, 10), 100, 100, 0, 0, CP_Color_Create(255, 255, 255, 200), Move_to_test_room, "Move to Test Screen");
+    //Create Main Menu Screen
+    screen_array[Main_menu].ButtonObjectArrayLengthCounter = 0;
+    screen_array[Main_menu].ButtonObjectArray[0] = CreateButtonObject(newVector2(900, 500), 100, 100, 50, 0, CP_Color_Create(255, 255, 255, 200), Move_to_Level_Select, "Level Select");
+
+    screen_array[Level_Select].ButtonObjectArrayLengthCounter = 0;
+    screen_array[Level_Select].ButtonObjectArray[0] = CreateButtonObject(newVector2(500 , 70), 100, 100, 0, 0, CP_Color_Create(255, 255, 255, 200), Move_to_Level_1, "Level 1");
+    screen_array[Level_Select].ButtonObjectArray[1] = CreateButtonObject(newVector2(700, 70), 100, 100, 0, 0, CP_Color_Create(255, 255, 255, 200), Move_to_Level_2, "Level 2");
+    screen_array[Level_Select].ButtonObjectArray[2] = CreateButtonObject(newVector2(900, 70), 100, 100, 0, 0, CP_Color_Create(255, 255, 255, 200), Move_to_Level_3, "Level 3");
+    screen_array[Level_Select].ButtonObjectArray[3] = CreateButtonObject(newVector2(1100, 70), 100, 100, 0, 0, CP_Color_Create(255, 255, 255, 200), Move_to_Level_4, "Level 4");
+    screen_array[Level_Select].ButtonObjectArray[4] = CreateButtonObject(newVector2(1300, 70), 100, 100, 0, 0, CP_Color_Create(255, 255, 255, 200), Move_to_Level_5, "Level 5");
+    screen_array[Level_Select].ButtonObjectArray[5] = CreateButtonObject(newVector2(500, 300), 100, 100, 0, 0, CP_Color_Create(255, 255, 255, 200), Move_to_Level_6, "Level 6");
+    screen_array[Level_Select].ButtonObjectArray[6] = CreateButtonObject(newVector2(700, 300), 100, 100, 0, 0, CP_Color_Create(255, 255, 255, 200), Move_to_Level_7, "Level 7");
+    screen_array[Level_Select].ButtonObjectArray[7] = CreateButtonObject(newVector2(900, 300), 100, 100, 0, 0, CP_Color_Create(255, 255, 255, 200), Move_to_Level_8, "Level 8");
+    screen_array[Level_Select].ButtonObjectArray[8] = CreateButtonObject(newVector2(1100, 300), 100, 100, 0, 0, CP_Color_Create(255, 255, 255, 200), Move_to_Level_9, "Level 9");
+    screen_array[Level_Select].ButtonObjectArray[9] = CreateButtonObject(newVector2(1300, 300), 100, 100, 0, 0, CP_Color_Create(255, 255, 255, 200), Move_to_Level_10, "Level 10");
+
+    screen_array[Options].ButtonObjectArrayLengthCounter = 0;
+    screen_array[Options].ButtonObjectArray[0] = CreateButtonObject(newVector2(900, 10), 100, 100, 0, 0, CP_Color_Create(255, 255, 255, 200), Move_to_main_Menu, "Main Menu");
 
     //Create Test Room screen
     //Fill up array with test circles
@@ -325,12 +406,66 @@ void Initialize_Screens(void) {
         float scale = CP_Random_RangeFloat(10, 15);
         CircleGameObject tempc = CreateCircleGameObject(newVector2(CP_Random_RangeFloat(50, 1800), CP_Random_RangeFloat(50, 1000)), newVector2(CP_Random_RangeFloat(-100, 100), CP_Random_RangeFloat(-100, 100)), 0, CP_Color_Create(CP_Random_RangeInt(0, 255), CP_Random_RangeInt(0, 255), CP_Random_RangeInt(0, 255), 255), scale, false, scale, 1);
         screen_array[Test_Room].CircleGameObjectArray[i] = tempc;
+        screen_array[Level_1].CircleGameObjectArray[i] = tempc;
+        screen_array[Level_2].CircleGameObjectArray[i] = tempc;
+        screen_array[Level_3].CircleGameObjectArray[i] = tempc;
+        screen_array[Level_4].CircleGameObjectArray[i] = tempc;
+        screen_array[Level_5].CircleGameObjectArray[i] = tempc;
+        screen_array[Level_6].CircleGameObjectArray[i] = tempc;
+        screen_array[Level_7].CircleGameObjectArray[i] = tempc;
+        screen_array[Level_8].CircleGameObjectArray[i] = tempc;
+        screen_array[Level_9].CircleGameObjectArray[i] = tempc;
+        screen_array[Level_10].CircleGameObjectArray[i] = tempc;
     }
     screen_array[Test_Room].LineArrayLengthCounter = 0;
     screen_array[Test_Room].CircleArrayLengthCounter = 0;
-    screen_array[Test_Room].ButtonObjectArray[0] = CreateButtonObject(newVector2(10, 10), 100, 100, 0, 0, CP_Color_Create(255, 255, 255, 200), Move_to_test_Menu, "Move to Test Menu");
-    screen_array[Test_Room].ButtonObjectArray[1] = CreateButtonObject(newVector2(120, 10), 100, 100, 0, 0, CP_Color_Create(255, 255, 255, 200), Pause_Game, "Pause Game");
+    screen_array[Test_Room].ButtonObjectArray[0] = CreateButtonObject(newVector2(10, 10), 100, 100, 0, 0, CP_Color_Create(255, 255, 255, 200), Move_to_main_Menu, "Move to Main Menu");
+
+    screen_array[Level_1].LineArrayLengthCounter = 0;
+    screen_array[Level_1].CircleArrayLengthCounter = 0;
+    screen_array[Level_1].ButtonObjectArray[0] = CreateButtonObject(newVector2(10, 10), 100, 100, 0, 0, CP_Color_Create(255, 255, 255, 200), Move_to_main_Menu, "Move to Main Menu");
+
+    screen_array[Level_2].LineArrayLengthCounter = 0;
+    screen_array[Level_2].CircleArrayLengthCounter = 0;
+    screen_array[Level_2].ButtonObjectArray[0] = CreateButtonObject(newVector2(10, 10), 100, 100, 0, 0, CP_Color_Create(255, 255, 255, 200), Move_to_main_Menu, "Move to Main Menu");
+
+    screen_array[Level_3].LineArrayLengthCounter = 0;
+    screen_array[Level_3].CircleArrayLengthCounter = 0;
+    screen_array[Level_3].ButtonObjectArray[0] = CreateButtonObject(newVector2(10, 10), 100, 100, 0, 0, CP_Color_Create(255, 255, 255, 200), Move_to_main_Menu, "Move to Main Menu");
+
+    screen_array[Level_4].LineArrayLengthCounter = 0;
+    screen_array[Level_4].CircleArrayLengthCounter = 0;
+    screen_array[Level_4].ButtonObjectArray[0] = CreateButtonObject(newVector2(10, 10), 100, 100, 0, 0, CP_Color_Create(255, 255, 255, 200), Move_to_main_Menu, "Move to Main Menu");
+
+    screen_array[Level_5].LineArrayLengthCounter = 0;
+    screen_array[Level_5].CircleArrayLengthCounter = 0;
+    screen_array[Level_5].ButtonObjectArray[0] = CreateButtonObject(newVector2(10, 10), 100, 100, 0, 0, CP_Color_Create(255, 255, 255, 200), Move_to_main_Menu, "Move to Main Menu");
+
+    screen_array[Level_6].LineArrayLengthCounter = 0;
+    screen_array[Level_6].CircleArrayLengthCounter = 0;
+    screen_array[Level_6].ButtonObjectArray[0] = CreateButtonObject(newVector2(10, 10), 100, 100, 0, 0, CP_Color_Create(255, 255, 255, 200), Move_to_main_Menu, "Move to Main Menu");
+
+    screen_array[Level_7].LineArrayLengthCounter = 0;
+    screen_array[Level_7].CircleArrayLengthCounter = 0;
+    screen_array[Level_7].ButtonObjectArray[0] = CreateButtonObject(newVector2(10, 10), 100, 100, 0, 0, CP_Color_Create(255, 255, 255, 200), Move_to_main_Menu, "Move to Main Menu");
+
+    screen_array[Level_8].LineArrayLengthCounter = 0;
+    screen_array[Level_8].CircleArrayLengthCounter = 0;
+    screen_array[Level_8].ButtonObjectArray[0] = CreateButtonObject(newVector2(10, 10), 100, 100, 0, 0, CP_Color_Create(255, 255, 255, 200), Move_to_main_Menu, "Move to Main Menu");
+    
+    screen_array[Level_9].LineArrayLengthCounter = 0;
+    screen_array[Level_9].CircleArrayLengthCounter = 0;
+    screen_array[Level_9].ButtonObjectArray[0] = CreateButtonObject(newVector2(10, 10), 100, 100, 0, 0, CP_Color_Create(255, 255, 255, 200), Move_to_main_Menu, "Move to Main Menu");
+
+    screen_array[Level_10].LineArrayLengthCounter = 0;
+    screen_array[Level_10].CircleArrayLengthCounter = 0;
+    screen_array[Level_10].ButtonObjectArray[0] = CreateButtonObject(newVector2(10, 10), 100, 100, 0, 0, CP_Color_Create(255, 255, 255, 200), Move_to_options, "Options");
+
+    screen_array[Test_Room].LineArrayLengthCounter = 0;
+    screen_array[Test_Room].CircleArrayLengthCounter = 0;
+    screen_array[Test_Room].ButtonObjectArray[0] = CreateButtonObject(newVector2(10, 10), 100, 100, 0, 0, CP_Color_Create(255, 255, 255, 200), Move_to_main_Menu, "Move to Main Menu");
 }
+
 void game_exit(void)
 {
 

@@ -95,10 +95,11 @@ struct boxGameObject
 	GameObject gameObject;
 	float width;
 	float height;
+	CP_Image image;
 
 };
 
-struct boxGameObject CreateBoxGameObject(Vector2 position, float width, float height,float bounciness, float angle) {
+struct boxGameObject CreateBoxGameObject(Vector2 position, float width, float height,float bounciness, float angle, CP_Image image) {
 	BoxGameObject b;
 	b.gameObject.isActive = true;
 	b.gameObject.position = position;
@@ -106,7 +107,7 @@ struct boxGameObject CreateBoxGameObject(Vector2 position, float width, float he
 	b.width = width;
 	b.gameObject.angle = angle;
 	b.gameObject.bounciness = bounciness;
-
+	b.image = image;
 	return b;
 }
 
@@ -706,9 +707,16 @@ void CirclePhys(CircleGameObject* c1) {
 	}
 }
 
+Vector2 CenterOfBox(BoxGameObject* b1) {
+	Vector2 boxTopLeft = b1->gameObject.position;
+	Vector2 boxTopRight = newVector2(boxTopLeft.x + b1->width * cosf(b1->gameObject.angle / 180 * PI), boxTopLeft.y + b1->width * sinf(b1->gameObject.angle / 180 * PI));
+	Vector2 boxBottomLeft = newVector2(boxTopLeft.x + b1->height * cosf((b1->gameObject.angle + 90) / 180 * PI), boxTopLeft.y + b1->height * sinf((b1->gameObject.angle + 90) / 180 * PI));
+	return newVector2((boxTopRight.x + boxBottomLeft.x) / 2, (boxTopRight.y + boxBottomLeft.y) / 2);
+}
 
 // Call this function to draw an image over a boxGameObject for UI
-void DrawBoxImage(CP_Image image, BoxGameObject b, int alpha) {
-	CP_Image_DrawAdvanced(image, b.gameObject.position.x, b.gameObject.position.y, b.width, b.height, alpha, b.gameObject.angle);
+void DrawBoxImage(CP_Image image, BoxGameObject* b, int alpha) {
+	Vector2 Center = CenterOfBox(b);
+	CP_Image_DrawAdvanced(image, Center.x, Center.y, b->width, b->height, alpha, b->gameObject.angle);
 }
 

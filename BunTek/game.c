@@ -124,7 +124,7 @@ void AddLine(void) {
             LineLength = DistBetween(LineStartPos, LineEndPos);
         }
         if (MousePos.x != MousePosPrev.x || MousePos.y != MousePosPrev.y) {
-            Current_screen.LineArray[LineCounter] = CreateBoxGameObject(LineStartPos, LineLength, 4.0f, DrawnLineBounciness,atan2f(LineEndPos.y - LineStartPos.y, LineEndPos.x - LineStartPos.x) / (float)PI * 180);
+            Current_screen.LineArray[LineCounter] = CreateBoxGameObject(LineStartPos, LineLength, 4.0f, DrawnLineBounciness,atan2f(LineEndPos.y - LineStartPos.y, LineEndPos.x - LineStartPos.x) / (float)PI * 180, TestDoge);
         }
     }
     else if (Mouse1Held) 
@@ -179,7 +179,13 @@ void DrawAllShapes(void)
         else {
             CP_Settings_Fill(x->gameObject.color);
             CP_Settings_NoStroke();
-            CP_Graphics_DrawRectAdvanced(x->gameObject.position.x, x->gameObject.position.y, x->width, x->height, x->gameObject.angle,1);
+            if (x->image != NULL) {
+                DrawBoxImage(x->image, x, 255);
+            }
+            else {
+                CP_Graphics_DrawRectAdvanced(x->gameObject.position.x, x->gameObject.position.y, x->width, x->height, x->gameObject.angle, 1);
+            }
+            
 
         }
     }

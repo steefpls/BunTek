@@ -180,7 +180,7 @@ void DrawAllShapes(void)
             CP_Settings_Fill(x->gameObject.color);
             CP_Settings_NoStroke();
             if (x->image != NULL) {
-                DrawBoxImage(x->image, x, 255);
+                DrawBoxImage( x, 255);
             }
             else {
                 CP_Graphics_DrawRectAdvanced(x->gameObject.position.x, x->gameObject.position.y, x->width, x->height, x->gameObject.angle, 1);

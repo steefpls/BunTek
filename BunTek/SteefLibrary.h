@@ -714,9 +714,14 @@ Vector2 CenterOfBox(BoxGameObject* b1) {
 	return newVector2((boxTopRight.x + boxBottomLeft.x) / 2, (boxTopRight.y + boxBottomLeft.y) / 2);
 }
 
-// Call this function to draw an image over a boxGameObject for UI
-void DrawBoxImage(CP_Image image, BoxGameObject* b, int alpha) {
+// Call this function to overwrite the boxGameObject's image over itself (Usually for UI)
+void OverriteBoxImage(CP_Image image, BoxGameObject* b, int alpha) {
 	Vector2 Center = CenterOfBox(b);
 	CP_Image_DrawAdvanced(image, Center.x, Center.y, b->width, b->height, alpha, b->gameObject.angle);
 }
 
+// Call this function to draw the boxGameObject's image over itself (Usually for UI)
+void DrawBoxImage(BoxGameObject* b, int alpha) {
+	Vector2 Center = CenterOfBox(b);
+	CP_Image_DrawAdvanced(b->image, Center.x, Center.y, b->width, b->height, alpha, b->gameObject.angle);
+}

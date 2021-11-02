@@ -4,6 +4,7 @@
 // Store the sounds file location
 #define BallBounce CP_Sound_Load("./Assets/Ball_Bounce_trimmed.wav")
 #define GameOverSound CP_Sound_Load("./Assets/mixkit-arcade-retro-game-over-213.wav")
+
 //Global Variables
 float GlobalVolume = 1;
 float SFXVolume = 1;

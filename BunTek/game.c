@@ -27,12 +27,6 @@ Vector2 LineStartPos;
 Vector2 LineEndPos;
 const float DrawnLineBounciness = 1.0f;
 
-<<<<<<< Updated upstream
-=======
-
-bool ButtonClicked = false;
-
->>>>>>> Stashed changes
 //Initialize functions
 void draw_framerate(void);
 void DrawAllShapes(void);

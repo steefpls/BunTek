@@ -199,6 +199,7 @@ xcopy "$(ProjectDir)Assets\*" "$(OutDir)Assets\" /s /r /y /q</Command>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Screen_control.h" />
+    <ClInclude Include="Sound_Effect.h" />
     <ClInclude Include="SteefLibrary.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

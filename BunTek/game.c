@@ -12,6 +12,7 @@
  * Copyright © 2020 DigiPen, All rights reserved.
 * ---------------------------------------------------------*/
 #include "Screen_control.h"
+#include "Sound_Effect.h"
 #include <gl/GL.h>
 //Initialize variables
 bool Mouse1Held = false; //mouse held bool for previous frame
@@ -26,6 +27,12 @@ Vector2 LineStartPos;
 Vector2 LineEndPos;
 const float DrawnLineBounciness = 1.0f;
 
+<<<<<<< Updated upstream
+=======
+
+bool ButtonClicked = false;
+
+>>>>>>> Stashed changes
 //Initialize functions
 void draw_framerate(void);
 void DrawAllShapes(void);
@@ -35,6 +42,8 @@ bool CheckAllButtons(void);
 void TriggerButtonEffects(ButtonObject* x);
 void Initialize_Screens(void);
 void Initialize_Sprites(void);
+void play_ball_bounce(void); 
+
 //Initialize array
 Screen screen_array[Total_screen_number];
 
@@ -65,6 +74,7 @@ void game_init(void)
 {
     Initialize_Sprites();
     CP_Font_Set(CP_Font_GetDefault());
+
     if (debug) {
         CP_System_ShowConsole();
     }
@@ -98,6 +108,15 @@ void game_update(void)
     }
     DrawAllShapes();
     screen_transition(&isScreenTransiting, &transition_oppacity, &Current_screen_name, &Next_screen_name, current_screen, screen_array);
+
+    // Debugging -  for audio code 
+
+    if (CP_Input_KeyTriggered(KEY_A)) {
+        printf("Hi key A has been pressed.");
+        play_ball_bounce(); 
+    }
+
+ 
     // Profiling info and frameRate testing
     if (debug) draw_framerate();
 }
@@ -262,7 +281,7 @@ void CalculateAllPhysics(void)
                     {
                         if (CircleCol(c1, c2, true))  //If circle collides with cicle
                         {
-                           
+                            play_ball_bounce(); //  Audio : ball bouncing off other balls 
                             
                         }
                     }
@@ -288,7 +307,7 @@ void CalculateAllPhysics(void)
                 }
                 else {
                     if (CircleRectCol(c1, b1, true)) {
-
+                        play_ball_bounce();     // Audio : ball bouncing off a surface -> when ball bounce of a platform / user platform 
                     }
                 }
             }

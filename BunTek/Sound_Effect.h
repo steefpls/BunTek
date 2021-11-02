@@ -1,25 +1,52 @@
 #include <stdio.h>
 #include "cprocessing.h"
 
-#define AUDIO_BOUNCE CP_Sound_Load("./Assets/Ball_Bounce_trimmed.wav")
+// Store the sounds file location
+#define BallBounce CP_Sound_Load("./Assets/Ball_Bounce_trimmed.wav")
+#define GameOverSound CP_Sound_Load("./Assets/mixkit-arcade-retro-game-over-213.wav")
+//Global Variables
+float GlobalVolume = 1;
+float SFXVolume = 1;
+float MusicVolume = 1;
 
 
-// Function : Load Sound File 
-// Arguements : wav. location
+// Playing sound effect with the correctly set volume
+void PlaySoundEffect(CP_Sound audio) {
+	CP_Sound_PlayAdvanced(audio, GlobalVolume * SFXVolume, 1, false, CP_SOUND_GROUP_SFX);
+}
 
-void play_ball_bounce(void) {
+// Playing sound effect with random-ish pitch
+void PlayPitchedSoundEffect(CP_Sound audio, float pitchrange) {
+	float pitch = CP_Random_RangeFloat(1 - pitchrange, 1 + pitchrange);
+	CP_Sound_PlayAdvanced(audio, GlobalVolume * SFXVolume, pitch, false, CP_SOUND_GROUP_SFX);
+}
 
-	if (AUDIO_BOUNCE == NULL) {
-		printf("Ball bounce Audio did not load.\n"); 
-	}
-
-	CP_Sound_Play(AUDIO_BOUNCE); 
+//play Looping Music
+void PlayMusic(CP_Sound audio) {
+	CP_Sound_PlayAdvanced(audio, GlobalVolume * MusicVolume, 1, true, CP_SOUND_GROUP_MUSIC);
 }
 
 
+void PauseMusic() {
+	CP_Sound_PauseGroup(CP_SOUND_GROUP_MUSIC);
+}
 
+void PauseSFX() {
+	CP_Sound_PauseGroup(CP_SOUND_GROUP_SFX);
+}
 
+void ResumeMusic() {
+	CP_Sound_ResumeGroup(CP_SOUND_GROUP_MUSIC);
+}
 
+void ResumeSFX() {
+	CP_Sound_ResumeGroup(CP_SOUND_GROUP_SFX);
+}
 
+void PauseAllSounds() {
+	CP_Sound_PauseAll();
+}
 
-// Task : Load sound path - ball bouncing 
+void ResumeAllSounds() {
+	CP_Sound_ResumeAll();
+}

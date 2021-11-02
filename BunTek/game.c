@@ -26,8 +26,6 @@ Vector2 LineStartPos;
 Vector2 LineEndPos;
 const float DrawnLineBounciness = 1.0f;
 
-bool ButtonClicked = false;
-
 //Initialize functions
 void draw_framerate(void);
 void DrawAllShapes(void);
@@ -41,7 +39,7 @@ void Initialize_Sprites(void);
 Screen screen_array[Total_screen_number];
 
 //Initialize Screen control
-Screen_name Start_Screen = Main_menu;
+Screen_name Start_Screen = Splash_screen;
 Screen_name Current_screen_name;
 Screen_name Next_screen_name;
 
@@ -52,10 +50,14 @@ Screen* current_screen = &Current_screen;
 //transition control
 int transition_oppacity = 0;
 bool isScreenTransiting = false;
-bool isgamepaused = false;
+bool isgamepaused = true;
+
+bool ButtonClicked = false;
+bool startup;
 
 //Sprites
 CP_Image TestDoge = NULL;
+CP_Image DigipenLogo = NULL;
 
 
 
@@ -69,6 +71,7 @@ void game_init(void)
     //initialize all screen data
     Initialize_Screens();
     //set the screens
+    startup = true;
     Current_screen_name = Start_Screen;
     Next_screen_name = Start_Screen;
     //initialize current screen
@@ -79,7 +82,9 @@ void game_update(void)
 {
     CP_Graphics_ClearBackground(CP_Color_Create(50, 50, 50, 255));
     MousePos = newVector2(CP_Input_GetMouseX(), CP_Input_GetMouseY());
-    
+    if (startup) {
+        startupsequence(&Current_screen_name, &Next_screen_name, &isScreenTransiting, &startup , &isgamepaused);
+    }
 
     if (!isScreenTransiting) {//not transitioning to new screen
         //check for button Click and return bool, also run the buttons effect if any
@@ -200,10 +205,16 @@ void DrawAllShapes(void)
         else {
             CP_Settings_Fill(x->boxGameObject.gameObject.color);
             CP_Settings_NoStroke();
-            CP_Graphics_DrawRectAdvanced(x->boxGameObject.gameObject.position.x, x->boxGameObject.gameObject.position.y, x->boxGameObject.width, x->boxGameObject.height, x->boxGameObject.gameObject.angle, 1);
-            CP_Settings_Fill(CP_Color_Create(0, 0, 0, 255));
-            CP_Settings_TextAlignment(CP_TEXT_ALIGN_H_CENTER, CP_TEXT_ALIGN_V_TOP);
-            CP_Font_DrawTextBox(x->buttontext, x->boxGameObject.gameObject.position.x, x->boxGameObject.gameObject.position.y, x->boxGameObject.width);
+            if (x->boxGameObject.image != NULL) {
+                DrawBoxImage(&x->boxGameObject, 255);
+            }
+            else {
+                CP_Graphics_DrawRectAdvanced(x->boxGameObject.gameObject.position.x, x->boxGameObject.gameObject.position.y, x->boxGameObject.width, x->boxGameObject.height, x->boxGameObject.gameObject.angle, 1);
+                CP_Settings_Fill(CP_Color_Create(0, 0, 0, 255));
+                CP_Settings_TextAlignment(CP_TEXT_ALIGN_H_CENTER, CP_TEXT_ALIGN_V_TOP);
+                CP_Font_DrawTextBox(x->buttontext, x->boxGameObject.gameObject.position.x, x->boxGameObject.gameObject.position.y, x->boxGameObject.width);
+            }
+            
         }
     }
 }
@@ -391,6 +402,10 @@ void TriggerButtonEffects(ButtonObject* x) {
 }
 
 void Initialize_Screens(void) {
+    //create splash screen
+    screen_array[Splash_screen].ButtonObjectArrayLengthCounter = 0;
+    screen_array[Splash_screen].ButtonObjectArray[0] = CreateButtonObject(newVector2(0+CP_System_GetWindowWidth()/2.0f - 1026.0f /2.0f, 0 + CP_System_GetWindowHeight() / 2.0f - 249.0f /2.0f), 1026, 249, 50, 0, DigipenLogo, CP_Color_Create(255, 255, 255, 200), None, "");
+
     //Create Main Menu Screen
     screen_array[Main_menu].ButtonObjectArrayLengthCounter = 0;
     screen_array[Main_menu].ButtonObjectArray[0] = CreateButtonObject(newVector2(900, 500), 100, 100, 50, 0, NULL, CP_Color_Create(255, 255, 255, 200), Move_to_Level_Select, "Level Select");
@@ -427,6 +442,7 @@ void Initialize_Screens(void) {
         screen_array[Level_9].CircleGameObjectArray[i] = tempc;
         screen_array[Level_10].CircleGameObjectArray[i] = tempc;
     }
+
     screen_array[Test_Room].LineArrayLengthCounter = 0;
     screen_array[Test_Room].CircleArrayLengthCounter = 0;
     screen_array[Test_Room].ButtonObjectArray[0] = CreateButtonObject(newVector2(10, 10), 100, 100, 0, 0, NULL, CP_Color_Create(255, 255, 255, 200), Move_to_main_Menu, "Move to Main Menu");
@@ -477,6 +493,7 @@ void Initialize_Screens(void) {
 }
 void Initialize_Sprites(void) {
     TestDoge = CP_Image_Load("./Sprites/MahLe.jpg");
+    DigipenLogo = CP_Image_Load("./Assets/DigiPen_WHITE.png");
 }
 void game_exit(void)
 {

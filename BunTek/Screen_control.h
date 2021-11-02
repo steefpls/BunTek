@@ -6,7 +6,7 @@
 
 #define ButtonObject struct buttonObject
 
-#define LerpDuration 1.0f
+#define LerpDuration 1.5f
 
 #define LineArrayLength 1000
 #define CircleGameObjectArrayLength 1000
@@ -39,6 +39,7 @@ typedef enum{
 } Screen_name;
 
 typedef enum {
+	None,
 	Move_to_test_room,
 	Move_to_Level_Select,
 	Move_to_Level_1,
@@ -64,6 +65,7 @@ struct buttonObject {
 };
 
 struct screen {
+	
 	//Array for all collidable circles
 	int CircleArrayLengthCounter;
 	CircleGameObject CircleGameObjectArray[CircleGameObjectArrayLength];
@@ -76,6 +78,7 @@ struct screen {
 	//Array for all buttons
 	int ButtonObjectArrayLengthCounter;
 	ButtonObject ButtonObjectArray[ButtonObjectArrayLength];
+	
 };
 //create button object for screen
 ButtonObject CreateButtonObject(Vector2 position, float width, float height,float bounciness, float angle, CP_Image image, CP_Color color, Button_effects effect, char* buttontext) {
@@ -90,7 +93,7 @@ ButtonObject CreateButtonObject(Vector2 position, float width, float height,floa
 //transition to black
 bool screen_transition_to_black(int* transition_oppacity) {
 	//fade to black
-	TimeElapse += FrameTime*0.5f;
+	TimeElapse += FrameTime;
 	*transition_oppacity = CP_Math_LerpInt(*transition_oppacity, 255, TimeElapse/LerpDuration);
 	CP_Math_ClampInt(*transition_oppacity, 0, 255);
 	CP_Settings_Fill(CP_Color_Create(0, 0, 0, *transition_oppacity));
@@ -104,7 +107,7 @@ bool screen_transition_to_black(int* transition_oppacity) {
 //transition from black
 bool screen_transition_from_black(int* transition_oppacity) {
 	//fade from black
-	TimeElapse += FrameTime * 0.5f;
+	TimeElapse += FrameTime;
 	*transition_oppacity = CP_Math_LerpInt(*transition_oppacity, 0, TimeElapse/LerpDuration);
 	CP_Math_ClampInt(*transition_oppacity, 0 , 255);
 	CP_Settings_Fill(CP_Color_Create(0, 0, 0, *transition_oppacity));
@@ -134,9 +137,36 @@ void screen_transition(bool* isScreenTransiting, int* transition_oppacity, Scree
 			*isScreenTransiting = !screen_transition_from_black(transition_oppacity);
 		}
 	}
-
 	printf("Opacity: %i\n", *transition_oppacity);
 	printf("time: %f\n", TimeElapse);
+}
+
+//Stopwatch
+bool Stopwatch(float duration) {
+	TimeElapse += FrameTime;
+	if (TimeElapse >= duration) {
+		TimeElapse = 0;
+		return true;
+	}
+	printf("time: %f\n", TimeElapse);
+	return false;
+}
+
+void startupsequence(Screen_name* Current_screen_name, Screen_name* Next_screen_name, bool* isScreenTransiting, bool* startup, bool* isgamepaused) {
+	switch (*Current_screen_name)
+	{
+	case Splash_screen:
+		if (Stopwatch(2.0f)) {
+			*Next_screen_name = Main_menu;
+			*isScreenTransiting = true;
+		}
+		break;
+	default:
+		*isgamepaused = false;
+		*startup = false;
+
+		break;
+	}
 }
 
 

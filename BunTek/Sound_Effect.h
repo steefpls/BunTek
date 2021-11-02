@@ -26,6 +26,17 @@ void PlayMusic(CP_Sound audio) {
 	CP_Sound_PlayAdvanced(audio, GlobalVolume * MusicVolume, 1, true, CP_SOUND_GROUP_MUSIC);
 }
 
+void StopMusic() {
+	CP_Sound_StopGroup(CP_SOUND_GROUP_MUSIC);
+}
+
+void StopSFX() {
+	CP_Sound_StopGroup(CP_SOUND_GROUP_SFX);
+}
+
+void StopAllSounds() {
+	CP_Sound_StopAll();
+}
 
 void PauseMusic() {
 	CP_Sound_PauseGroup(CP_SOUND_GROUP_MUSIC);

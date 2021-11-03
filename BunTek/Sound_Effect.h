@@ -62,3 +62,18 @@ void PauseAllSounds() {
 void ResumeAllSounds() {
 	CP_Sound_ResumeAll();
 }
+
+void SetSFXVolume(float vol) {
+	CP_Sound_SetGroupVolume(CP_SOUND_GROUP_SFX, vol);
+	SFXVolume = vol;
+}
+
+void SetMusicVolume(float vol) {
+	CP_Sound_SetGroupVolume(CP_SOUND_GROUP_MUSIC, vol);
+	MusicVolume = vol;
+}
+
+void SetGlobalVolume(float vol) {
+	SetSFXVolume(vol);
+	SetMusicVolume(vol);
+}

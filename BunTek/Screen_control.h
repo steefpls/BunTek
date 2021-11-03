@@ -6,7 +6,7 @@
 
 #define ButtonObject struct buttonObject
 
-#define LerpDuration 1.5f
+#define LerpDuration 6.0f
 
 #define LineArrayLength 1000
 #define CircleGameObjectArrayLength 1000
@@ -91,28 +91,28 @@ ButtonObject CreateButtonObject(Vector2 position, float width, float height,floa
 }
 
 //transition to black
-bool screen_transition_to_black(int* transition_oppacity) {
+bool screen_transition_to_black(float* transition_oppacity) {
 	//fade to black
 	TimeElapse += FrameTime;
-	*transition_oppacity = CP_Math_LerpInt(*transition_oppacity, 255, TimeElapse/LerpDuration);
-	CP_Math_ClampInt(*transition_oppacity, 0, 255);
-	CP_Settings_Fill(CP_Color_Create(0, 0, 0, *transition_oppacity));
+	
+	*transition_oppacity = CP_Math_LerpFloat(*transition_oppacity, 255, LerpDuration * FrameTime);
+
+	CP_Settings_Fill(CP_Color_Create(0, 0, 0, (int) *transition_oppacity));
 	CP_Graphics_DrawRectAdvanced(0, 0, (float)CP_System_GetWindowWidth(), (float)CP_System_GetWindowHeight(), 0, 0);
-	if (*transition_oppacity == 255) {
+	if ((int)*transition_oppacity >= 254) {
 		TimeElapse = 0;
 		return true;
 	}
 	return false;
 }
 //transition from black
-bool screen_transition_from_black(int* transition_oppacity) {
+bool screen_transition_from_black(float* transition_oppacity) {
 	//fade from black
 	TimeElapse += FrameTime;
-	*transition_oppacity = CP_Math_LerpInt(*transition_oppacity, 0, TimeElapse/LerpDuration);
-	CP_Math_ClampInt(*transition_oppacity, 0 , 255);
-	CP_Settings_Fill(CP_Color_Create(0, 0, 0, *transition_oppacity));
+	*transition_oppacity = CP_Math_LerpFloat(*transition_oppacity, 0, LerpDuration * FrameTime);
+	CP_Settings_Fill(CP_Color_Create(0, 0, 0, (int)*transition_oppacity));
 	CP_Graphics_DrawRectAdvanced(0, 0, (float)CP_System_GetWindowWidth(), (float)CP_System_GetWindowHeight(), 0, 0);
-	if (*transition_oppacity == 0) {
+	if ((int)*transition_oppacity == 0) {
 		TimeElapse = 0;
 		return true;
 	}
@@ -120,7 +120,7 @@ bool screen_transition_from_black(int* transition_oppacity) {
 }
 
 //transition Control
-void screen_transition(bool* isScreenTransiting, int* transition_oppacity, Screen_name* Current_screen_name, Screen_name* Next_screen_name, Screen* current_screen, const Screen* screen_array) {
+void screen_transition(bool* isScreenTransiting, float* transition_oppacity, Screen_name* Current_screen_name, Screen_name* Next_screen_name, Screen* current_screen, const Screen* screen_array) {
 	if (*isScreenTransiting) {//transitioning to new screen
 		if (*Current_screen_name != *Next_screen_name) {
 			if (screen_transition_to_black(transition_oppacity)) {
@@ -137,7 +137,7 @@ void screen_transition(bool* isScreenTransiting, int* transition_oppacity, Scree
 			*isScreenTransiting = !screen_transition_from_black(transition_oppacity);
 		}
 	}
-	printf("Opacity: %i\n", *transition_oppacity);
+	printf("Opacity: %f\n", *transition_oppacity);
 	printf("time: %f\n", TimeElapse);
 }
 

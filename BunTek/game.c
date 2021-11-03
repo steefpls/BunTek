@@ -52,7 +52,7 @@ Screen Current_screen;
 Screen* current_screen = &Current_screen;
 
 //transition control
-int transition_oppacity = 0;
+float transition_oppacity = 0;
 bool isScreenTransiting = false;
 bool isgamepaused = true;
 

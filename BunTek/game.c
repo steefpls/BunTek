@@ -41,6 +41,7 @@ void Initialize_Sprites(void);
 
 //Initialize array
 Screen screen_array[Total_screen_number];
+Screen overlay_array[Total_overlay_number];
 
 //Initialize Screen control
 Screen_name Start_Screen = Splash_screen;
@@ -52,12 +53,18 @@ Screen Current_screen;
 Screen* current_screen = &Current_screen;
 
 //transition control
-float transition_oppacity = 0;
+float transition_opacity = 0;
+
 bool isScreenTransiting = false;
 bool isgamepaused = true;
 
+bool isoverlayTransiting = false;
+bool isoverlayActive = false;
+
 bool ButtonClicked = false;
 bool startup;
+
+bool restartingLevel = false;
 
 //Sprites
 CP_Image TestDoge = NULL;
@@ -87,11 +94,18 @@ void game_update(void)
 {
     CP_Graphics_ClearBackground(CP_Color_Create(50, 50, 50, 255));
     MousePos = newVector2(CP_Input_GetMouseX(), CP_Input_GetMouseY());
+    
     if (startup) {
         startupsequence(&Current_screen_name, &Next_screen_name, &isScreenTransiting, &startup , &isgamepaused);
     }
-
-    if (!isScreenTransiting) {//not transitioning to new screen
+    
+    if (!isScreenTransiting && !isoverlayTransiting && !restartingLevel) {//not transitioning to new screen or overlay or restarting
+        if (current_screen->overlay_name != No_overlay) {
+            if (CP_Input_KeyTriggered(KEY_ESCAPE))
+            {
+                isoverlayTransiting = true;//start overlay transition
+            }
+        }
         //check for button Click and return bool, also run the buttons effect if any
         ButtonClicked = CheckAllButtons();
         if (!isgamepaused) {
@@ -102,8 +116,14 @@ void game_update(void)
         }
     }
     DrawAllShapes();
-    screen_transition(&isScreenTransiting, &transition_oppacity, &Current_screen_name, &Next_screen_name, current_screen, screen_array);
- 
+
+    Drawoverlay(&isoverlayTransiting, &isoverlayActive, &isgamepaused, current_screen->overlay_name, overlay_array);
+    if (restartingLevel) {
+        Restart_transition(&restartingLevel, &isoverlayActive, &isgamepaused, &Current_screen_name, current_screen, screen_array);
+    }
+    else {
+        Screen_transition(&isScreenTransiting, &isoverlayActive, &transition_opacity, &Current_screen_name, &Next_screen_name, current_screen, screen_array);
+    }
     // Profiling info and frameRate testing
     if (debug) draw_framerate();
 }
@@ -306,14 +326,26 @@ void CalculateAllPhysics(void)
 
 bool CheckAllButtons(void) {
     if (CP_Input_MouseTriggered(MOUSE_BUTTON_LEFT)) {
-
-        for (int i = 0; i < ButtonObjectArrayLength; i++)
-        {
-            ButtonObject* x = &Current_screen.ButtonObjectArray[i];
-            //if mouse is coliding with button
-            if (PointRectCol(MousePos, &x->boxGameObject)) {
-                TriggerButtonEffects(x);
-                return true;
+        if (isoverlayActive && !isoverlayTransiting) {
+            for (int i = 0; i < ButtonObjectArrayLength; i++)
+            {
+                ButtonObject* x = &overlay_array[current_screen->overlay_name].ButtonObjectArray[i];
+                //if mouse is coliding with button
+                if (PointRectCol(MousePos, &x->boxGameObject)) {
+                    TriggerButtonEffects(x);
+                    return true;
+                }
+            }
+        }
+        else if(!isoverlayActive){
+            for (int i = 0; i < ButtonObjectArrayLength; i++)
+            {
+                ButtonObject* x = &Current_screen.ButtonObjectArray[i];
+                //if mouse is coliding with button
+                if (PointRectCol(MousePos, &x->boxGameObject)) {
+                    TriggerButtonEffects(x);
+                    return true;
+                }
             }
         }
     }
@@ -402,12 +434,22 @@ void TriggerButtonEffects(ButtonObject* x) {
     case Pause_Game:
         isgamepaused = !isgamepaused;
         break;
+    case Restart:
+        //isScreenTransiting = true;
+        restartingLevel = true;
+        break;
     default:
         break;
     }
 }
 
 void Initialize_Screens(void) {
+    //create overlay;
+    overlay_array[pause_overlay].ButtonObjectArrayLengthCounter = 0;
+    overlay_array[pause_overlay].ButtonObjectArray[1] = CreateButtonObject(newVector2(700, 300), 100, 100, 0, 0, NULL, CP_Color_Create(255, 255, 255, 200), Move_to_main_Menu, "Move to Main Menu");
+    overlay_array[pause_overlay].ButtonObjectArray[2] = CreateButtonObject(newVector2(900, 300), 100, 100, 0, 0, NULL, CP_Color_Create(255, 255, 255, 200), Restart, "Restart");
+    overlay_array[pause_overlay].ButtonObjectArray[3] = CreateButtonObject(newVector2(1100, 300), 100, 100, 0, 0, NULL, CP_Color_Create(255, 255, 255, 200), Move_to_Level_Select, "Level Select");
+
     //create splash screen
     screen_array[Splash_screen].ButtonObjectArrayLengthCounter = 0;
     screen_array[Splash_screen].ButtonObjectArray[0] = CreateButtonObject(newVector2(0+CP_System_GetWindowWidth()/2.0f - 1026.0f /2.0f, 0 + CP_System_GetWindowHeight() / 2.0f - 249.0f /2.0f), 1026, 249, 50, 0, DigipenLogo, CP_Color_Create(255, 255, 255, 200), None, "");
@@ -455,47 +497,43 @@ void Initialize_Screens(void) {
 
     screen_array[Level_1].LineArrayLengthCounter = 0;
     screen_array[Level_1].CircleArrayLengthCounter = 0;
-    screen_array[Level_1].ButtonObjectArray[0] = CreateButtonObject(newVector2(10, 10), 100, 100, 0, 0, NULL, CP_Color_Create(255, 255, 255, 200), Move_to_main_Menu, "Move to Main Menu");
+    screen_array[Level_1].overlay_name = pause_overlay;
 
     screen_array[Level_2].LineArrayLengthCounter = 0;
     screen_array[Level_2].CircleArrayLengthCounter = 0;
-    screen_array[Level_2].ButtonObjectArray[0] = CreateButtonObject(newVector2(10, 10), 100, 100, 0, 0, NULL, CP_Color_Create(255, 255, 255, 200), Move_to_main_Menu, "Move to Main Menu");
+    screen_array[Level_2].overlay_name = pause_overlay;
 
     screen_array[Level_3].LineArrayLengthCounter = 0;
     screen_array[Level_3].CircleArrayLengthCounter = 0;
-    screen_array[Level_3].ButtonObjectArray[0] = CreateButtonObject(newVector2(10, 10), 100, 100, 0, 0, NULL, CP_Color_Create(255, 255, 255, 200), Move_to_main_Menu, "Move to Main Menu");
+    screen_array[Level_3].overlay_name = pause_overlay;
 
     screen_array[Level_4].LineArrayLengthCounter = 0;
     screen_array[Level_4].CircleArrayLengthCounter = 0;
-    screen_array[Level_4].ButtonObjectArray[0] = CreateButtonObject(newVector2(10, 10), 100, 100, 0, 0, NULL, CP_Color_Create(255, 255, 255, 200), Move_to_main_Menu, "Move to Main Menu");
+    screen_array[Level_4].overlay_name = pause_overlay;
 
     screen_array[Level_5].LineArrayLengthCounter = 0;
     screen_array[Level_5].CircleArrayLengthCounter = 0;
-    screen_array[Level_5].ButtonObjectArray[0] = CreateButtonObject(newVector2(10, 10), 100, 100, 0, 0, NULL, CP_Color_Create(255, 255, 255, 200), Move_to_main_Menu, "Move to Main Menu");
+    screen_array[Level_5].overlay_name = pause_overlay;
 
     screen_array[Level_6].LineArrayLengthCounter = 0;
     screen_array[Level_6].CircleArrayLengthCounter = 0;
-    screen_array[Level_6].ButtonObjectArray[0] = CreateButtonObject(newVector2(10, 10), 100, 100, 0, 0, NULL, CP_Color_Create(255, 255, 255, 200), Move_to_main_Menu, "Move to Main Menu");
+    screen_array[Level_6].overlay_name = pause_overlay;
 
     screen_array[Level_7].LineArrayLengthCounter = 0;
     screen_array[Level_7].CircleArrayLengthCounter = 0;
-    screen_array[Level_7].ButtonObjectArray[0] = CreateButtonObject(newVector2(10, 10), 100, 100, 0, 0, NULL, CP_Color_Create(255, 255, 255, 200), Move_to_main_Menu, "Move to Main Menu");
+    screen_array[Level_7].overlay_name = pause_overlay;
 
     screen_array[Level_8].LineArrayLengthCounter = 0;
     screen_array[Level_8].CircleArrayLengthCounter = 0;
-    screen_array[Level_8].ButtonObjectArray[0] = CreateButtonObject(newVector2(10, 10), 100, 100, 0, 0, NULL, CP_Color_Create(255, 255, 255, 200), Move_to_main_Menu, "Move to Main Menu");
+    screen_array[Level_8].overlay_name = pause_overlay;
     
     screen_array[Level_9].LineArrayLengthCounter = 0;
     screen_array[Level_9].CircleArrayLengthCounter = 0;
-    screen_array[Level_9].ButtonObjectArray[0] = CreateButtonObject(newVector2(10, 10), 100, 100, 0, 0, NULL, CP_Color_Create(255, 255, 255, 200), Move_to_main_Menu, "Move to Main Menu");
+    screen_array[Level_9].overlay_name = pause_overlay;
 
     screen_array[Level_10].LineArrayLengthCounter = 0;
     screen_array[Level_10].CircleArrayLengthCounter = 0;
-    screen_array[Level_10].ButtonObjectArray[0] = CreateButtonObject(newVector2(10, 10), 100, 100, 0, 0, NULL, CP_Color_Create(255, 255, 255, 200), Move_to_options, "Options");
-
-    screen_array[Test_Room].LineArrayLengthCounter = 0;
-    screen_array[Test_Room].CircleArrayLengthCounter = 0;
-    screen_array[Test_Room].ButtonObjectArray[0] = CreateButtonObject(newVector2(10, 10), 100, 100, 0, 0, NULL, CP_Color_Create(255, 255, 255, 200), Move_to_main_Menu, "Move to Main Menu");
+    screen_array[Level_10].overlay_name = pause_overlay;
 }
 void Initialize_Sprites(void) {
     TestDoge = CP_Image_Load("./Sprites/MahLe.jpg");

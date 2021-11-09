@@ -60,6 +60,32 @@ struct gameObject
 	float bounciness;
 };
 
+struct ballSpawner {
+	BoxGameObject b;
+	float spawnrate; // Balls per second
+	float internalTimer; //Timer to spawn balls
+	bool isSpawning; // Is spawning balls or not
+	float spawnVel;
+	float spreadAngle;
+
+};
+
+struct ballSpawner CreateBallSpawner(Vector2 position, float width, float height, float angle, float spawnrate, bool isSpawning, float spawnVel, float spreadAngle, CP_Image image) {
+	BallSpawner ba;
+	ba.b.gameObject.isActive = true;
+	ba.b.gameObject.position = position;
+	ba.b.height = height;
+	ba.b.width = width;
+	ba.b.gameObject.angle = angle;
+	ba.b.image = image;
+	ba.spawnrate = spawnrate;
+	ba.isSpawning = isSpawning;
+	ba.spawnVel;
+	ba.spreadAngle;
+
+	return ba;
+}
+
 struct circleGameObject
 {
 	GameObject gameObject;
@@ -109,32 +135,6 @@ struct boxGameObject CreateBoxGameObject(Vector2 position, float width, float he
 	b.gameObject.bounciness = bounciness;
 	b.image = image;
 	return b;
-}
-
-struct ballSpawner {
-	BoxGameObject b;
-	float spawnrate; // Balls per second
-	float internalTimer; //Timer to spawn balls
-	bool isSpawning; // Is spawning balls or not
-	float spawnVel;
-	float spreadAngle;
-
-};
-
-struct ballSpawner CreateBallSpawner(Vector2 position, float width, float height, float angle, float spawnrate, bool isSpawning, float spawnVel, float spreadAngle, CP_Image image) {
-	BallSpawner ba;
-	ba.b.gameObject.isActive = true;
-	ba.b.gameObject.position = position;
-	ba.b.height = height;
-	ba.b.width = width;
-	ba.b.gameObject.angle = angle;
-	ba.b.image = image;
-	ba.spawnrate = spawnrate;
-	ba.isSpawning = isSpawning;
-	ba.spawnVel;
-	ba.spreadAngle;
-
-	return ba;
 }
 
 struct particle

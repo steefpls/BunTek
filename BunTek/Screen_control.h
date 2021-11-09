@@ -267,8 +267,7 @@ Vector2 RemoveBall(Screen* sc, CircleGameObject c1) {
 			if (sc->CircleArrayLengthCounter > 0) {
 				sc->CircleGameObjectArray[i] = sc->CircleGameObjectArray[sc->CircleArrayLengthCounter];
 			}
-			return (c1.gameObject.position);
 		}
 	}
-
+	return (c1.gameObject.position);
 }

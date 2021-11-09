@@ -60,6 +60,16 @@ struct gameObject
 	float bounciness;
 };
 
+struct boxGameObject
+{
+	// Main properties
+	GameObject gameObject;
+	float width;
+	float height;
+	CP_Image image;
+
+};
+
 struct ballSpawner {
 	BoxGameObject b;
 	float spawnrate; // Balls per second
@@ -115,15 +125,7 @@ struct circleGameObject CreateCircleGameObject(Vector2 pos, Vector2 vel, float a
 
 
 
-struct boxGameObject
-{
-	// Main properties
-	GameObject gameObject;
-	float width;
-	float height;
-	CP_Image image;
 
-};
 
 struct boxGameObject CreateBoxGameObject(Vector2 position, float width, float height,float bounciness, float angle, CP_Image image) {
 	BoxGameObject b;

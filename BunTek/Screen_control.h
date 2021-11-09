@@ -85,15 +85,20 @@ struct screen {
 	//Array for all collidable circles
 	int CircleArrayLengthCounter;
 	CircleGameObject CircleGameObjectArray[CircleGameObjectArrayLength];
+
 	//Array for all collidable Line
 	int LineArrayLengthCounter;
 	BoxGameObject LineArray[LineArrayLength];
+
 	//Array for all collidable rects
 	int BoxGameObjectArrayLengthCounter;
 	BoxGameObject BoxGameObjectArray[BoxGameObjectArrayLength];
+
 	//Array for all buttons
 	int ButtonObjectArrayLengthCounter;
 	ButtonObject ButtonObjectArray[ButtonObjectArrayLength];
+	
+
 	Overlay_name overlay_name;
 	
 };
@@ -249,4 +254,21 @@ void Drawoverlay(bool* isoverlayTransiting, bool* isoverlayActice, bool* isgamep
 	}
 }
 
+void AddBall(Screen* sc, CircleGameObject c1) {
+	sc->CircleGameObjectArray[sc->CircleArrayLengthCounter] = c1;
+	sc->CircleArrayLengthCounter++;
 
+}
+
+Vector2 RemoveBall(Screen* sc, CircleGameObject c1) {
+	for (int i = 0; i < sc->CircleArrayLengthCounter; i++) {
+		if (sc->CircleGameObjectArray[i].gameObject.position.x == c1.gameObject.position.x && sc->CircleGameObjectArray[i].gameObject.position.y == c1.gameObject.position.y) {
+			sc->CircleArrayLengthCounter--;
+			if (sc->CircleArrayLengthCounter > 0) {
+				sc->CircleGameObjectArray[i] = sc->CircleGameObjectArray[sc->CircleArrayLengthCounter];
+			}
+			return (c1.gameObject.position);
+		}
+	}
+
+}

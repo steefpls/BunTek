@@ -6,6 +6,7 @@
 #define Vector2 struct vector2
 #define CircleGameObject struct circleGameObject
 #define BoxGameObject struct boxGameObject
+#define BallSpawner struct ballSpawner
 #define GameObject struct gameObject
 #define Particle struct particle
 #define FrameTime CP_System_GetDt()
@@ -59,6 +60,31 @@ struct gameObject
 	float bounciness;
 };
 
+struct ballSpawner {
+	BoxGameObject b;
+	float spawnrate; // Balls per second
+	float internalTimer; //Timer to spawn balls
+	bool isSpawning; // Is spawning balls or not
+	float spawnVel;
+	float spreadAngle;
+
+};
+
+struct ballSpawner CreateBallSpawner(Vector2 position, float width, float height, float angle, float spawnrate, bool isSpawning, float spawnVel, float spreadAngle, CP_Image image) {
+	BallSpawner ba;
+	ba.b.gameObject.isActive = true;
+	ba.b.gameObject.position = position;
+	ba.b.height = height;
+	ba.b.width = width;
+	ba.b.gameObject.angle = angle;
+	ba.b.image = image;
+	ba.spawnrate = spawnrate;
+	ba.isSpawning = isSpawning;
+	ba.spawnVel;
+	ba.spreadAngle;
+
+	return ba;
+}
 
 struct circleGameObject
 {
@@ -680,7 +706,6 @@ bool PointRectCol(Vector2 p1, BoxGameObject* b1) {
 	}
 	return collided;
 }
-
 
 void CirclePhys(CircleGameObject* c1) {
 	c1->gameObject.velocity.y += gravity * FrameTime;

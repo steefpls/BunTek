@@ -172,53 +172,40 @@ void AddLine(void) {
 
 void DrawAllShapes(void)
 {
-    for (int i = 0; i < CircleGameObjectArrayLength; i++)
+    for (int i = 0; i < Current_screen.CircleArrayLengthCounter; i++)
     {
         CircleGameObject* x = &Current_screen.CircleGameObjectArray[i];
 
-       
-        if ( x->radius == 0.0f) // If radius of thing is 0
-        {
-            
+        CP_Settings_Fill(x->gameObject.color);
+
+        if (x->outline) {
+            CP_Settings_Stroke(CP_Color_Create(0, 0, 0, 255));
         }
         else {
-            CP_Settings_Fill(x->gameObject.color);
-
-            if (x->outline) {
-                CP_Settings_Stroke(CP_Color_Create(0, 0, 0, 255));
-            }
-            else {
-                CP_Settings_NoStroke();
-            }
-
-            CP_Graphics_DrawCircle(x->gameObject.position.x, x->gameObject.position.y, x->radius * 2);
-            if (debug) {
-                CP_Settings_Stroke(CP_Color_Create(255, 255, 255, 255));
-                CP_Graphics_DrawLine(x->gameObject.position.x, x->gameObject.position.y, x->gameObject.position.x + x->gameObject.velocity.x, x->gameObject.position.y + x->gameObject.velocity.y);
-            }
+            CP_Settings_NoStroke();
         }
+
+        CP_Graphics_DrawCircle(x->gameObject.position.x, x->gameObject.position.y, x->radius * 2);
+        if (debug) {
+            CP_Settings_Stroke(CP_Color_Create(255, 255, 255, 255));
+            CP_Graphics_DrawLine(x->gameObject.position.x, x->gameObject.position.y, x->gameObject.position.x + x->gameObject.velocity.x, x->gameObject.position.y + x->gameObject.velocity.y);
+        }
+        
     }
 
-    for (int i = 0; i < LineArrayLength; i++)
+    for (int i = 0; i < LineCounter; i++)
     {
         BoxGameObject* x = &Current_screen.LineArray[i];
 
-        if (x->width == 0 || x->height == 0)  // Box has no width or height
-        {
-            
+        CP_Settings_Fill(x->gameObject.color);
+        CP_Settings_NoStroke();
+        if (x->image != NULL) {
+            DrawBoxImage( x, 255);
         }
         else {
-            CP_Settings_Fill(x->gameObject.color);
-            CP_Settings_NoStroke();
-            if (x->image != NULL) {
-                DrawBoxImage( x, 255);
-            }
-            else {
-                CP_Graphics_DrawRectAdvanced(x->gameObject.position.x, x->gameObject.position.y, x->width, x->height, x->gameObject.angle, 1);
-            }
-            
-
+            CP_Graphics_DrawRectAdvanced(x->gameObject.position.x, x->gameObject.position.y, x->width, x->height, x->gameObject.angle, 1);
         }
+            
     }
     for (int i = 0; i < ButtonObjectArrayLength; i++)
     {
@@ -260,7 +247,7 @@ void CalculateAllPhysics(void)
     }
 
     //Checking circle-circle collision
-    for (int i = 0; i < CircleGameObjectArrayLength; i++)
+    for (int i = 0; i < Current_screen.CircleArrayLengthCounter; i++)
     {
         CircleGameObject* c1 = &Current_screen.CircleGameObjectArray[i];
         if (Current_screen.CircleGameObjectArray[i].radius == 0.0f) // TODO: SUB WITH CODE THAT DETECTS END OF ARRAY
@@ -270,7 +257,7 @@ void CalculateAllPhysics(void)
         }
         else 
         {
-            for (int o = i+1; o < CircleGameObjectArrayLength; o++)
+            for (int o = i+1; o < Current_screen.CircleArrayLengthCounter; o++)
             {
                 CircleGameObject* c2 = &Current_screen.CircleGameObjectArray[o];
                 if (Current_screen.CircleGameObjectArray[o].radius == 0.0f) // TODO: SUB WITH CODE THAT DETECTS END OF ARRAY
@@ -288,6 +275,8 @@ void CalculateAllPhysics(void)
                     {
                         if (CircleCol(c1, c2, true))  //If circle collides with cicle
                         {
+                            RemoveBall(&Current_screen, *c1);
+                            RemoveBall(&Current_screen, *c2);
                             //PlayPitchedSoundEffect(BallBounce, 0.1f); //  Audio : ball bouncing off other balls 
                             
                         }
@@ -473,23 +462,7 @@ void Initialize_Screens(void) {
     screen_array[Options].ButtonObjectArrayLengthCounter = 0;
     screen_array[Options].ButtonObjectArray[0] = CreateButtonObject(newVector2(900, 10), 100, 100, 0, 0, NULL, CP_Color_Create(255, 255, 255, 200), Move_to_main_Menu, "Main Menu");
 
-    //Create Test Room screen
-    //Fill up array with test circles
-    for (int i = 0; i < 200; i++) {
-        float scale = CP_Random_RangeFloat(10, 15);
-        CircleGameObject tempc = CreateCircleGameObject(newVector2(CP_Random_RangeFloat(50, 1800), CP_Random_RangeFloat(50, 1000)), newVector2(CP_Random_RangeFloat(-100, 100), CP_Random_RangeFloat(-100, 100)), 0, CP_Color_Create(CP_Random_RangeInt(0, 255), CP_Random_RangeInt(0, 255), CP_Random_RangeInt(0, 255), 255), scale, false, scale, 1);
-        screen_array[Test_Room].CircleGameObjectArray[i] = tempc;
-        screen_array[Level_1].CircleGameObjectArray[i] = tempc;
-        screen_array[Level_2].CircleGameObjectArray[i] = tempc;
-        screen_array[Level_3].CircleGameObjectArray[i] = tempc;
-        screen_array[Level_4].CircleGameObjectArray[i] = tempc;
-        screen_array[Level_5].CircleGameObjectArray[i] = tempc;
-        screen_array[Level_6].CircleGameObjectArray[i] = tempc;
-        screen_array[Level_7].CircleGameObjectArray[i] = tempc;
-        screen_array[Level_8].CircleGameObjectArray[i] = tempc;
-        screen_array[Level_9].CircleGameObjectArray[i] = tempc;
-        screen_array[Level_10].CircleGameObjectArray[i] = tempc;
-    }
+    
 
     screen_array[Test_Room].LineArrayLengthCounter = 0;
     screen_array[Test_Room].CircleArrayLengthCounter = 0;
@@ -534,11 +507,26 @@ void Initialize_Screens(void) {
     screen_array[Level_10].LineArrayLengthCounter = 0;
     screen_array[Level_10].CircleArrayLengthCounter = 0;
     screen_array[Level_10].overlay_name = pause_overlay;
+
+    //Create Test Room screen
+    //Fill up array with test circles
+    for (int i = 0; i < 200; i++) {
+        float scale = CP_Random_RangeFloat(10, 15);
+        CircleGameObject tempc = CreateCircleGameObject(newVector2(CP_Random_RangeFloat(50, 1800), CP_Random_RangeFloat(50, 1000)), newVector2(CP_Random_RangeFloat(-100, 100), CP_Random_RangeFloat(-100, 100)), 0, CP_Color_Create(CP_Random_RangeInt(0, 255), CP_Random_RangeInt(0, 255), CP_Random_RangeInt(0, 255), 255), scale, false, scale, 1);
+        AddBall(&screen_array[Test_Room], tempc);
+        AddBall(&screen_array[Level_1], tempc);
+        AddBall(&screen_array[Level_2], tempc);
+        AddBall(&screen_array[Level_3], tempc);
+
+
+    }
 }
+
 void Initialize_Sprites(void) {
     TestDoge = CP_Image_Load("./Sprites/MahLe.jpg");
     DigipenLogo = CP_Image_Load("./Assets/DigiPen_WHITE.png");
 }
+
 void game_exit(void)
 {
 

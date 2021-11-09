@@ -198,6 +198,7 @@ xcopy "$(ProjectDir)Assets\*" "$(OutDir)Assets\" /s /r /y /q</Command>
     <ClCompile Include="main.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GameObjects.h" />
     <ClInclude Include="Screen_control.h" />
     <ClInclude Include="Sound_Effect.h" />
     <ClInclude Include="SteefLibrary.h" />

@@ -12,7 +12,8 @@
  * Copyright © 2020 DigiPen, All rights reserved.
 * ---------------------------------------------------------*/
 
-#include "Screen_control.h"
+//#include "Screen_control.h"
+#include "GameObjects.h"
 #include "Sound_Effect.h"
 #include <gl/GL.h>
 
@@ -27,7 +28,9 @@ float LineLength = 5;
 float NewLineInterval = 0.05f;
 Vector2 LineStartPos;
 Vector2 LineEndPos;
-const float DrawnLineBounciness = 1.0f;
+const float DrawnLineBounciness = 1.0;
+bool colided = false; 
+bool colided_previous = false; 
 
 //Initialize functions
 void draw_framerate(void);
@@ -38,10 +41,14 @@ bool CheckAllButtons(void);
 void TriggerButtonEffects(ButtonObject* x);
 void Initialize_Screens(void);
 void Initialize_Sprites(void);
+void Initialize_SuperBounce(void); 
+
 
 //Initialize array
 Screen screen_array[Total_screen_number];
 Screen overlay_array[Total_overlay_number];
+
+
 
 //Initialize Screen control
 Screen_name Start_Screen = Splash_screen;
@@ -74,6 +81,7 @@ CP_Image DigipenLogo = NULL;
 
 void game_init(void)
 {
+    
     Initialize_Sprites();
     CP_Font_Set(CP_Font_GetDefault());
 
@@ -124,6 +132,13 @@ void game_update(void)
     else {
         Screen_transition(&isScreenTransiting, &isoverlayActive, &transition_opacity, &Current_screen_name, &Next_screen_name, current_screen, screen_array);
     }
+
+    // Testing - super-bounce platforms. 
+
+
+
+
+
     // Profiling info and frameRate testing
     if (debug) draw_framerate();
 }
@@ -131,41 +146,67 @@ void game_update(void)
 void AddLine(void) {
     
     if (CP_Input_MouseDown(MOUSE_BUTTON_1)) {
-        
-        if (!Mouse1Held) // New Line needs to be made
-        {
-            LineTimer = 0;
-            LineStartPos = MousePos;
-            LineEndPos = MousePos;
-            LineLength = 0;
-        }
-        else //continue from previous line
-        {
-            LineTimer += FrameTime;
-            if ((LineTimer >= NewLineInterval && LineLength>10)||LineLength>100)
-            {
-                LineStartPos = LineEndPos;
-                if (LineCounter + 1 < LineArrayLength) {
-                    LineCounter += 1;
-                }
-                LineTimer = 0;
-            }
-            LineEndPos = MousePos;
 
-            LineLength = DistBetween(LineStartPos, LineEndPos);
+        colided = false;  // reset boolean. 
+
+        for (int i = 0; i < BoxGameObjectArrayLength; i++) {
+            BoxGameObject* x = &Current_screen.NoDrawZoneArray[i];
+
+            if (PointRectCol(MousePos, x) == true) { // if draw collides box , colided == true 
+                colided = true;
+
+            }
+
         }
-        if (MousePos.x != MousePosPrev.x || MousePos.y != MousePosPrev.y) {
-            Current_screen.LineArray[LineCounter] = CreateBoxGameObject(LineStartPos, LineLength, 4.0f, DrawnLineBounciness,atan2f(LineEndPos.y - LineStartPos.y, LineEndPos.x - LineStartPos.x) / (float)PI * 180, TestDoge);
+        
+        if (!colided) {
+            if (!Mouse1Held || colided_previous) // New Line needs to be made // if mouse is not held. 
+            {
+                LineTimer = 0;
+                LineStartPos = MousePos;
+                LineEndPos = MousePos;
+                LineLength = 0;
+            }
+            else //continue from previous line // if mouse is held.
+            {
+                LineTimer += FrameTime;
+                if ((LineTimer >= NewLineInterval && LineLength > 10) || LineLength > 100)   // LineLength = end point - start point
+                {
+                    LineStartPos = LineEndPos;
+                    if (LineCounter + 1 < LineArrayLength)
+                    {
+                        LineCounter += 1;
+                    }
+                    LineTimer = 0;
+                }
+
+                // Creates new line for every frame. 
+                LineEndPos = MousePos;
+
+                LineLength = DistBetween(LineStartPos, LineEndPos);
+            }
+
+            // if colided == false. 
+            if ((MousePos.x != MousePosPrev.x || (MousePos.y != MousePosPrev.y) && (colided == false))) {
+                Current_screen.LineArray[LineCounter] = CreateBoxGameObject(LineStartPos, LineLength, 4.0f, DrawnLineBounciness, atan2f(LineEndPos.y - LineStartPos.y, LineEndPos.x - LineStartPos.x) / (float)PI * 180, TestDoge);
+
+                // TODO: Delete lines if colide. (move to fast into the box - box detection didnt detect , so to solve this we delete the line. 
+
+            }
         }
-    }
-    else if (Mouse1Held) 
-    {
-        if (LineCounter +1 < LineArrayLength) {
-            LineCounter += 1;
+        else if (Mouse1Held)
+        {
+            if (LineCounter + 1 < LineArrayLength) {
+                LineCounter += 1;
+            }
         }
-    }
+       
+        }
+
     Mouse1Held = CP_Input_MouseDown(MOUSE_BUTTON_1);
     MousePosPrev = MousePos;
+    colided_previous = colided; 
+      
     
 }
 
@@ -176,10 +217,23 @@ void DrawAllShapes(void)
     {
         CircleGameObject* x = &Current_screen.CircleGameObjectArray[i];
 
+<<<<<<< Updated upstream
+=======
+<<<<<<< HEAD
+
+        if (x->radius == 0.0f) // If radius of thing is 0
+        {
+
+=======
+>>>>>>> Stashed changes
         CP_Settings_Fill(x->gameObject.color);
 
         if (x->outline) {
             CP_Settings_Stroke(CP_Color_Create(0, 0, 0, 255));
+<<<<<<< Updated upstream
+=======
+>>>>>>> a8d6551e0df0ad732190b628bc98c9b09775f119
+>>>>>>> Stashed changes
         }
         else {
             CP_Settings_NoStroke();
@@ -197,6 +251,7 @@ void DrawAllShapes(void)
     {
         BoxGameObject* x = &Current_screen.LineArray[i];
 
+<<<<<<< Updated upstream
         CP_Settings_Fill(x->gameObject.color);
         CP_Settings_NoStroke();
         if (x->image != NULL) {
@@ -204,6 +259,33 @@ void DrawAllShapes(void)
         }
         else {
             CP_Graphics_DrawRectAdvanced(x->gameObject.position.x, x->gameObject.position.y, x->width, x->height, x->gameObject.angle, 1);
+=======
+<<<<<<< HEAD
+        if (x->width == 0 || x->height == 0)  // Box has no width or height
+        {
+
+        }
+        else {
+            CP_Settings_Fill(x->gameObject.color);
+            CP_Settings_NoStroke();
+            if (x->image != NULL) {
+                DrawBoxImage(x, 255);
+            }
+            else {
+                CP_Graphics_DrawRectAdvanced(x->gameObject.position.x, x->gameObject.position.y, x->width, x->height, x->gameObject.angle, 1);
+            }
+
+
+=======
+        CP_Settings_Fill(x->gameObject.color);
+        CP_Settings_NoStroke();
+        if (x->image != NULL) {
+            DrawBoxImage( x, 255);
+        }
+        else {
+            CP_Graphics_DrawRectAdvanced(x->gameObject.position.x, x->gameObject.position.y, x->width, x->height, x->gameObject.angle, 1);
+>>>>>>> a8d6551e0df0ad732190b628bc98c9b09775f119
+>>>>>>> Stashed changes
         }
             
     }
@@ -227,7 +309,40 @@ void DrawAllShapes(void)
                 CP_Settings_TextAlignment(CP_TEXT_ALIGN_H_CENTER, CP_TEXT_ALIGN_V_TOP);
                 CP_Font_DrawTextBox(x->buttontext, x->boxGameObject.gameObject.position.x, x->boxGameObject.gameObject.position.y, x->boxGameObject.width);
             }
+
+        }
+    }
+
+    // Draw Obstacles -> Draw Super Bounce Platform
+    for (int i = 0; i < BoxGameObjectArrayLength; i++)
+    {
+        BoxGameObject* x = &Current_screen.SuperBouncePlatformArray[i];
+
+        // Invalid Object - if there is no width & height (the object drawn won't be seen)
+        if (x->width == 0 || x->height == 0) {
+
+        }
+        else {
+            CP_Settings_Fill(x -> gameObject.color); 
+            CP_Settings_NoStroke(); 
+            CP_Graphics_DrawRectAdvanced(x->gameObject.position.x, x->gameObject.position.y, x->width, x->height, x->gameObject.angle, 1); 
+        }
+
+    }
+
+    // Draw Obstacles -> Draw no-draw zone
+    for (int i = 0; i < BoxGameObjectArrayLength; i++) {
+
+        BoxGameObject* x = &Current_screen.NoDrawZoneArray[i]; 
+
+        if (x->width == 0 || x->height == 0) {
+
+        }
+        else {
+            CP_Settings_Fill(x->gameObject.color); 
             
+            CP_Graphics_DrawRectAdvanced(x->gameObject.position.x, x->gameObject.position.y, x->width, x->height, x->gameObject.angle, 1);
+
         }
     }
 }
@@ -309,6 +424,30 @@ void CalculateAllPhysics(void)
             }
         }
 
+    }
+
+    // Calculate physics between super-bounce and balls. 
+    for (int x = 0; x < BoxGameObjectArrayLength; x++) {
+        BoxGameObject* b1 = &Current_screen.SuperBouncePlatformArray[x];
+        if (Current_screen.SuperBouncePlatformArray[x].height == 0.0f || Current_screen.SuperBouncePlatformArray[x].width == 0.0f) {
+
+        }
+        else {
+            for (int y = 0; y < CircleGameObjectArrayLength; y++)
+            {   
+                CircleGameObject* c1 = &Current_screen.CircleGameObjectArray[y];
+                if (Current_screen.CircleGameObjectArray[y].radius == 0.0f) // If radius of thing is 0
+                {
+                    break;
+                }
+                else {
+                    if (CircleRectCol(c1, b1, true)) {
+                        //PlayPitchedSoundEffect(BallBounce, 0.1f); //  Audio : ball bouncing off other balls 
+                    }
+                }
+            }
+        }
+        
     }
     
 }
@@ -471,10 +610,13 @@ void Initialize_Screens(void) {
     screen_array[Level_1].LineArrayLengthCounter = 0;
     screen_array[Level_1].CircleArrayLengthCounter = 0;
     screen_array[Level_1].overlay_name = pause_overlay;
+    screen_array[Level_1].SuperBouncePlatformArray[0] = createSuperBouncePlatform(newVector2(500, 500), 0, 100, 100); 
+    screen_array[Level_1].NoDrawZoneArray[0] = createNoDrawZone(newVector2(1000, 500), 0,  100, 100);
 
     screen_array[Level_2].LineArrayLengthCounter = 0;
     screen_array[Level_2].CircleArrayLengthCounter = 0;
-    screen_array[Level_2].overlay_name = pause_overlay;
+    screen_array[Level_2].overlay_name = pause_overlay; 
+    screen_array[Level_2].NoDrawZoneArray[1] = createNoDrawZone(newVector2(1000, 500), 0, 100, 100); 
 
     screen_array[Level_3].LineArrayLengthCounter = 0;
     screen_array[Level_3].CircleArrayLengthCounter = 0;

@@ -133,7 +133,7 @@ struct boxGameObject CreateBoxGameObject(Vector2 position, float width, float he
 	b.gameObject.position = position;
 	b.height = height;
 	b.width = width;
-	b.gameObject.angle = angle;
+	b.gameObject.angle = angle; 
 	b.gameObject.bounciness = bounciness;
 	b.image = image;
 	return b;

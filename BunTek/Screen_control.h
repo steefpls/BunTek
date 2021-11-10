@@ -97,21 +97,13 @@ struct screen {
 	//Array for all buttons
 	int ButtonObjectArrayLengthCounter;
 	ButtonObject ButtonObjectArray[ButtonObjectArrayLength];
-<<<<<<< Updated upstream
-	
-=======
-<<<<<<< HEAD
+
 	// Array for all no-draw zones
 	int NoDrawZonesArrayLengthCounter; 
 	BoxGameObject NoDrawZoneArray[BoxGameObjectArrayLength]; 
 	// Array for super-bounce platforms 
 	int SuperBouncePlatformLengthCounter;
 	BoxGameObject SuperBouncePlatformArray[BoxGameObjectArrayLength]; 
-=======
-	
->>>>>>> a8d6551e0df0ad732190b628bc98c9b09775f119
->>>>>>> Stashed changes
-
 	Overlay_name overlay_name;
 	
 };

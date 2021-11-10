@@ -216,24 +216,11 @@ void DrawAllShapes(void)
     for (int i = 0; i < Current_screen.CircleArrayLengthCounter; i++)
     {
         CircleGameObject* x = &Current_screen.CircleGameObjectArray[i];
-
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
-
-        if (x->radius == 0.0f) // If radius of thing is 0
-        {
-
-=======
->>>>>>> Stashed changes
         CP_Settings_Fill(x->gameObject.color);
 
         if (x->outline) {
             CP_Settings_Stroke(CP_Color_Create(0, 0, 0, 255));
-<<<<<<< Updated upstream
-=======
->>>>>>> a8d6551e0df0ad732190b628bc98c9b09775f119
->>>>>>> Stashed changes
+
         }
         else {
             CP_Settings_NoStroke();
@@ -244,50 +231,45 @@ void DrawAllShapes(void)
             CP_Settings_Stroke(CP_Color_Create(255, 255, 255, 255));
             CP_Graphics_DrawLine(x->gameObject.position.x, x->gameObject.position.y, x->gameObject.position.x + x->gameObject.velocity.x, x->gameObject.position.y + x->gameObject.velocity.y);
         }
-        
-    }
 
+    }
     for (int i = 0; i < LineCounter; i++)
     {
         BoxGameObject* x = &Current_screen.LineArray[i];
 
-<<<<<<< Updated upstream
         CP_Settings_Fill(x->gameObject.color);
         CP_Settings_NoStroke();
         if (x->image != NULL) {
-            DrawBoxImage( x, 255);
+            DrawBoxImage(x, 255);
         }
         else {
             CP_Graphics_DrawRectAdvanced(x->gameObject.position.x, x->gameObject.position.y, x->width, x->height, x->gameObject.angle, 1);
-=======
-<<<<<<< HEAD
-        if (x->width == 0 || x->height == 0)  // Box has no width or height
-        {
 
-        }
-        else {
-            CP_Settings_Fill(x->gameObject.color);
-            CP_Settings_NoStroke();
-            if (x->image != NULL) {
-                DrawBoxImage(x, 255);
+            if (x->width == 0 || x->height == 0)  // Box has no width or height
+            {
+
             }
             else {
-                CP_Graphics_DrawRectAdvanced(x->gameObject.position.x, x->gameObject.position.y, x->width, x->height, x->gameObject.angle, 1);
+                CP_Settings_Fill(x->gameObject.color);
+                CP_Settings_NoStroke();
+                if (x->image != NULL) {
+                    DrawBoxImage(x, 255);
+                }
+                else {
+                    CP_Graphics_DrawRectAdvanced(x->gameObject.position.x, x->gameObject.position.y, x->width, x->height, x->gameObject.angle, 1);
+                }
+                CP_Settings_Fill(x->gameObject.color);
+                CP_Settings_NoStroke();
+                if (x->image != NULL) {
+                    DrawBoxImage(x, 255);
+                }
+                else {
+                    CP_Graphics_DrawRectAdvanced(x->gameObject.position.x, x->gameObject.position.y, x->width, x->height, x->gameObject.angle, 1);
+
+                }
+
             }
-
-
-=======
-        CP_Settings_Fill(x->gameObject.color);
-        CP_Settings_NoStroke();
-        if (x->image != NULL) {
-            DrawBoxImage( x, 255);
         }
-        else {
-            CP_Graphics_DrawRectAdvanced(x->gameObject.position.x, x->gameObject.position.y, x->width, x->height, x->gameObject.angle, 1);
->>>>>>> a8d6551e0df0ad732190b628bc98c9b09775f119
->>>>>>> Stashed changes
-        }
-            
     }
     for (int i = 0; i < ButtonObjectArrayLength; i++)
     {
@@ -312,7 +294,6 @@ void DrawAllShapes(void)
 
         }
     }
-
     // Draw Obstacles -> Draw Super Bounce Platform
     for (int i = 0; i < BoxGameObjectArrayLength; i++)
     {
@@ -323,30 +304,34 @@ void DrawAllShapes(void)
 
         }
         else {
-            CP_Settings_Fill(x -> gameObject.color); 
-            CP_Settings_NoStroke(); 
-            CP_Graphics_DrawRectAdvanced(x->gameObject.position.x, x->gameObject.position.y, x->width, x->height, x->gameObject.angle, 1); 
+            CP_Settings_Fill(x->gameObject.color);
+            CP_Settings_NoStroke();
+            CP_Graphics_DrawRectAdvanced(x->gameObject.position.x, x->gameObject.position.y, x->width, x->height, x->gameObject.angle, 1);
         }
 
     }
 
-    // Draw Obstacles -> Draw no-draw zone
+
+     // Draw Obstacles -> Draw no-draw zone
     for (int i = 0; i < BoxGameObjectArrayLength; i++) {
 
-        BoxGameObject* x = &Current_screen.NoDrawZoneArray[i]; 
+        BoxGameObject* x = &Current_screen.NoDrawZoneArray[i];
 
         if (x->width == 0 || x->height == 0) {
 
         }
         else {
-            CP_Settings_Fill(x->gameObject.color); 
-            
+            CP_Settings_Fill(x->gameObject.color);
+
             CP_Graphics_DrawRectAdvanced(x->gameObject.position.x, x->gameObject.position.y, x->width, x->height, x->gameObject.angle, 1);
 
         }
     }
+               
+        
+        
+    
 }
-
 void CalculateAllPhysics(void)
 {
     
@@ -452,7 +437,7 @@ void CalculateAllPhysics(void)
     
 }
 
-bool CheckAllButtons(void) {
+bool CheckAllButtons(void){
     if (CP_Input_MouseTriggered(MOUSE_BUTTON_LEFT)) {
         if (isoverlayActive && !isoverlayTransiting) {
             for (int i = 0; i < ButtonObjectArrayLength; i++)
@@ -659,8 +644,6 @@ void Initialize_Screens(void) {
         AddBall(&screen_array[Level_1], tempc);
         AddBall(&screen_array[Level_2], tempc);
         AddBall(&screen_array[Level_3], tempc);
-
-
     }
 }
 

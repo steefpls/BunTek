@@ -96,6 +96,8 @@ void game_init(void)
     Next_screen_name = Start_Screen;
     //initialize current screen
     *current_screen = screen_array[Current_screen_name];
+
+    
 }
 
 void game_update(void)
@@ -133,9 +135,10 @@ void game_update(void)
         Screen_transition(&isScreenTransiting, &isoverlayActive, &transition_opacity, &Current_screen_name, &Next_screen_name, current_screen, screen_array);
     }
 
-    // Testing - super-bounce platforms. 
-
-
+    // Testing 
+    
+    
+    
 
 
 
@@ -154,7 +157,6 @@ void AddLine(void) {
 
             if (PointRectCol(MousePos, x) == true) { // if draw collides box , colided == true 
                 colided = true;
-
             }
 
         }
@@ -271,6 +273,7 @@ void DrawAllShapes(void)
             }
         }
     }
+
     for (int i = 0; i < ButtonObjectArrayLength; i++)
     {
         ButtonObject* x = &Current_screen.ButtonObjectArray[i];
@@ -311,6 +314,24 @@ void DrawAllShapes(void)
 
     }
 
+    // Draw Obstacles -> Draw Testing Box Objects
+    for (int i = 0; i < BoxGameObjectArrayLength; i++)
+    {
+        BoxGameObject* x = &Current_screen.BoxGameObjectArray[i];
+       
+
+        // Invalid Object - if there is no width & height (the object drawn won't be seen)
+        if (x->width == 0 || x->height == 0) {
+
+        }
+        else {
+            CP_Settings_Fill(x->gameObject.color);
+            CP_Settings_NoStroke();
+            CP_Graphics_DrawRectAdvanced(x->gameObject.position.x, x->gameObject.position.y, x->width, x->height, x->gameObject.angle, 1);
+        }
+
+    }
+
 
      // Draw Obstacles -> Draw no-draw zone
     for (int i = 0; i < BoxGameObjectArrayLength; i++) {
@@ -334,6 +355,7 @@ void DrawAllShapes(void)
 }
 void CalculateAllPhysics(void)
 {
+    
     
     //Calculating circle physics
     for (int i = 0; i < CircleGameObjectArrayLength; i++)

@@ -709,6 +709,123 @@ bool PointRectCol(Vector2 p1, BoxGameObject* b1) {
 	return collided;
 }
 
+bool RectRectCol(BoxGameObject* b1, BoxGameObject* b2) {
+	Vector2 box1TopLeft = b1->gameObject.position;
+	Vector2 box1TopRight = newVector2(box1TopLeft.x + b1->width * cosf(b1->gameObject.angle / 180 * PI), box1TopLeft.y + b1->width * sinf(b1->gameObject.angle / 180 * PI));
+	Vector2 box1BottomLeft = newVector2(box1TopLeft.x + b1->height * cosf((b1->gameObject.angle + 90) / 180 * PI), box1TopLeft.y + b1->height * sinf((b1->gameObject.angle + 90) / 180 * PI));
+	Vector2 box1BottomRight = newVector2(box1TopLeft.x + b1->width * cosf(b1->gameObject.angle / 180 * PI) + b1->height * cosf((b1->gameObject.angle + 90) / 180 * PI), box1TopLeft.y + b1->width * sinf(b1->gameObject.angle / 180 * PI) + b1->height * sinf((b1->gameObject.angle + 90) / 180 * PI));
+	
+	Vector2 box2TopLeft = b2->gameObject.position;
+	Vector2 box2TopRight = newVector2(box2TopLeft.x + b2->width * cosf(b2->gameObject.angle / 180 * PI), box2TopLeft.y + b2->width * sinf(b2->gameObject.angle / 180 * PI));
+	Vector2 box2BottomLeft = newVector2(box2TopLeft.x + b2->height * cosf((b2->gameObject.angle + 90) / 180 * PI), box2TopLeft.y + b2->height * sinf((b2->gameObject.angle + 90) / 180 * PI));
+	Vector2 box2BottomRight = newVector2(box2TopLeft.x + b2->width * cosf(b2->gameObject.angle / 180 * PI) + b2->height * cosf((b2->gameObject.angle + 90) / 180 * PI), box2TopLeft.y + b2->width * sinf(b2->gameObject.angle / 180 * PI) + b2->height * sinf((b2->gameObject.angle + 90) / 180 * PI));
+	
+	Vector2 Axis1 = VectorMinus(box1TopRight, box1TopLeft);
+	Vector2 Axis2 = VectorMinus(box1BottomLeft, box1TopLeft);
+	Vector2 Axis3 = VectorMinus(box2TopRight, box2TopLeft);
+	Vector2 Axis4 = VectorMinus(box2BottomLeft, box2TopLeft);
+	
+	Vector2 ProjAxis1 = VectorProject(VectorMinus(box1TopRight, box2TopLeft),Axis1);
+	Vector2 ProjAxis2 = VectorProject(VectorMinus(box1TopRight, box2TopRight),Axis1);
+	Vector2 ProjAxis3 = VectorProject(VectorMinus(box1TopRight, box2BottomLeft),Axis1);
+	Vector2 ProjAxis4 = VectorProject(VectorMinus(box1TopRight, box2BottomRight),Axis1);
+
+	Vector2 ProjAxis5 = VectorProject(VectorMinus(box1TopRight, box2TopLeft), Axis2);
+	Vector2 ProjAxis6 = VectorProject(VectorMinus(box1TopRight, box2TopRight), Axis2);
+	Vector2 ProjAxis7 = VectorProject(VectorMinus(box1TopRight, box2BottomLeft), Axis2);
+	Vector2 ProjAxis8 = VectorProject(VectorMinus(box1TopRight, box2BottomRight), Axis2);
+	
+	Vector2 ProjAxis9 = VectorProject(VectorMinus(box2TopRight, box1TopLeft), Axis3);
+	Vector2 ProjAxis10 = VectorProject(VectorMinus(box2TopRight, box1TopRight), Axis3);
+	Vector2 ProjAxis11 = VectorProject(VectorMinus(box2TopRight, box1BottomLeft), Axis3);
+	Vector2 ProjAxis12 = VectorProject(VectorMinus(box2TopRight, box1BottomRight), Axis3);
+
+	Vector2 ProjAxis13 = VectorProject(VectorMinus(box2TopRight, box1TopLeft), Axis4);
+	Vector2 ProjAxis14 = VectorProject(VectorMinus(box2TopRight, box1TopRight), Axis4);
+	Vector2 ProjAxis15 = VectorProject(VectorMinus(box2TopRight, box1BottomLeft), Axis4);
+	Vector2 ProjAxis16 = VectorProject(VectorMinus(box2TopRight, box1BottomRight), Axis4);
+	
+	if (debug) {
+		//Tangent Vector is white
+		CP_Settings_Stroke(CP_Color_Create(255, 255, 255, 255));
+		CP_Graphics_DrawLine(box1TopLeft.x, box1TopLeft.y, box1TopLeft.x + Axis1.x, box1TopLeft.y + Axis1.y);
+		CP_Settings_Stroke(CP_Color_Create(0, 0, 255, 255));
+		CP_Graphics_DrawLine(box1TopLeft.x, box1TopLeft.y, box1TopLeft.x + ProjAxis1.x, box1TopLeft.y + ProjAxis1.y);
+		CP_Settings_Stroke(CP_Color_Create(0, 255, 0, 255));
+		CP_Graphics_DrawLine(box1TopLeft.x, box1TopLeft.y, box1TopLeft.x + ProjAxis2.x, box1TopLeft.y + ProjAxis2.y);
+		CP_Settings_Stroke(CP_Color_Create(255, 0, 0, 255));
+		CP_Graphics_DrawLine(box1TopLeft.x, box1TopLeft.y, box1TopLeft.x + ProjAxis3.x, box1TopLeft.y + ProjAxis3.y);
+		CP_Settings_Stroke(CP_Color_Create(255, 0, 255, 255));
+		CP_Graphics_DrawLine(box1TopLeft.x, box1TopLeft.y, box1TopLeft.x + ProjAxis4.x, box1TopLeft.y + ProjAxis4.y);
+
+		CP_Settings_Stroke(CP_Color_Create(255, 255, 255, 255));
+		CP_Graphics_DrawLine(box1TopLeft.x, box1TopLeft.y, box1TopLeft.x + Axis2.x, box1TopLeft.y + Axis2.y);
+
+		CP_Settings_Stroke(CP_Color_Create(0, 0, 255, 255));
+		CP_Graphics_DrawLine(box1TopLeft.x, box1TopLeft.y, box1TopLeft.x - ProjAxis5.x, box1TopLeft.y - ProjAxis5.y);
+		CP_Settings_Stroke(CP_Color_Create(0, 255, 0, 255));
+		CP_Graphics_DrawLine(box1TopLeft.x, box1TopLeft.y, box1TopLeft.x - ProjAxis6.x, box1TopLeft.y - ProjAxis6.y);
+		CP_Settings_Stroke(CP_Color_Create(255, 0, 0, 255));
+		CP_Graphics_DrawLine(box1TopLeft.x, box1TopLeft.y, box1TopLeft.x - ProjAxis7.x, box1TopLeft.y - ProjAxis7.y);
+		CP_Settings_Stroke(CP_Color_Create(255, 0, 255, 255));
+		CP_Graphics_DrawLine(box1TopLeft.x, box1TopLeft.y, box1TopLeft.x - ProjAxis8.x, box1TopLeft.y - ProjAxis8.y);
+	}
+
+	
+	float max1 = DotProd(Axis1, Axis1);
+	float dotprod1 = DotProd(Axis1, ProjAxis1);
+	float dotprod2 = DotProd(Axis1, ProjAxis2);
+	float dotprod3 = DotProd(Axis1, ProjAxis3);
+	float dotprod4 = DotProd(Axis1, ProjAxis4);
+
+	if (dotprod1 > 0 && dotprod1 <= max1 || dotprod2 > 0 && dotprod2 <= max1 || dotprod3 > 0 && dotprod3 <= max1 || dotprod4 > 0 && dotprod4 <= max1) {
+		
+	}
+	else {
+		return false;
+	}
+	
+	
+	float max2 = DotProd(Axis2, Axis2);
+	float dotprod5 = -DotProd(Axis2, ProjAxis5);
+	float dotprod6 = -DotProd(Axis2, ProjAxis6);
+	float dotprod7 = -DotProd(Axis2, ProjAxis7);
+	float dotprod8 = -DotProd(Axis2, ProjAxis8);
+
+	if (dotprod5 > 0 && dotprod5 <= max2 || dotprod6 > 0 && dotprod6 <= max2 || dotprod7 > 0 && dotprod7 <= max2 || dotprod8 > 0 && dotprod8 <= max2) {
+		
+	}
+	else {
+		return false;
+	}
+
+	float max3 = DotProd(Axis3, Axis3);
+	float dotprod9 = DotProd(Axis3, ProjAxis9);
+	float dotprod10 = DotProd(Axis3, ProjAxis10);
+	float dotprod11 = DotProd(Axis3, ProjAxis11);
+	float dotprod12 = DotProd(Axis3, ProjAxis12);
+
+	if (dotprod9 > 0 && dotprod9 <= max3 || dotprod10 > 0 && dotprod10 <= max3 || dotprod11 > 0 && dotprod11 <= max3 || dotprod12 > 0 && dotprod12 <= max3) {
+
+	}
+	else {
+		return false;
+	}
+
+	float max4 = DotProd(Axis4, Axis4);
+	float dotprod13 = -DotProd(Axis4, ProjAxis13);
+	float dotprod14 = -DotProd(Axis4, ProjAxis14);
+	float dotprod15 = -DotProd(Axis4, ProjAxis15);
+	float dotprod16 = -DotProd(Axis4, ProjAxis16);
+
+	if (dotprod13 > 0 && dotprod13 <= max4 || dotprod14 > 0 && dotprod14 <= max4 || dotprod15 > 0 && dotprod15 <= max4 || dotprod16 > 0 && dotprod16 <= max4) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
 void CirclePhys(CircleGameObject* c1) {
 	c1->gameObject.velocity.y += gravity * FrameTime;
 	//AddForce(&c1->gameObject, newVector2(0, gravity * FrameTime));

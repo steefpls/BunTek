@@ -157,7 +157,7 @@ void Screen_transition(bool* isScreenTransiting, bool* isoverlayActive, float* t
 
 		}
 	}
-	printf("Opacity: %f\n", *transition_opacity);
+	//printf("Opacity: %f\n", *transition_opacity);
 }
 
 //restart transition Control
@@ -174,7 +174,7 @@ void Restart_transition(bool* restartingLevel, bool* isoverlayActive, bool* isga
 			*isgamepaused = false;//unpause the game
 		}
 	}
-	printf("Opacity: %f\n", *overlay_bg_opacity);
+	//printf("Opacity: %f\n", *overlay_bg_opacity);
 }
 
 //Stopwatch
@@ -184,7 +184,7 @@ bool Stopwatch(float duration) {
 		TimeElapse = 0;
 		return true;
 	}
-	printf("time: %f\n", TimeElapse);
+	//printf("time: %f\n", TimeElapse);
 	return false;
 }
 

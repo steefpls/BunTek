@@ -58,6 +58,10 @@ Screen_name Next_screen_name;
 //struct screen being displayed and calculated
 Screen Current_screen;
 Screen* current_screen = &Current_screen;
+//oveylay of current screen
+Screen Current_overlay;
+Screen* current_overlay = &Current_overlay;
+
 
 //transition control
 float transition_opacity = 0;
@@ -76,6 +80,8 @@ bool restartingLevel = false;
 //Sprites
 CP_Image TestDoge = NULL;
 CP_Image DigipenLogo = NULL;
+ButtonbgInfo basebuttonbackground;
+ButtonbgInfo nobuttonbackground;
 
 
 
@@ -127,12 +133,12 @@ void game_update(void)
     }
     DrawAllShapes();
 
-    Drawoverlay(&isoverlayTransiting, &isoverlayActive, &isgamepaused, current_screen->overlay_name, overlay_array);
+    Drawoverlay(&isoverlayTransiting, &isoverlayActive, &isgamepaused, current_screen->overlay_name, current_overlay);
     if (restartingLevel) {
-        Restart_transition(&restartingLevel, &isoverlayActive, &isgamepaused, &Current_screen_name, current_screen, screen_array);
+        Restart_transition(&restartingLevel, &isoverlayActive, &isgamepaused, &Current_screen_name, current_screen, screen_array, current_overlay, overlay_array);
     }
     else {
-        Screen_transition(&isScreenTransiting, &isoverlayActive, &transition_opacity, &Current_screen_name, &Next_screen_name, current_screen, screen_array);
+        Screen_transition(&isScreenTransiting, &isoverlayActive, &transition_opacity, &Current_screen_name, &Next_screen_name, current_screen, screen_array, current_overlay, overlay_array);
     }
 
     // Testing 
@@ -152,7 +158,7 @@ void AddLine(void) {
 
         colided = false;  // reset boolean. 
 
-        for (int i = 0; i < BoxGameObjectArrayLength; i++) {
+        for (int i = 0; i < Current_screen.LineArrayLengthCounter; i++) {
             BoxGameObject* x = &Current_screen.NoDrawZoneArray[i];
 
             if (PointRectCol(MousePos, x) == true) { // if draw collides box , colided == true 
@@ -175,9 +181,9 @@ void AddLine(void) {
                 if ((LineTimer >= NewLineInterval && LineLength > 10) || LineLength > 100)   // LineLength = end point - start point
                 {
                     LineStartPos = LineEndPos;
-                    if (LineCounter + 1 < LineArrayLength)
+                    if (Current_screen.LineArrayLengthCounter + 1 < LineArrayLength)
                     {
-                        LineCounter += 1;
+                        Current_screen.LineArrayLengthCounter += 1;
                     }
                     LineTimer = 0;
                 }
@@ -190,26 +196,16 @@ void AddLine(void) {
 
             // if colided == false. 
             if ((MousePos.x != MousePosPrev.x || (MousePos.y != MousePosPrev.y) && (colided == false))) {
-                Current_screen.LineArray[LineCounter] = CreateBoxGameObject(LineStartPos, LineLength, 4.0f, DrawnLineBounciness, atan2f(LineEndPos.y - LineStartPos.y, LineEndPos.x - LineStartPos.x) / (float)PI * 180, TestDoge);
+                Current_screen.LineArray[Current_screen.LineArrayLengthCounter] = CreateBoxGameObject(LineStartPos, LineLength, 4.0f, DrawnLineBounciness, atan2f(LineEndPos.y - LineStartPos.y, LineEndPos.x - LineStartPos.x) / (float)PI * 180, TestDoge);
 
                 // TODO: Delete lines if colide. (move to fast into the box - box detection didnt detect , so to solve this we delete the line. 
 
             }
         }
-        else if (Mouse1Held)
-        {
-            if (LineCounter + 1 < LineArrayLength) {
-                LineCounter += 1;
-            }
-        }
-       
-        }
-
+    }
     Mouse1Held = CP_Input_MouseDown(MOUSE_BUTTON_1);
     MousePosPrev = MousePos;
     colided_previous = colided; 
-      
-    
 }
 
 
@@ -235,7 +231,7 @@ void DrawAllShapes(void)
         }
 
     }
-    for (int i = 0; i < LineCounter; i++)
+    for (int i = 0; i < Current_screen.LineArrayLengthCounter; i++)
     {
         BoxGameObject* x = &Current_screen.LineArray[i];
 
@@ -274,7 +270,7 @@ void DrawAllShapes(void)
         }
     }
 
-    for (int i = 0; i < ButtonObjectArrayLength; i++)
+    for (int i = 0; i < Current_screen.ButtonObjectArrayLengthCounter; i++)
     {
         ButtonObject* x = &Current_screen.ButtonObjectArray[i];
 
@@ -285,14 +281,17 @@ void DrawAllShapes(void)
         else {
             CP_Settings_Fill(x->boxGameObject.gameObject.color);
             CP_Settings_NoStroke();
+            //draw button background
+            DrawButtonBackgroundImage(&x->boxGameObject, &x->buttonbgInfo, &isoverlayTransiting);
             if (x->boxGameObject.image != NULL) {
                 DrawBoxImage(&x->boxGameObject, 255);
             }
             else {
                 CP_Graphics_DrawRectAdvanced(x->boxGameObject.gameObject.position.x, x->boxGameObject.gameObject.position.y, x->boxGameObject.width, x->boxGameObject.height, x->boxGameObject.gameObject.angle, 1);
-                CP_Settings_Fill(CP_Color_Create(0, 0, 0, 255));
+                CP_Settings_Fill(x->TextColor);
                 CP_Settings_TextAlignment(CP_TEXT_ALIGN_H_CENTER, CP_TEXT_ALIGN_V_TOP);
-                CP_Font_DrawTextBox(x->buttontext, x->boxGameObject.gameObject.position.x, x->boxGameObject.gameObject.position.y, x->boxGameObject.width);
+                CP_Settings_TextSize(20);
+                CP_Font_DrawTextBox(x->buttontext, x->boxGameObject.gameObject.position.x, x->boxGameObject.gameObject.position.y + x->boxGameObject.height/2, x->boxGameObject.width);
             }
 
         }
@@ -460,27 +459,33 @@ void CalculateAllPhysics(void)
 }
 
 bool CheckAllButtons(void){
-    if (CP_Input_MouseTriggered(MOUSE_BUTTON_LEFT)) {
-        if (isoverlayActive && !isoverlayTransiting) {
-            for (int i = 0; i < ButtonObjectArrayLength; i++)
-            {
-                ButtonObject* x = &overlay_array[current_screen->overlay_name].ButtonObjectArray[i];
-                //if mouse is coliding with button
-                if (PointRectCol(MousePos, &x->boxGameObject)) {
+    //lerp buttons
+    ButtonLerp(MousePos, &isoverlayActive, current_screen, current_overlay);
+    //check overlay
+    if (isoverlayActive && !isoverlayTransiting) {
+        for (int i = 0; i < Current_overlay.ButtonObjectArrayLengthCounter; i++)
+        {
+            ButtonObject* x = &current_overlay->ButtonObjectArray[i];
+            //if mouse is coliding with button
+            if (PointRectCol(MousePos, &x->boxGameObject)) {
+                if (CP_Input_MouseReleased(MOUSE_BUTTON_LEFT)) {
                     TriggerButtonEffects(x);
-                    return true;
                 }
+                return true;
             }
         }
-        else if(!isoverlayActive){
-            for (int i = 0; i < ButtonObjectArrayLength; i++)
-            {
-                ButtonObject* x = &Current_screen.ButtonObjectArray[i];
-                //if mouse is coliding with button
-                if (PointRectCol(MousePos, &x->boxGameObject)) {
+    }
+    //check screen
+    else if (!isoverlayActive) {
+        for (int i = 0; i < Current_screen.ButtonObjectArrayLengthCounter; i++)
+        {
+            ButtonObject* x = &Current_screen.ButtonObjectArray[i];
+            //if mouse is coliding with button
+            if (PointRectCol(MousePos, &x->boxGameObject)) {
+                if (CP_Input_MouseReleased(MOUSE_BUTTON_LEFT)) {
                     TriggerButtonEffects(x);
-                    return true;
                 }
+                return true;
             }
         }
     }
@@ -581,39 +586,42 @@ void TriggerButtonEffects(ButtonObject* x) {
 void Initialize_Screens(void) {
     //create overlay;
     overlay_array[pause_overlay].ButtonObjectArrayLengthCounter = 0;
-    overlay_array[pause_overlay].ButtonObjectArray[1] = CreateButtonObject(newVector2(700, 300), 100, 100, 0, 0, NULL, CP_Color_Create(255, 255, 255, 200), Move_to_main_Menu, "Move to Main Menu");
-    overlay_array[pause_overlay].ButtonObjectArray[2] = CreateButtonObject(newVector2(900, 300), 100, 100, 0, 0, NULL, CP_Color_Create(255, 255, 255, 200), Restart, "Restart");
-    overlay_array[pause_overlay].ButtonObjectArray[3] = CreateButtonObject(newVector2(1100, 300), 100, 100, 0, 0, NULL, CP_Color_Create(255, 255, 255, 200), Move_to_Level_Select, "Level Select");
+    AddButton(&overlay_array[pause_overlay], CreateButtonObject(newVector2(700, 300), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_main_Menu, CP_Color_Create(255, 255, 255, 255), "Move to Main Menu", basebuttonbackground));
+    AddButton(&overlay_array[pause_overlay], CreateButtonObject(newVector2(900, 300), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Restart, CP_Color_Create(255, 255, 255, 255), "Restart", basebuttonbackground));
+    AddButton(&overlay_array[pause_overlay], CreateButtonObject(newVector2(1100, 300), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_Level_Select, CP_Color_Create(255, 255, 255, 255), "Level Select", basebuttonbackground));
 
     //create splash screen
     screen_array[Splash_screen].ButtonObjectArrayLengthCounter = 0;
-    screen_array[Splash_screen].ButtonObjectArray[0] = CreateButtonObject(newVector2(0+CP_System_GetWindowWidth()/2.0f - 1026.0f /2.0f, 0 + CP_System_GetWindowHeight() / 2.0f - 249.0f /2.0f), 1026, 249, 50, 0, DigipenLogo, CP_Color_Create(255, 255, 255, 200), None, "");
+    AddButton(&screen_array[Splash_screen], CreateButtonObject(newVector2(0 + CP_System_GetWindowWidth() / 2.0f - 1026.0f / 2.0f, 0 + CP_System_GetWindowHeight() / 2.0f - 249.0f / 2.0f), 1026, 249, 50, 0, DigipenLogo, CP_Color_Create(255, 255, 255, 200), None, CP_Color_Create(255, 255, 255, 255), "", nobuttonbackground));
+
 
     //Create Main Menu Screen
     screen_array[Main_menu].ButtonObjectArrayLengthCounter = 0;
-    screen_array[Main_menu].ButtonObjectArray[0] = CreateButtonObject(newVector2(900, 500), 100, 100, 50, 0, NULL, CP_Color_Create(255, 255, 255, 200), Move_to_Level_Select, "Level Select");
+    AddButton(&screen_array[Main_menu], CreateButtonObject(newVector2(900, 500), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_Level_Select, CP_Color_Create(255, 255, 255, 255), "Level Select", basebuttonbackground));
+
 
     screen_array[Level_Select].ButtonObjectArrayLengthCounter = 0;
-    screen_array[Level_Select].ButtonObjectArray[0] = CreateButtonObject(newVector2(500 , 70), 100, 100, 0, 0, NULL, CP_Color_Create(255, 255, 255, 200), Move_to_Level_1, "Level 1");
-    screen_array[Level_Select].ButtonObjectArray[1] = CreateButtonObject(newVector2(700, 70), 100, 100, 0, 0, NULL, CP_Color_Create(255, 255, 255, 200), Move_to_Level_2, "Level 2");
-    screen_array[Level_Select].ButtonObjectArray[2] = CreateButtonObject(newVector2(900, 70), 100, 100, 0, 0, NULL, CP_Color_Create(255, 255, 255, 200), Move_to_Level_3, "Level 3");
-    screen_array[Level_Select].ButtonObjectArray[3] = CreateButtonObject(newVector2(1100, 70), 100, 100, 0, 0, NULL, CP_Color_Create(255, 255, 255, 200), Move_to_Level_4, "Level 4");
-    screen_array[Level_Select].ButtonObjectArray[4] = CreateButtonObject(newVector2(1300, 70), 100, 100, 0, 0, NULL, CP_Color_Create(255, 255, 255, 200), Move_to_Level_5, "Level 5");
-    screen_array[Level_Select].ButtonObjectArray[5] = CreateButtonObject(newVector2(500, 300), 100, 100, 0, 0, NULL, CP_Color_Create(255, 255, 255, 200), Move_to_Level_6, "Level 6");
-    screen_array[Level_Select].ButtonObjectArray[6] = CreateButtonObject(newVector2(700, 300), 100, 100, 0, 0, NULL, CP_Color_Create(255, 255, 255, 200), Move_to_Level_7, "Level 7");
-    screen_array[Level_Select].ButtonObjectArray[7] = CreateButtonObject(newVector2(900, 300), 100, 100, 0, 0, NULL, CP_Color_Create(255, 255, 255, 200), Move_to_Level_8, "Level 8");
-    screen_array[Level_Select].ButtonObjectArray[8] = CreateButtonObject(newVector2(1100, 300), 100, 100, 0, 0, NULL, CP_Color_Create(255, 255, 255, 200), Move_to_Level_9, "Level 9");
-    screen_array[Level_Select].ButtonObjectArray[9] = CreateButtonObject(newVector2(1300, 300), 100, 100, 0, 0, NULL, CP_Color_Create(255, 255, 255, 200), Move_to_Level_10, "Level 10");
+    AddButton(&screen_array[Level_Select], CreateButtonObject(newVector2(500, 70), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_Level_1, CP_Color_Create(255, 255, 255, 255), "Level 1", basebuttonbackground));
+    AddButton(&screen_array[Level_Select], CreateButtonObject(newVector2(700, 70), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_Level_2, CP_Color_Create(255, 255, 255, 255), "Level 2", basebuttonbackground));
+    AddButton(&screen_array[Level_Select], CreateButtonObject(newVector2(900, 70), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_Level_3, CP_Color_Create(255, 255, 255, 255), "Level 3", basebuttonbackground));
+    AddButton(&screen_array[Level_Select], CreateButtonObject(newVector2(1100, 70), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_Level_4, CP_Color_Create(255, 255, 255, 255), "Level 4", basebuttonbackground));
+    AddButton(&screen_array[Level_Select], CreateButtonObject(newVector2(1300, 70), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_Level_5, CP_Color_Create(255, 255, 255, 255), "Level 5", basebuttonbackground));
+    AddButton(&screen_array[Level_Select], CreateButtonObject(newVector2(500, 300), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_Level_6, CP_Color_Create(255, 255, 255, 255), "Level 6", basebuttonbackground));
+    AddButton(&screen_array[Level_Select], CreateButtonObject(newVector2(700, 300), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_Level_7, CP_Color_Create(255, 255, 255, 255), "Level 7", basebuttonbackground));
+    AddButton(&screen_array[Level_Select], CreateButtonObject(newVector2(900, 300), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_Level_8, CP_Color_Create(255, 255, 255, 255), "Level 8", basebuttonbackground));
+    AddButton(&screen_array[Level_Select], CreateButtonObject(newVector2(1100, 300), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_Level_9, CP_Color_Create(255, 255, 255, 255), "Level 9", basebuttonbackground));
+    AddButton(&screen_array[Level_Select], CreateButtonObject(newVector2(1300, 300), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_Level_10, CP_Color_Create(255, 255, 255, 255), "Level 10", basebuttonbackground));
+
 
     screen_array[Options].ButtonObjectArrayLengthCounter = 0;
-    screen_array[Options].ButtonObjectArray[0] = CreateButtonObject(newVector2(900, 10), 100, 100, 0, 0, NULL, CP_Color_Create(255, 255, 255, 200), Move_to_main_Menu, "Main Menu");
+    AddButton(&screen_array[Options], CreateButtonObject(newVector2(900, 10), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_main_Menu, CP_Color_Create(255, 255, 255, 255), "Main Menu", basebuttonbackground));
 
     
 
     screen_array[Test_Room].LineArrayLengthCounter = 0;
     screen_array[Test_Room].CircleArrayLengthCounter = 0;
-    screen_array[Test_Room].ButtonObjectArray[0] = CreateButtonObject(newVector2(10, 10), 100, 100, 0, 0, NULL, CP_Color_Create(255, 255, 255, 200), Move_to_main_Menu, "Move to Main Menu");
-
+    AddButton(&screen_array[Test_Room], CreateButtonObject(newVector2(10, 10), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_main_Menu, CP_Color_Create(255, 255, 255, 255), "Move to Main Menu", basebuttonbackground));
+    
     screen_array[Level_1].LineArrayLengthCounter = 0;
     screen_array[Level_1].CircleArrayLengthCounter = 0;
     screen_array[Level_1].overlay_name = pause_overlay;
@@ -672,6 +680,13 @@ void Initialize_Screens(void) {
 void Initialize_Sprites(void) {
     TestDoge = CP_Image_Load("./Sprites/MahLe.jpg");
     DigipenLogo = CP_Image_Load("./Assets/DigiPen_WHITE.png");
+    //initialize base button background
+    basebuttonbackground.border = CP_Image_Load("./Assets/Buttons/ButtonDeactivated.png");
+    basebuttonbackground.borderalpha = 255;
+    basebuttonbackground.hoverbg = CP_Image_Load("./Assets/Buttons/ButtonHovered.png");
+    basebuttonbackground.hoveralpha = 0;
+    basebuttonbackground.clickedbg = CP_Image_Load("./Assets/Buttons/ButtonDown.png");
+    basebuttonbackground.clickedalpha = 0;
 }
 
 void game_exit(void)

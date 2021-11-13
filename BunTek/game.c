@@ -42,6 +42,7 @@ void TriggerButtonEffects(ButtonObject* x);
 void Initialize_Screens(void);
 void Initialize_Sprites(void);
 void Initialize_SuperBounce(void); 
+void UpdateSpawner(void);
 
 
 //Initialize array
@@ -80,6 +81,7 @@ bool restartingLevel = false;
 //Sprites
 CP_Image TestDoge = NULL;
 CP_Image DigipenLogo = NULL;
+CP_Image Spawner = NULL;
 ButtonbgInfo basebuttonbackground;
 ButtonbgInfo nobuttonbackground;
 
@@ -129,6 +131,7 @@ void game_update(void)
                 AddLine();
             }
             CalculateAllPhysics();
+            UpdateSpawner();
         }
     }
     DrawAllShapes();
@@ -142,7 +145,6 @@ void game_update(void)
     }
 
     // Testing 
-    
     
     
 
@@ -347,10 +349,19 @@ void DrawAllShapes(void)
 
         }
     }
-               
-        
-        
     
+    for (int i = 0; i < SpawnerGameObjectArrayLength; i++)
+    {
+        BallSpawner* x = &Current_screen.BallSpawnerArray[i];
+        if (x->b.image != NULL) 
+        {
+            DrawBoxImage(&x->b, 255);
+        }
+        else
+        {
+            //CP_Graphics_DrawRectAdvanced(x->b.gameObject.position.x, x->b.gameObject.position.y, x->b.width, x->b.height, x->b.gameObject.angle, 1);
+        }
+    }
 }
 void CalculateAllPhysics(void)
 {
@@ -640,6 +651,7 @@ void Initialize_Screens(void) {
     screen_array[Level_4].LineArrayLengthCounter = 0;
     screen_array[Level_4].CircleArrayLengthCounter = 0;
     screen_array[Level_4].overlay_name = pause_overlay;
+    screen_array[Level_4].BallSpawnerArray[0] = CreateBallSpawner(newVector2(700, 200), 100.0f, 100.0f, 30.0f, 3.0f, true, newVector2(400,400), CP_Random_RangeFloat(1, 15), Spawner);
 
     screen_array[Level_5].LineArrayLengthCounter = 0;
     screen_array[Level_5].CircleArrayLengthCounter = 0;
@@ -687,6 +699,45 @@ void Initialize_Sprites(void) {
     basebuttonbackground.hoveralpha = 0;
     basebuttonbackground.clickedbg = CP_Image_Load("./Assets/Buttons/ButtonDown.png");
     basebuttonbackground.clickedalpha = 0;
+
+    //initialise background for spawner
+    Spawner = CP_Image_Load("./Assets/Spawner.png");
+}
+
+void UpdateSpawner(void)
+{
+    if (current_screen->BallSpawnerArray[0].isSpawning == true)
+    {
+        int numberofBalls = 0;
+        if (current_screen->CircleArrayLengthCounter <= CircleGameObjectArrayLength)
+        {
+            current_screen->BallSpawnerArray[0].internalTimer -= CP_System_GetDt();
+            if (current_screen->BallSpawnerArray[0].internalTimer < 0)
+            {
+                for (float i = 0; i < current_screen->BallSpawnerArray[0].spawnrate; ++i)
+                {
+                    Vector2 ballVelocity = current_screen->BallSpawnerArray[0].spawnVel;
+                    float angleMultiplier = current_screen->BallSpawnerArray[0].spreadAngle;
+                    float angles = current_screen->BallSpawnerArray[0].b.gameObject.angle;
+                    float scale = CP_Random_RangeFloat(10, 15);
+                    //float range = CP_Random_RangeFloat(200, 200);
+                    float width = current_screen->BallSpawnerArray[0].b.width;
+                    float height = current_screen->BallSpawnerArray[0].b.height;
+                    float positionX = current_screen->BallSpawnerArray[0].b.gameObject.position.x + width;
+                    float positionY = current_screen->BallSpawnerArray[0].b.gameObject.position.y + height;
+                    float spawnerPositionX = current_screen->BallSpawnerArray[0].b.gameObject.position.x;
+                    float spawnerPositionY = current_screen->BallSpawnerArray[0].b.gameObject.position.y;
+                    float calculationX = ((positionX - spawnerPositionX) * cosf(angles)) - ((spawnerPositionY - positionY) * sinf(angles));
+                    float calculationY = ((spawnerPositionY - positionY) * cosf(angles)) + ((positionX - spawnerPositionX) * sinf(angles));
+                    Vector2 positionVector = newVector2(CP_Random_RangeFloat(calculationX, calculationX+50), CP_Random_RangeFloat( calculationY,-calculationY+50));
+                    CircleGameObject tempvariable = CreateCircleGameObject(positionVector, ballVelocity, CP_Random_RangeFloat(0, 90) + angleMultiplier, CP_Color_Create(CP_Random_RangeInt(0, 255), CP_Random_RangeInt(0, 255), CP_Random_RangeInt(0, 255), 255), scale, false, scale, 1);
+                    AddBall(current_screen, tempvariable);
+                    numberofBalls++;
+                }
+                current_screen->BallSpawnerArray[0].internalTimer = 1.0f;
+            }
+        }
+    }
 }
 
 void game_exit(void)

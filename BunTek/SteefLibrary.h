@@ -12,7 +12,6 @@
 #define FrameTime CP_System_GetDt()
 
 #define bool _Bool
-
 #define false 0x0
 #define true 0x1
 
@@ -75,12 +74,11 @@ struct ballSpawner {
 	float spawnrate; // Balls per second
 	float internalTimer; //Timer to spawn balls
 	bool isSpawning; // Is spawning balls or not
-	float spawnVel;
+	Vector2 spawnVel;
 	float spreadAngle;
-
 };
 
-struct ballSpawner CreateBallSpawner(Vector2 position, float width, float height, float angle, float spawnrate, bool isSpawning, float spawnVel, float spreadAngle, CP_Image image) {
+struct ballSpawner CreateBallSpawner(Vector2 position,float width, float height, float angle, float spawnrate, bool isSpawning, Vector2 spawnVel, float spreadAngle, CP_Image image) {
 	BallSpawner ba;
 	ba.b.gameObject.isActive = true;
 	ba.b.gameObject.position = position;
@@ -90,9 +88,8 @@ struct ballSpawner CreateBallSpawner(Vector2 position, float width, float height
 	ba.b.image = image;
 	ba.spawnrate = spawnrate;
 	ba.isSpawning = isSpawning;
-	ba.spawnVel;
-	ba.spreadAngle;
-
+	ba.spawnVel = spawnVel;
+	ba.spreadAngle = spreadAngle;
 	return ba;
 }
 
@@ -869,3 +866,4 @@ void DrawBoxImage(BoxGameObject* b, int alpha) {
 	Vector2 Center = CenterOfBox(b);
 	CP_Image_DrawAdvanced(b->image, Center.x, Center.y, b->width, b->height, alpha, b->gameObject.angle);
 }
+

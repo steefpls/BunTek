@@ -17,6 +17,7 @@
 #define BoxGameObjectArrayLength 1000
 #define ButtonObjectArrayLength 50
 #define TextLimit 100
+#define SpawnerGameObjectArrayLength 1000
 
 float Overlay_bg_opacity = 0;
 float Overlay_opacity = 0;
@@ -120,6 +121,10 @@ struct screen {
 	int SuperBouncePlatformLengthCounter;
 	BoxGameObject SuperBouncePlatformArray[BoxGameObjectArrayLength]; 
 	Overlay_name overlay_name;
+
+	//Array for all Spawners
+	int BallSpawnerArrayLengthCounter;
+	BallSpawner BallSpawnerArray[SpawnerGameObjectArrayLength];
 	
 };
 
@@ -390,6 +395,7 @@ void AddBall(Screen* sc, CircleGameObject c1) {
 
 }
 
+
 Vector2 RemoveBall(Screen* sc, CircleGameObject c1) {
 	for (int i = 0; i < sc->CircleArrayLengthCounter; i++) {
 		if (sc->CircleGameObjectArray[i].gameObject.position.x == c1.gameObject.position.x && sc->CircleGameObjectArray[i].gameObject.position.y == c1.gameObject.position.y) {
@@ -401,3 +407,4 @@ Vector2 RemoveBall(Screen* sc, CircleGameObject c1) {
 	}
 	return (c1.gameObject.position);
 }
+

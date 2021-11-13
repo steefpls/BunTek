@@ -16,7 +16,7 @@
 #define true 0x1
 
 bool debug = false;
-float gravity = 500;
+float gravity = 200;
 
 
 void draw_framerate(void)
@@ -74,11 +74,13 @@ struct ballSpawner {
 	float spawnrate; // Balls per second
 	float internalTimer; //Timer to spawn balls
 	bool isSpawning; // Is spawning balls or not
-	Vector2 spawnVel;
+	float spawnVel;
 	float spreadAngle;
+	float ballScale;
+	float ballScaleSpread;
 };
 
-struct ballSpawner CreateBallSpawner(Vector2 position,float width, float height, float angle, float spawnrate, bool isSpawning, Vector2 spawnVel, float spreadAngle, CP_Image image) {
+struct ballSpawner CreateBallSpawner(Vector2 position,float width, float height, float angle, float spawnrate, bool isSpawning, float spawnVel, float spreadAngle, CP_Image image) {
 	BallSpawner ba;
 	ba.b.gameObject.isActive = true;
 	ba.b.gameObject.position = position;
@@ -87,9 +89,13 @@ struct ballSpawner CreateBallSpawner(Vector2 position,float width, float height,
 	ba.b.gameObject.angle = angle;
 	ba.b.image = image;
 	ba.spawnrate = spawnrate;
+	ba.internalTimer = 1.0f/spawnrate;
 	ba.isSpawning = isSpawning;
 	ba.spawnVel = spawnVel;
 	ba.spreadAngle = spreadAngle;
+	ba.ballScale = 12.5f;
+	ba.ballScaleSpread = 2.5f;
+
 	return ba;
 }
 
@@ -119,10 +125,6 @@ struct circleGameObject CreateCircleGameObject(Vector2 pos, Vector2 vel, float a
 
 	return c;
 }
-
-
-
-
 
 struct boxGameObject CreateBoxGameObject(Vector2 position, float width, float height,float bounciness, float angle, CP_Image image) {
 	BoxGameObject b;
@@ -160,6 +162,7 @@ Vector2 VectorAdd(Vector2 v1, Vector2 v2) {
 
 	return newVector2(v1.x + v2.x, v1.y + v2.y);
 }
+//Returns v1-v2;
 Vector2 VectorMinus(Vector2 v1, Vector2 v2) {
 	return newVector2(v1.x - v2.x, v1.y - v2.y);
 }
@@ -181,7 +184,6 @@ Vector2 VectorProject(Vector2 v1, Vector2 v2) { //Finds projection of v1 on v2
 float AngBet(Vector2 p1, Vector2 p2) {
 	return atan2f(p1.y - p2.y, p1.x - p2.x);
 }
-
 
 void AddForce(GameObject* g, Vector2 force) {
 	g->velocity.x += force.x;
@@ -213,7 +215,7 @@ bool CircleCol(CircleGameObject* c1, CircleGameObject* c2, bool doPhysics)
 		float c1Y = c1->gameObject.position.y;
 		float c2X = c2->gameObject.position.x;
 		float c2Y = c2->gameObject.position.y;
-		//printf("\nCircle1pos: %f,%f\nCircle2pos: %f,%f\n",c1X,c1Y,c2X,c2Y);
+		
 		//Are the two circles close? Do significantly cheaper bounding box check first
 		bool inBoundingBox = c1X + c1->radius + c2->radius > c2X
 			&& c1X < c2X + c1->radius + c2->radius
@@ -468,9 +470,6 @@ bool CircleRectCol(CircleGameObject* c1, BoxGameObject* b1, bool doPhysics) {
 		if (dotprody > 0) {
 			collidedTop = true;
 		}
-
-		
-		
 
 		//If circle center is inside rect
 		if (confirmedY && confirmedX) {
@@ -848,11 +847,19 @@ void CirclePhys(CircleGameObject* c1) {
 	}
 }
 
+// Returns the middle of the boxobject
 Vector2 CenterOfBox(BoxGameObject* b1) {
 	Vector2 boxTopLeft = b1->gameObject.position;
 	Vector2 boxTopRight = newVector2(boxTopLeft.x + b1->width * cosf(b1->gameObject.angle / 180 * PI), boxTopLeft.y + b1->width * sinf(b1->gameObject.angle / 180 * PI));
 	Vector2 boxBottomLeft = newVector2(boxTopLeft.x + b1->height * cosf((b1->gameObject.angle + 90) / 180 * PI), boxTopLeft.y + b1->height * sinf((b1->gameObject.angle + 90) / 180 * PI));
 	return newVector2((boxTopRight.x + boxBottomLeft.x) / 2, (boxTopRight.y + boxBottomLeft.y) / 2);
+}
+
+// Returns a unit vector that points to the right of the boxObject, changes based on boxobject's rotation
+Vector2 BoxForward(BoxGameObject* b1) {
+	Vector2 boxTopLeft = b1->gameObject.position;
+	Vector2 boxTopRight = newVector2(boxTopLeft.x + b1->width * cosf(b1->gameObject.angle / 180 * PI), boxTopLeft.y + b1->width * sinf(b1->gameObject.angle / 180 * PI));
+	return Normalize(VectorMinus(boxTopRight, boxTopLeft));
 }
 
 // Call this function to overwrite the boxGameObject's image over itself (Usually for UI)
@@ -865,5 +872,22 @@ void OverriteBoxImage(CP_Image image, BoxGameObject* b, int alpha) {
 void DrawBoxImage(BoxGameObject* b, int alpha) {
 	Vector2 Center = CenterOfBox(b);
 	CP_Image_DrawAdvanced(b->image, Center.x, Center.y, b->width, b->height, alpha, b->gameObject.angle);
+}
+
+CP_Color RandomColor() {
+	return CP_Color_Create(CP_Random_RangeInt(0, 255), CP_Random_RangeInt(0, 255), CP_Random_RangeInt(0, 255), 255);
+}
+
+//Returns a rotated vector rotated clockwise
+Vector2 RotateVector(Vector2 vec, float ang) {
+	float theta = ang/180*PI;
+
+	float cs = cosf(theta);
+	float sn = sinf(theta);
+
+	float vecx = vec.x * cs - vec.y * sn;
+	float vecy = vec.x * sn + vec.y * cs;
+
+	return (newVector2(vecx, vecy));
 }
 

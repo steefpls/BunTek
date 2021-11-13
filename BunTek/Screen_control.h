@@ -407,4 +407,8 @@ Vector2 RemoveBall(Screen* sc, CircleGameObject c1) {
 	}
 	return (c1.gameObject.position);
 }
+/*
+void AddBallSpawner() {
 
+}
+*/

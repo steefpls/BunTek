@@ -45,6 +45,7 @@ void Initialize_SuperBounce(void);
 void UpdateAllSpawners(void);
 
 
+
 //Initialize array
 Screen screen_array[Total_screen_number];
 Screen overlay_array[Total_overlay_number];
@@ -349,19 +350,58 @@ void DrawAllShapes(void)
 
         }
     }
-    
-    for (int i = 0; i < SpawnerGameObjectArrayLength; i++)
-    {
-        BallSpawner* x = &Current_screen.BallSpawnerArray[i];
-        if (x->b.image != NULL) 
-        {
-            DrawBoxImage(&x->b, 255);
-        }
-        else
-        {
-            //CP_Graphics_DrawRectAdvanced(x->b.gameObject.position.x, x->b.gameObject.position.y, x->b.width, x->b.height, x->b.gameObject.angle, 1);
+
+
+    // Draw Scoring Container
+    for (int i = 0; i < BoxGameObjectArrayLength; i++) {
+
+        ScoringContainerObject * x = &Current_screen.ScoringContainerArray[i]; 
+
+        
+        if (x->box.width == 0 || x->box.height == 0) {
+
+        } 
+        else {
+            // Draw Code : while container has not meet it's ball count. 
+            if (x->ballcountgoal != 0) {           
+                CP_Graphics_ClearBackground(CP_Color_Create(50, 50, 50, 255)); 
+                // Draw Container 
+                CP_Settings_Fill(x->box.gameObject.color);
+                CP_Graphics_DrawRectAdvanced(x->box.gameObject.position.x, x->box.gameObject.position.y, x->box.width, x->box.height, x->box.gameObject.angle, 1);
+                CP_Settings_Fill(x->textcolor);
+                CP_Settings_TextAlignment(CP_TEXT_ALIGN_H_CENTER, CP_TEXT_ALIGN_V_MIDDLE);
+                CP_Settings_TextSize(30);
+
+                char buffer_count_string[100];
+                char* buffer_ptr = buffer_count_string;
+
+                snprintf(buffer_ptr, 100, "%d", x->ballcountgoal);
+
+                CP_Font_DrawTextBox(buffer_ptr, x->box.gameObject.position.x, x->box.gameObject.position.y + x->box.height / 2, x->box.width);
+            } else {
+
+                // Draw Code : while container has met it's ball count.
+                // Draw Container 
+                CP_Settings_Fill(CP_Color_Create(50, 205, 50, 255));  // lime green
+                CP_Graphics_DrawRectAdvanced(x->box.gameObject.position.x, x->box.gameObject.position.y, x->box.width, x->box.height, x->box.gameObject.angle, 1);
+                CP_Settings_Fill(x->textcolor);
+                CP_Settings_TextAlignment(CP_TEXT_ALIGN_H_CENTER, CP_TEXT_ALIGN_V_MIDDLE);
+                CP_Settings_TextSize(30);
+
+                char buffer_count_string[100];
+                char* buffer_ptr = buffer_count_string;
+
+                snprintf(buffer_ptr, 100, "%d", x->ballcountgoal);
+
+                CP_Font_DrawTextBox(buffer_ptr, x->box.gameObject.position.x, x->box.gameObject.position.y + x->box.height / 2, x->box.width);
+            }
+
         }
     }
+               
+        
+        
+    
 }
 void CalculateAllPhysics(void)
 {
@@ -463,6 +503,36 @@ void CalculateAllPhysics(void)
             }
         }
         
+    }
+
+    // Calculate ball collision into scoringContainer
+    for (int x = 0; x < BoxGameObjectArrayLength; x++) {
+        ScoringContainerObject* b1 = &Current_screen.ScoringContainerArray[x]; 
+        if (Current_screen.ScoringContainerArray[x].box.height == 0.0f || Current_screen.ScoringContainerArray[x].box.width == 0.0f) {
+            // do nothing. (impossible to calculate collision)
+        }
+        else {
+            for (int y = 0; y < CircleGameObjectArrayLength; y++) 
+            {
+                CircleGameObject* c1 = &Current_screen.CircleGameObjectArray[y]; 
+                if (Current_screen.CircleGameObjectArray[y].radius == 0.0f) // if radius of ball is 0, can't calculate collision
+                {
+                    break;
+                }
+                else {
+                    if (CircleRectCol(c1, &b1->box, true) && !b1->filled) // if collision into the container true. 
+                    {   
+                        // Destroy the ball 
+                        RemoveBall(&Current_screen, *c1);               
+                        b1->ballcountgoal -= 1;     // decrease counter by 1. this value will be updated on the container
+                        if (b1->ballcountgoal <= 0) {
+                            b1->filled = true; 
+                        } 
+                    }
+                }
+            }
+        }
+
     }
     
 }
@@ -685,7 +755,12 @@ void Initialize_Screens(void) {
         AddBall(&screen_array[Level_1], tempc);
         AddBall(&screen_array[Level_2], tempc);
         AddBall(&screen_array[Level_3], tempc);
+        AddBall(&screen_array[Level_10], tempc); // Using level 10 room to test score container. 
     }
+
+    // Testing for Scoring Containers 
+    ScoringContainerObject tempinit = createScoringContainer(newVector2(500, 500), 0, 200, 200, 100); 
+    AddScoreContainer(&screen_array[Level_10], tempinit); 
 }
 
 void Initialize_Sprites(void) {

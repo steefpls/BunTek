@@ -117,9 +117,15 @@ struct screen {
 	// Array for all no-draw zones
 	int NoDrawZonesArrayLengthCounter; 
 	BoxGameObject NoDrawZoneArray[BoxGameObjectArrayLength]; 
+	
 	// Array for super-bounce platforms 
-	int SuperBouncePlatformLengthCounter;
+	int SuperBouncePlatformArrayLengthCounter;
 	BoxGameObject SuperBouncePlatformArray[BoxGameObjectArrayLength]; 
+
+	// Array for scoring containers 
+	int ScoringContainerArrayLengthCounter; 
+	ScoringContainerObject ScoringContainerArray[BoxGameObjectArrayLength]; 
+
 	Overlay_name overlay_name;
 
 	//Array for all Spawners
@@ -393,6 +399,12 @@ void AddBall(Screen* sc, CircleGameObject c1) {
 	sc->CircleGameObjectArray[sc->CircleArrayLengthCounter] = c1;
 	sc->CircleArrayLengthCounter++;
 
+}
+
+// add scoring container to screen 
+void AddScoreContainer(Screen* sc, ScoringContainerObject sc1) {
+	sc->ScoringContainerArray[sc->ScoringContainerArrayLengthCounter] = sc1; // Accessing the particular scoring container array's position, and storing the newly defined scoring container object. 
+	sc->ScoringContainerArrayLengthCounter++; 
 }
 
 

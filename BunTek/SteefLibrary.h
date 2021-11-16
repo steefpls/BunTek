@@ -7,6 +7,7 @@
 #define CircleGameObject struct circleGameObject
 #define BoxGameObject struct boxGameObject
 #define BallSpawner struct ballSpawner
+#define ScoringContainerObject struct scoringContainer
 #define GameObject struct gameObject
 #define Particle struct particle
 #define FrameTime CP_System_GetDt()
@@ -14,6 +15,7 @@
 #define bool _Bool
 #define false 0x0
 #define true 0x1
+#define ContainerTextLimit 3
 
 bool debug = false;
 float gravity = 200;
@@ -69,6 +71,17 @@ struct boxGameObject
 
 };
 
+struct scoringContainer 
+{
+
+	BoxGameObject box;
+	int ballcountgoal; // test explicit type casting
+	CP_Color textcolor;
+	char ballcounttext[ContainerTextLimit]; // char array to store String Literals (for drawing on top of container)
+	bool filled;
+
+};
+
 struct ballSpawner {
 	BoxGameObject b;
 	float spawnrate; // Balls per second
@@ -98,6 +111,7 @@ struct ballSpawner CreateBallSpawner(Vector2 position,float width, float height,
 
 	return ba;
 }
+
 
 struct circleGameObject
 {

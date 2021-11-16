@@ -351,6 +351,18 @@ void DrawAllShapes(void)
         }
     }
 
+    for (int i = 0; i < SpawnerGameObjectArrayLength; i++)
+    {
+        BallSpawner* x = &Current_screen.BallSpawnerArray[i];
+        if (x->b.image != NULL)
+        {
+            DrawBoxImage(&x->b, 255);
+        }
+        else
+        {
+           // CP_Graphics_DrawRectAdvanced(x->b.gameObject.position.x, x->b.gameObject.position.y, x->b.width, x->b.height, x->b.gameObject.angle, 1);
+        }
+    }
 
     // Draw Scoring Container
     for (int i = 0; i < BoxGameObjectArrayLength; i++) {

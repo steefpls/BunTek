@@ -8,9 +8,18 @@
 #define BoxGameObject struct boxGameObject
 #define BallSpawner struct ballSpawner
 #define ScoringContainerObject struct scoringContainer
+#define Circleportalpair struct circleportalpair
+#define Rotatedboxportalpair struct rotatedboxportalpair
+#define TeleportInfo struct teleportInfo
 #define GameObject struct gameObject
 #define Particle struct particle
 #define FrameTime CP_System_GetDt()
+
+//portal control: per second
+#define PortalRotation 360
+#define PortalBallRadiusDivisor 2
+#define PortalBallDistDivisor 2
+
 
 #define bool _Bool
 #define false 0x0
@@ -112,14 +121,28 @@ struct ballSpawner CreateBallSpawner(Vector2 position,float width, float height,
 	return ba;
 }
 
+enum {
+	Not_teleporting,
+	teleporting,
+	teleported,
+};
+
+struct teleportInfo {
+	int teleportStatus;
+	Vector2 original_resultant;
+	Vector2 original_velocity;
+	float original_radius;
+};
 
 struct circleGameObject
 {
 	GameObject gameObject;
 	float radius;
 	bool outline;
-	
+	TeleportInfo teleportinfo;
 };
+
+
 
 struct circleGameObject CreateCircleGameObject(Vector2 pos, Vector2 vel, float angle, CP_Color color, float radius, bool outline, float mass, float bounciness)
 {
@@ -136,7 +159,7 @@ struct circleGameObject CreateCircleGameObject(Vector2 pos, Vector2 vel, float a
 	c.outline = outline;
 	c.gameObject.mass = mass;
 	c.gameObject.bounciness = bounciness;
-
+	c.teleportinfo.teleportStatus = Not_teleporting;
 	return c;
 }
 
@@ -151,6 +174,36 @@ struct boxGameObject CreateBoxGameObject(Vector2 position, float width, float he
 	b.image = image;
 	return b;
 }
+
+struct circleportalpair {
+	CircleGameObject portal_1;
+	CircleGameObject portal_2;
+	float Exit_vel_scale;
+	CP_Image image;
+};
+
+struct circleportalpair Createcircleportalpair(Vector2 Portal1_pos, Vector2 Portal2_pos, CP_Color color, CP_Image image, float radius, float Exit_vel_scale) {
+	Circleportalpair cpp;
+	cpp.portal_1 = CreateCircleGameObject(Portal1_pos, newVector2(0, 0), 0, color, radius, false, 0, 0);
+	cpp.portal_2 = CreateCircleGameObject(Portal2_pos, newVector2(0, 0), 0, color, radius, false, 0, 0);
+	cpp.image = image;
+	cpp.Exit_vel_scale = Exit_vel_scale;
+	return cpp;
+}
+
+/*
+struct rotatedboxportalpair {
+	BoxGameObject portal_1;
+	BoxGameObject portal_2;
+};
+
+struct rotatedboxportalpair Createrotatedboxportalpair(BoxGameObject portal1, BoxGameObject portal2) {
+	Rotatedboxportalpair rbpp;
+	rbpp.portal_1 = portal1;
+	rbpp.portal_2 = portal2;
+	return rbpp;
+}
+*/
 
 struct particle
 {

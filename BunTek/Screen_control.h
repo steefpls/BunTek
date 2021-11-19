@@ -7,6 +7,8 @@
 #define ButtonObject struct buttonObject
 #define ButtonbgInfo struct buttonbgInfo
 
+#define Screen_keys struct screen_keys
+
 
 #define LerpDuration 6.0f
 #define OverlaypDuration 8.0f
@@ -18,6 +20,7 @@
 #define ButtonObjectArrayLength 50
 #define TextLimit 100
 #define SpawnerGameObjectArrayLength 1000
+#define PortalArrayLength 10
 
 float Overlay_bg_opacity = 0;
 float Overlay_opacity = 0;
@@ -47,6 +50,8 @@ typedef enum{
 	Level_9,
 	Level_10,
 	Options,
+	Credits_screen,
+	Tutorial,
 	//V make sure this is last in the ENUM
 	Total_screen_number,
 } Screen_name;
@@ -54,6 +59,7 @@ typedef enum{
 typedef enum {
 	No_overlay,
 	pause_overlay,
+	victory_overlay,
 	//V make sure this is last in the ENUM
 	Total_overlay_number,
 	
@@ -76,9 +82,14 @@ typedef enum {
 	Move_to_test_Menu,
 	Move_to_main_Menu,
 	Move_to_options,
+	Move_to_credits,
+	Move_to_tutorial,
+	Next_Level,
 	Pause_Game,
 	Restart,
+	Exit_game,
 } Button_effects;
+
 struct buttonbgInfo {
 	CP_Image border;
 	CP_Image hoverbg;
@@ -88,6 +99,12 @@ struct buttonbgInfo {
 	float clickedalpha;
 	
 };
+
+struct screen_keys {
+	Button_effects key;
+	Screen_name value;
+};
+
 struct buttonObject {
 	BoxGameObject boxGameObject;
 	Button_effects button_effect;
@@ -117,6 +134,12 @@ struct screen {
 	// Array for all no-draw zones
 	int NoDrawZonesArrayLengthCounter; 
 	BoxGameObject NoDrawZoneArray[BoxGameObjectArrayLength]; 
+
+	int CircleportalpairArrayLengthCounter;
+	Circleportalpair CircleportalpairArray[PortalArrayLength];
+
+	//int RotatedboxportalpairArrayLengthCounter;
+	//Rotatedboxportalpair RotatedboxportalpairArray[PortalArrayLength];
 	
 	// Array for super-bounce platforms 
 	int SuperBouncePlatformArrayLengthCounter;
@@ -395,6 +418,18 @@ void AddButton(Screen* sc, ButtonObject b1) {
 
 }
 
+//add Screen keys
+void AddScreenKey(int* count, Button_effects key, Screen_name value, Screen_keys* Screen_key_array) {
+	if (*count < Total_screen_number) {
+		Screen_keys sk;
+		sk.key = key;
+		sk.value = value;
+		Screen_key_array[*count] = sk;
+		(*count)++;
+	}
+}
+
+
 void AddBall(Screen* sc, CircleGameObject c1) {
 	sc->CircleGameObjectArray[sc->CircleArrayLengthCounter] = c1;
 	sc->CircleArrayLengthCounter++;
@@ -407,6 +442,17 @@ void AddScoreContainer(Screen* sc, ScoringContainerObject sc1) {
 	sc->ScoringContainerArrayLengthCounter++; 
 }
 
+void AddCircleportalpair(Screen* sc, Circleportalpair cpp1) {
+	sc->CircleportalpairArray[sc->CircleportalpairArrayLengthCounter] = cpp1;
+	sc->CircleportalpairArrayLengthCounter++;
+}
+
+/*
+void AddRotatedboxportalpair(Screen* sc, Rotatedboxportalpair rbpp) {
+	sc->RotatedboxportalpairArray[sc->RotatedboxportalpairArrayLengthCounter] = rbpp;
+	sc->RotatedboxportalpairArrayLengthCounter++;
+}
+*/
 
 Vector2 RemoveBall(Screen* sc, CircleGameObject c1) {
 	for (int i = 0; i < sc->CircleArrayLengthCounter; i++) {

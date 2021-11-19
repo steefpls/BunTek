@@ -43,14 +43,15 @@ void Initialize_Screens(void);
 void Initialize_Sprites(void);
 void Initialize_SuperBounce(void); 
 void UpdateAllSpawners(void);
-
+void Initialize_Screen_Keys(void);
 
 
 //Initialize array
 Screen screen_array[Total_screen_number];
 Screen overlay_array[Total_overlay_number];
 
-
+int key_count = 0;
+Screen_keys Screen_key_array[Total_screen_number];
 
 //Initialize Screen control
 Screen_name Start_Screen = Splash_screen;
@@ -98,6 +99,7 @@ void game_init(void)
         CP_System_ShowConsole();
     }
     //initialize all screen data
+    Initialize_Screen_Keys();
     Initialize_Screens();
     //set the screens
     startup = true;
@@ -214,6 +216,31 @@ void AddLine(void) {
 
 void DrawAllShapes(void)
 {
+
+    for (int i = 0; i < Current_screen.CircleportalpairArrayLengthCounter; i++) {
+        Circleportalpair* cpp = &Current_screen.CircleportalpairArray[i];
+
+        CP_Settings_Fill(cpp->portal_1.gameObject.color);
+
+        if (cpp->portal_1.outline) {
+            CP_Settings_Stroke(CP_Color_Create(0, 0, 0, 255));
+
+        }
+        else {
+            CP_Settings_NoStroke();
+        }
+        if (cpp->image != NULL) {
+            CP_Image_DrawAdvanced(cpp->image, cpp->portal_1.gameObject.position.x, cpp->portal_1.gameObject.position.y, cpp->portal_1.radius * 2, cpp->portal_1.radius * 2, 255, cpp->portal_1.gameObject.angle);
+            CP_Image_DrawAdvanced(cpp->image, cpp->portal_2.gameObject.position.x, cpp->portal_2.gameObject.position.y, cpp->portal_2.radius * 2, cpp->portal_2.radius * 2, 255, cpp->portal_2.gameObject.angle);
+        }
+        else {
+            CP_Graphics_DrawCircle(cpp->portal_1.gameObject.position.x, cpp->portal_1.gameObject.position.y, cpp->portal_1.radius * 2);
+            CP_Graphics_DrawCircle(cpp->portal_2.gameObject.position.x, cpp->portal_2.gameObject.position.y, cpp->portal_2.radius * 2);
+        }
+
+
+    }
+
     for (int i = 0; i < Current_screen.CircleArrayLengthCounter; i++)
     {
         CircleGameObject* x = &Current_screen.CircleGameObjectArray[i];
@@ -258,15 +285,6 @@ void DrawAllShapes(void)
                 }
                 else {
                     CP_Graphics_DrawRectAdvanced(x->gameObject.position.x, x->gameObject.position.y, x->width, x->height, x->gameObject.angle, 1);
-                }
-                CP_Settings_Fill(x->gameObject.color);
-                CP_Settings_NoStroke();
-                if (x->image != NULL) {
-                    DrawBoxImage(x, 255);
-                }
-                else {
-                    CP_Graphics_DrawRectAdvanced(x->gameObject.position.x, x->gameObject.position.y, x->width, x->height, x->gameObject.angle, 1);
-
                 }
 
             }
@@ -411,10 +429,27 @@ void DrawAllShapes(void)
         }
     }
                
-        
+    
+
+    /*
+    for (int i = 0; i < Current_screen.RotatedboxportalpairArrayLengthCounter; i++) {
+        Rotatedboxportalpair* rbpp = &Current_screen.RotatedboxportalpairArray[i];
+
+        CP_Settings_Fill(rbpp->portal_1.gameObject.color);
+        if (rbpp->portal_1.width == 0 || rbpp->portal_1.height == 0) {
+
+        }
+        else {
+            CP_Settings_Fill(rbpp->portal_1.gameObject.color);
+            CP_Settings_NoStroke();
+            CP_Graphics_DrawRectAdvanced(rbpp->portal_1.gameObject.position.x, rbpp->portal_1.gameObject.position.y, rbpp->portal_1.width, rbpp->portal_1.height, rbpp->portal_1.gameObject.angle, 1);
+            CP_Graphics_DrawRectAdvanced(rbpp->portal_2.gameObject.position.x, rbpp->portal_2.gameObject.position.y, rbpp->portal_2.width, rbpp->portal_2.height, rbpp->portal_2.gameObject.angle, 1);
+        }
+    }*/
         
     
 }
+
 void CalculateAllPhysics(void)
 {
     
@@ -439,7 +474,7 @@ void CalculateAllPhysics(void)
             //End of Array
             break;
         }
-        else 
+        else if(c1->teleportinfo.teleportStatus == Not_teleporting)
         {
             for (int o = i+1; o < Current_screen.CircleArrayLengthCounter; o++)
             {
@@ -449,7 +484,7 @@ void CalculateAllPhysics(void)
                     //End of Array
                     break;
                 }
-                else 
+                else if(c2->teleportinfo.teleportStatus == Not_teleporting)
                 {
                     if (c1 == c2) 
                     {
@@ -547,6 +582,148 @@ void CalculateAllPhysics(void)
 
     }
     
+    //Calculate ball collision into circle portal pair
+    for (int x = 0; x < Current_screen.CircleportalpairArrayLengthCounter; x++) {
+        Circleportalpair* cpp = &Current_screen.CircleportalpairArray[x];
+        if (cpp->portal_1.radius == 0 || cpp->portal_2.radius == 0) {
+            break;
+        }
+        else {
+
+            for (int o = 0; o < Current_screen.CircleArrayLengthCounter; o++) {
+                CircleGameObject* c = &Current_screen.CircleGameObjectArray[o];
+                if (c->radius == 0.0f) {
+                    break;
+                }
+                else {
+                    //teleportation logic
+                    Vector2 resultant;
+                    bool collided_portal_1 = CircleCol(c, &cpp->portal_1, false);
+                    bool collided_portal_2 = CircleCol(c, &cpp->portal_2, false);
+                    //colide with protal 1
+                    if (collided_portal_1) {
+                        resultant = VectorMinus(c->gameObject.position, cpp->portal_1.gameObject.position);
+                        //Moving into portal
+                        if (c->teleportinfo.teleportStatus == Not_teleporting) {
+                            c->teleportinfo.original_resultant = resultant;
+                            c->teleportinfo.original_velocity = c->gameObject.velocity;
+                            c->teleportinfo.original_radius = c->radius;
+                            c->teleportinfo.teleportStatus = teleporting;
+                        }
+                        //in entrance portal
+                        else if (c->teleportinfo.teleportStatus == teleporting) {
+                            c->gameObject.velocity = newVector2(0, 0);
+                            resultant = VectorDivide(resultant, CP_Math_LerpFloat(1, PortalBallDistDivisor ,FrameTime));
+                            resultant = RotateVector(resultant, PortalRotation * FrameTime);
+                            c->gameObject.position = VectorAdd(cpp->portal_1.gameObject.position, resultant);
+                            if (c->radius > 0) {
+                                c->radius = c->radius / CP_Math_LerpFloat(1, PortalBallRadiusDivisor, FrameTime);
+                                if (c->radius < 1) {
+                                   c->gameObject.position = cpp->portal_2.gameObject.position;
+                                   c->gameObject.velocity = VectorMultiply(Normalize(c->teleportinfo.original_velocity), cpp->Exit_vel_scale);
+                                   //c->gameObject.velocity = c->teleportinfo.original_velocity;
+                                   c->teleportinfo.teleportStatus = teleported;
+                                }
+                            }
+                            
+                        }
+                        //At exit portal
+                        else if (c->teleportinfo.teleportStatus == teleported) {
+                            c->radius = c->teleportinfo.original_radius * (VectorMagnitude(resultant) / cpp->portal_1.radius);
+                            //exited portal boundary
+                            if (c->radius >= c->teleportinfo.original_radius) {
+                                c->teleportinfo.teleportStatus = Not_teleporting;
+                            }
+                        }       
+
+                    }
+                    //colide with protal 2
+                    else if (collided_portal_2) {
+                        resultant = VectorMinus(c->gameObject.position, cpp->portal_2.gameObject.position);
+                        //Moving into portal
+                        if (c->teleportinfo.teleportStatus == Not_teleporting) {
+                            c->teleportinfo.original_resultant = resultant;
+                            c->teleportinfo.original_velocity = c->gameObject.velocity;
+                            c->teleportinfo.original_radius = c->radius;
+                            c->teleportinfo.teleportStatus = teleporting;
+                        }
+                        //in entrance portal
+                        else if (c->teleportinfo.teleportStatus == teleporting) {
+                            c->gameObject.velocity = newVector2(0, 0);
+                            resultant = VectorDivide(resultant, CP_Math_LerpFloat(1, PortalBallDistDivisor, FrameTime));
+                            resultant = RotateVector(resultant, PortalRotation * FrameTime);
+                            c->gameObject.position = VectorAdd(cpp->portal_2.gameObject.position, resultant);
+                            if (c->radius > 0) {
+                                c->radius = c->radius / CP_Math_LerpFloat(1, PortalBallRadiusDivisor, FrameTime);
+                                if (c->radius < 1) {
+                                    c->gameObject.position = cpp->portal_1.gameObject.position;
+                                    c->gameObject.velocity = VectorMultiply(Normalize(c->teleportinfo.original_velocity), cpp->Exit_vel_scale);
+                                    //c->gameObject.velocity = c->teleportinfo.original_velocity;
+                                    c->teleportinfo.teleportStatus = teleported;
+                                }
+                            }
+                        }
+                        //At exit portal
+                        else if (c->teleportinfo.teleportStatus == teleported) {
+                            c->radius = c->teleportinfo.original_radius * (VectorMagnitude(resultant) / cpp->portal_2.radius);
+                            //exited portal boundary
+                            if (c->radius >= c->teleportinfo.original_radius) {
+                                c->teleportinfo.teleportStatus = Not_teleporting;
+                            }
+                        }
+                    }
+                    else if (!(collided_portal_1 || collided_portal_2) && (c->teleportinfo.teleportStatus != Not_teleporting)) {
+                        if (c->radius != c->teleportinfo.original_radius) {
+                            c->radius = c->teleportinfo.original_radius;
+                        }
+                        c->teleportinfo.teleportStatus = Not_teleporting;
+                    }
+                }
+            }
+                
+        }
+
+    }
+    /*
+    for (int x = 0; x < Current_screen.CircleportalpairArrayLengthCounter; x++) {
+        Rotatedboxportalpair* rbpp = &Current_screen.RotatedboxportalpairArray[x];
+        if (rbpp->portal_1.width == 0 || rbpp->portal_1.height == 0) {
+
+        }
+        else {
+
+            for (int o = 0; o < Current_screen.CircleArrayLengthCounter; o++) {
+                CircleGameObject* c = &Current_screen.CircleGameObjectArray[o];
+                if (c->radius == 0.0f) {
+                    break;
+                }
+                else {
+                    Vector2 resultant;
+                    bool collided_portal_1 = CircleRectCol(c, &rbpp->portal_1, false);
+                    bool collided_portal_2 = CircleRectCol(c, &rbpp->portal_2, false);
+                    float angleDiff = rbpp->portal_1.gameObject.angle - rbpp->portal_2.gameObject.angle;
+                    if (collided_portal_1 && c->teleported == 0) {
+                        resultant = RotateVector(VectorMinus(CenterOfBox(&rbpp->portal_1), c->gameObject.position), angleDiff);
+                        c->gameObject.position = VectorAdd(CenterOfBox(&rbpp->portal_2), resultant);
+                        c->gameObject.velocity = RotateVector(c->gameObject.velocity, angleDiff);
+                        c->teleported = 2;
+
+                    }
+                    else if (collided_portal_2 && c->teleported == 0) {
+                        resultant = RotateVector(VectorMinus(CenterOfBox(&rbpp->portal_2), c->gameObject.position), angleDiff);
+                        c->gameObject.position = VectorAdd(CenterOfBox(&rbpp->portal_1), resultant);
+                        c->gameObject.velocity = RotateVector(c->gameObject.velocity, angleDiff);
+                        c->teleported = 2;
+                    }
+                    else if (!(collided_portal_1 ||collided_portal_2) && c->teleported == 2) {
+                        c->teleported = 0;
+                    }
+                }
+            }
+
+        }
+
+    }*/
 }
 
 bool CheckAllButtons(void){
@@ -585,101 +762,63 @@ bool CheckAllButtons(void){
 
 void TriggerButtonEffects(ButtonObject* x) {
     //check what is the buttons effect and run accordingly
+    
     switch (x->button_effect)
     {
-    case Move_to_options:
-        isgamepaused = true;
-        Next_screen_name = Options;
-        isScreenTransiting = false;
-        break;
-    case Move_to_main_Menu:
-        isgamepaused = false;
-        Next_screen_name = Main_menu;
-        isScreenTransiting = true;
-        break;
-    case Move_to_Level_Select:
-        isgamepaused = false;
-        Next_screen_name = Level_Select;
-        isScreenTransiting = true;
-        break;
-    case Move_to_Level_1:
-        isgamepaused = false;
-        Next_screen_name = Level_1;
-        isScreenTransiting = true;
-        break;
-    case Move_to_Level_2:
-        isgamepaused = false;
-        Next_screen_name = Level_2;
-        isScreenTransiting = true;
-        break;
-    case Move_to_Level_3:
-        isgamepaused = false;
-        Next_screen_name = Level_3;
-        isScreenTransiting = true;
-        break;
-    case Move_to_Level_4:
-        isgamepaused = false;
-        Next_screen_name = Level_4;
-        isScreenTransiting = true;
-        break;
-    case Move_to_Level_5:
-        isgamepaused = false;
-        Next_screen_name = Level_5;
-        isScreenTransiting = true;
-        break;
-    case Move_to_Level_6:
-        isgamepaused = false;
-        Next_screen_name = Level_6;
-        isScreenTransiting = true;
-        break;
-    case Move_to_Level_7:
-        isgamepaused = false;
-        Next_screen_name = Level_7;
-        isScreenTransiting = true;
-        break;
-    case Move_to_Level_8:
-        isgamepaused = false;
-        Next_screen_name = Level_8;
-        isScreenTransiting = true;
-        break;
-    case Move_to_Level_9:
-        isgamepaused = false;
-        Next_screen_name = Level_9;
-        isScreenTransiting = true;
-        break;
-    case Move_to_Level_10:
-        isgamepaused = false;
-        Next_screen_name = Level_10;
-        isScreenTransiting = true;
-        break;
-    case Move_to_test_room:
-        isgamepaused = false;
-        Next_screen_name = Test_Room;
-        isScreenTransiting = true;
-        break;
-    case Move_to_test_Menu:
-        isgamepaused = false;
-        Next_screen_name = Test_Menu;
-        isScreenTransiting = true;
-        break;
+    
     case Pause_Game:
         isgamepaused = !isgamepaused;
+        break;
+    case Exit_game :
+        CP_Engine_Terminate();
         break;
     case Restart:
         //isScreenTransiting = true;
         restartingLevel = true;
         break;
     default:
+        for (int i = 0; i < Total_screen_number; i++) {
+            if (Screen_key_array[i].key == x->button_effect) {
+                isgamepaused = false;
+                Next_screen_name = Screen_key_array[i].value;
+                isScreenTransiting = true;
+                break;
+            }
+        }
         break;
     }
 }
 
+void Initialize_Screen_Keys(void) {
+    AddScreenKey(&key_count, Move_to_Level_1, Level_1, Screen_key_array);
+    AddScreenKey(&key_count, Move_to_Level_2, Level_2, Screen_key_array);
+    AddScreenKey(&key_count, Move_to_Level_3, Level_3, Screen_key_array);
+    AddScreenKey(&key_count, Move_to_Level_4, Level_4, Screen_key_array);
+    AddScreenKey(&key_count, Move_to_Level_5, Level_5, Screen_key_array);
+    AddScreenKey(&key_count, Move_to_Level_6, Level_6, Screen_key_array);
+    AddScreenKey(&key_count, Move_to_Level_7, Level_7, Screen_key_array);
+    AddScreenKey(&key_count, Move_to_Level_8, Level_8, Screen_key_array);
+    AddScreenKey(&key_count, Move_to_Level_9, Level_9, Screen_key_array);
+    AddScreenKey(&key_count, Move_to_Level_10, Level_10, Screen_key_array);
+    AddScreenKey(&key_count, Move_to_main_Menu, Main_menu, Screen_key_array);
+    AddScreenKey(&key_count, Move_to_options, Options, Screen_key_array);
+    AddScreenKey(&key_count, Move_to_credits, Credits_screen, Screen_key_array);
+    AddScreenKey(&key_count, Move_to_tutorial, Tutorial, Screen_key_array);
+    AddScreenKey(&key_count, Move_to_Level_Select, Level_Select, Screen_key_array);
+}
+
 void Initialize_Screens(void) {
-    //create overlay;
+    //create pause overlay;
     overlay_array[pause_overlay].ButtonObjectArrayLengthCounter = 0;
-    AddButton(&overlay_array[pause_overlay], CreateButtonObject(newVector2(700, 300), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_main_Menu, CP_Color_Create(255, 255, 255, 255), "Move to Main Menu", basebuttonbackground));
+    AddButton(&overlay_array[pause_overlay], CreateButtonObject(newVector2(700, 300), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_main_Menu, CP_Color_Create(255, 255, 255, 255), "Main Menu", basebuttonbackground));
     AddButton(&overlay_array[pause_overlay], CreateButtonObject(newVector2(900, 300), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Restart, CP_Color_Create(255, 255, 255, 255), "Restart", basebuttonbackground));
     AddButton(&overlay_array[pause_overlay], CreateButtonObject(newVector2(1100, 300), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_Level_Select, CP_Color_Create(255, 255, 255, 255), "Level Select", basebuttonbackground));
+
+    //create victory overlay;
+    overlay_array[victory_overlay].ButtonObjectArrayLengthCounter = 0;
+    AddButton(&overlay_array[victory_overlay], CreateButtonObject(newVector2(700, 300), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Restart, CP_Color_Create(255, 255, 255, 255), "Restart", basebuttonbackground));
+    AddButton(&overlay_array[victory_overlay], CreateButtonObject(newVector2(900, 300), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Next_Level, CP_Color_Create(255, 255, 255, 255), "Next Level", basebuttonbackground));
+    AddButton(&overlay_array[victory_overlay], CreateButtonObject(newVector2(1100, 300), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_Level_Select, CP_Color_Create(255, 255, 255, 255), "Level Select", basebuttonbackground));
 
     //create splash screen
     screen_array[Splash_screen].ButtonObjectArrayLengthCounter = 0;
@@ -688,9 +827,18 @@ void Initialize_Screens(void) {
 
     //Create Main Menu Screen
     screen_array[Main_menu].ButtonObjectArrayLengthCounter = 0;
-    AddButton(&screen_array[Main_menu], CreateButtonObject(newVector2(900, 500), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_Level_Select, CP_Color_Create(255, 255, 255, 255), "Level Select", basebuttonbackground));
+    AddButton(&screen_array[Main_menu], CreateButtonObject(newVector2(900, 350), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_Level_Select, CP_Color_Create(255, 255, 255, 255), "Level Select", basebuttonbackground));
+    AddButton(&screen_array[Main_menu], CreateButtonObject(newVector2(900, 500), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_tutorial, CP_Color_Create(255, 255, 255, 255), "How to play", basebuttonbackground));
+    AddButton(&screen_array[Main_menu], CreateButtonObject(newVector2(900, 650), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_credits, CP_Color_Create(255, 255, 255, 255), "Credit", basebuttonbackground));
+    AddButton(&screen_array[Main_menu], CreateButtonObject(newVector2(900, 800), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Exit_game, CP_Color_Create(255, 255, 255, 255), "Quit game", basebuttonbackground));
 
+    //Create Tutorial screen
+    AddButton(&screen_array[Tutorial], CreateButtonObject(newVector2(900, 800), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_main_Menu, CP_Color_Create(255, 255, 255, 255), "Main Menu", basebuttonbackground));
 
+    //Create Credits
+    AddButton(&screen_array[Credits_screen], CreateButtonObject(newVector2(900, 800), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_main_Menu, CP_Color_Create(255, 255, 255, 255), "Main Menu", basebuttonbackground));
+
+    //level select
     screen_array[Level_Select].ButtonObjectArrayLengthCounter = 0;
     AddButton(&screen_array[Level_Select], CreateButtonObject(newVector2(500, 70), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_Level_1, CP_Color_Create(255, 255, 255, 255), "Level 1", basebuttonbackground));
     AddButton(&screen_array[Level_Select], CreateButtonObject(newVector2(700, 70), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_Level_2, CP_Color_Create(255, 255, 255, 255), "Level 2", basebuttonbackground));
@@ -702,6 +850,7 @@ void Initialize_Screens(void) {
     AddButton(&screen_array[Level_Select], CreateButtonObject(newVector2(900, 300), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_Level_8, CP_Color_Create(255, 255, 255, 255), "Level 8", basebuttonbackground));
     AddButton(&screen_array[Level_Select], CreateButtonObject(newVector2(1100, 300), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_Level_9, CP_Color_Create(255, 255, 255, 255), "Level 9", basebuttonbackground));
     AddButton(&screen_array[Level_Select], CreateButtonObject(newVector2(1300, 300), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_Level_10, CP_Color_Create(255, 255, 255, 255), "Level 10", basebuttonbackground));
+    AddButton(&screen_array[Level_Select], CreateButtonObject(newVector2(900, 800), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_main_Menu, CP_Color_Create(255, 255, 255, 255), "Main Menu", basebuttonbackground));
 
 
     screen_array[Options].ButtonObjectArrayLengthCounter = 0;
@@ -726,12 +875,15 @@ void Initialize_Screens(void) {
 
     screen_array[Level_3].LineArrayLengthCounter = 0;
     screen_array[Level_3].CircleArrayLengthCounter = 0;
+    
     screen_array[Level_3].overlay_name = pause_overlay;
 
     screen_array[Level_4].LineArrayLengthCounter = 0;
     screen_array[Level_4].CircleArrayLengthCounter = 0;
     screen_array[Level_4].overlay_name = pause_overlay;
     screen_array[Level_4].BallSpawnerArray[0] = CreateBallSpawner(newVector2(700, 200), 100.0f, 100.0f, 120, 2.0f, true, 400, 15, Spawner);
+    AddCircleportalpair(&screen_array[Level_4], Createcircleportalpair(newVector2(500, 500), newVector2(1000, 500), CP_Color_Create(255, 255, 255, 255), NULL, 50, 500));
+    //AddRotatedboxportalpair(&screen_array[Level_4], Createrotatedboxportalpair(CreateBoxGameObject(newVector2(1000, 400), 50, 50, 0, 0, NULL), CreateBoxGameObject(newVector2(500, 400), 50, 50, 0, 135, NULL)));
     screen_array[Level_4].BallSpawnerArrayLengthCounter++;
 
     screen_array[Level_5].LineArrayLengthCounter = 0;

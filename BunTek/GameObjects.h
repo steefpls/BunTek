@@ -16,22 +16,22 @@
 
 
 // Create Object : Super Bounce Platforms
-BoxGameObject createSuperBouncePlatform(Vector2 position, float angle, float width, float height) {
-	BoxGameObject super_bounce; 
-	
+BoxGameObject createSuperBouncePlatform(Vector2 position, float angle, float width, float height, float bounce) {
+	BoxGameObject super_bounce;
+
 	// Setting 'Super-bounce' settings as a <game object> 
-	super_bounce.gameObject.position.x = position.x; 
-	super_bounce.gameObject.position.y = position.y; 
-	super_bounce.gameObject.angle = angle; 
-	super_bounce.gameObject.isActive = true; 
+	super_bounce.gameObject.position.x = position.x;
+	super_bounce.gameObject.position.y = position.y;
+	super_bounce.gameObject.angle = angle;
+	super_bounce.gameObject.isActive = true;
 	super_bounce.gameObject.color = COLOR_GREEN; // Color Code - Level 1 bounce 
-	super_bounce.gameObject.bounciness = BOUNCE_LV_1; 
+	super_bounce.gameObject.bounciness = bounce;
 
 	// Basic Dimensions of Super Bounce Platform
-	super_bounce.width = width; 
-	super_bounce.height = height; 
+	super_bounce.width = width;
+	super_bounce.height = height;
 
-	return super_bounce; 
+	return super_bounce;
 }
 
 // Create Object : No Draw Zone 

@@ -161,7 +161,7 @@ struct screen {
 //create button object for screen
 ButtonObject CreateButtonObject(Vector2 position, float width, float height,float bounciness, float angle, CP_Image image, CP_Color color, Button_effects effect, CP_Color textcolor, char* buttontext, ButtonbgInfo background) {
 	ButtonObject b;
-	b.boxGameObject = CreateBoxGameObject(position, width, height, bounciness, angle, image);
+	b.boxGameObject = CreateBoxGameObject(position, width, height, bounciness, angle, image,color);
 	b.boxGameObject.gameObject.color = color;
 	b.button_effect = effect;
 	b.TextColor = textcolor;

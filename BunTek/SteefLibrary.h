@@ -163,7 +163,7 @@ struct circleGameObject CreateCircleGameObject(Vector2 pos, Vector2 vel, float a
 	return c;
 }
 
-struct boxGameObject CreateBoxGameObject(Vector2 position, float width, float height,float bounciness, float angle, CP_Image image) {
+struct boxGameObject CreateBoxGameObject(Vector2 position, float width, float height,float bounciness, float angle, CP_Image image, CP_Color color) {
 	BoxGameObject b;
 	b.gameObject.isActive = true;
 	b.gameObject.position = position;
@@ -172,6 +172,7 @@ struct boxGameObject CreateBoxGameObject(Vector2 position, float width, float he
 	b.gameObject.angle = angle; 
 	b.gameObject.bounciness = bounciness;
 	b.image = image;
+	b.gameObject.color = color;
 	return b;
 }
 

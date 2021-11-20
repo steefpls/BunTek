@@ -654,6 +654,7 @@ void CalculateAllPhysics(void)
                             c->radius = c->teleportinfo.original_radius * (VectorMagnitude(resultant) / cpp->portal_1.radius);
                             //exited portal boundary
                             if (c->radius >= c->teleportinfo.original_radius) {
+                                c->radius = c->teleportinfo.original_radius;
                                 c->teleportinfo.teleportStatus = Not_teleporting;
                             }
                         }       
@@ -690,6 +691,7 @@ void CalculateAllPhysics(void)
                             c->radius = c->teleportinfo.original_radius * (VectorMagnitude(resultant) / cpp->portal_2.radius);
                             //exited portal boundary
                             if (c->radius >= c->teleportinfo.original_radius) {
+                                c->radius = c->teleportinfo.original_radius;
                                 c->teleportinfo.teleportStatus = Not_teleporting;
                             }
                         }

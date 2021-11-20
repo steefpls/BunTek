@@ -33,7 +33,8 @@ float* overlay_opacity = &Overlay_opacity;
 float TimeElapse = 0;
 
 //names of the screen
-typedef enum{
+typedef enum Screen_name {
+	No_screen,
 	Test_Menu,
 	Test_Room,
 	Splash_screen,
@@ -49,14 +50,25 @@ typedef enum{
 	Level_8,
 	Level_9,
 	Level_10,
+	Level_1_title,
+	Level_2_title,
+	Level_3_title,
+	Level_4_title,
+	Level_5_title,
+	Level_6_title,
+	Level_7_title,
+	Level_8_title,
+	Level_9_title,
+	Level_10_title,
 	Options,
 	Credits_screen,
 	Tutorial,
 	//V make sure this is last in the ENUM
 	Total_screen_number,
 } Screen_name;
+
 //names of the overlays
-typedef enum {
+typedef enum Overlay_name{
 	No_overlay,
 	pause_overlay,
 	victory_overlay,
@@ -65,7 +77,7 @@ typedef enum {
 	
 } Overlay_name;
 
-typedef enum {
+typedef enum Button_effects {
 	None,
 	Move_to_test_room,
 	Move_to_Level_Select,
@@ -103,6 +115,7 @@ struct buttonbgInfo {
 struct screen_keys {
 	Button_effects key;
 	Screen_name value;
+	Screen_name subvalue;
 };
 
 struct buttonObject {
@@ -250,7 +263,7 @@ void startupsequence(Screen_name* Current_screen_name, Screen_name* Next_screen_
 	switch (*Current_screen_name)
 	{
 	case Splash_screen:
-		if (Stopwatch(2.0f)) {
+		if (Stopwatch(3.0f)) {
 			*Next_screen_name = Main_menu;
 			*isScreenTransiting = true;
 		}
@@ -418,12 +431,20 @@ void AddButton(Screen* sc, ButtonObject b1) {
 
 }
 
+//add NodrawZone to screen
+void AddNoDrawZone(Screen* sc, BoxGameObject b1) {
+	sc->NoDrawZoneArray[sc->NoDrawZonesArrayLengthCounter] = b1;
+	sc->NoDrawZonesArrayLengthCounter++;
+
+}
+
 //add Screen keys
-void AddScreenKey(int* count, Button_effects key, Screen_name value, Screen_keys* Screen_key_array) {
+void AddScreenKey(int* count, Button_effects key, Screen_name value, Screen_name subvalue, Screen_keys* Screen_key_array) {
 	if (*count < Total_screen_number) {
 		Screen_keys sk;
 		sk.key = key;
 		sk.value = value;
+		sk.subvalue = subvalue;
 		Screen_key_array[*count] = sk;
 		(*count)++;
 	}

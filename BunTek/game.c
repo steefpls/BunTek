@@ -43,6 +43,7 @@ void Initialize_Screens(void);
 void Initialize_Sprites(void);
 void UpdateAllSpawners(void);
 void Initialize_Screen_Keys(void);
+void TitlecardTransition(void);
 
 
 //Initialize array
@@ -78,6 +79,8 @@ bool ButtonClicked = false;
 bool startup;
 
 bool restartingLevel = false;
+
+bool titlecard = false;
 
 //Sprites
 CP_Image TestDoge = NULL;
@@ -120,6 +123,9 @@ void game_update(void)
     }
     
     if (!isScreenTransiting && !isoverlayTransiting && !restartingLevel) {//not transitioning to new screen or overlay or restarting
+        if (titlecard) {
+            TitlecardTransition();
+        }
         if (current_screen->overlay_name != No_overlay) {
             if (CP_Input_KeyTriggered(KEY_ESCAPE))
             {
@@ -134,6 +140,7 @@ void game_update(void)
             }
             CalculateAllPhysics();
             UpdateAllSpawners();
+
         }
     }
     DrawAllShapes();
@@ -161,9 +168,9 @@ void AddLine(void) {
     if (CP_Input_MouseDown(MOUSE_BUTTON_1)) {
 
         colided = false;  // reset boolean. 
-
-        for (int i = 0; i < Current_screen.LineArrayLengthCounter; i++) {
-            BoxGameObject* x = &Current_screen.NoDrawZoneArray[i];
+        BoxGameObject* x;
+        for (int i = 0; i < Current_screen.NoDrawZonesArrayLengthCounter; i++) {
+            x = &Current_screen.NoDrawZoneArray[i];
 
             if (PointRectCol(MousePos, x) == true) { // if draw collides box , colided == true 
                 colided = true;
@@ -200,7 +207,18 @@ void AddLine(void) {
 
             // if colided == false. 
             if ((MousePos.x != MousePosPrev.x || (MousePos.y != MousePosPrev.y) && (colided == false))) {
-                Current_screen.LineArray[Current_screen.LineArrayLengthCounter] = CreateBoxGameObject(LineStartPos, LineLength, 4.0f, DrawnLineBounciness, atan2f(LineEndPos.y - LineStartPos.y, LineEndPos.x - LineStartPos.x) / (float)PI * 180, TestDoge,CP_Color_Create(255,255,255,255));
+                BoxGameObject templine = CreateBoxGameObject(LineStartPos, LineLength, 4.0f, DrawnLineBounciness, atan2f(LineEndPos.y - LineStartPos.y, LineEndPos.x - LineStartPos.x) / (float)PI * 180, TestDoge, CP_Color_Create(255, 255, 255, 255));
+                for (int i = 0; i < Current_screen.NoDrawZonesArrayLengthCounter; i++) {
+                    x = &Current_screen.NoDrawZoneArray[i];
+                    if (RectRectCol(&templine, x)) {
+                        colided = true;
+                        break;
+                    }
+                }
+                if (!colided) {
+                    Current_screen.LineArray[Current_screen.LineArrayLengthCounter] = templine;
+                }
+
 
                 // TODO: Delete lines if colide. (move to fast into the box - box detection didnt detect , so to solve this we delete the line. 
 
@@ -800,6 +818,11 @@ void TriggerButtonEffects(ButtonObject* x) {
                 isgamepaused = false;
                 Next_screen_name = Screen_key_array[i].value;
                 isScreenTransiting = true;
+                if (Screen_key_array[i].subvalue != No_screen) {
+                    titlecard = true;
+                    break;
+                }
+                titlecard = false;
                 break;
             }
         }
@@ -807,22 +830,38 @@ void TriggerButtonEffects(ButtonObject* x) {
     }
 }
 
+void TitlecardTransition(void) {
+    if (titlecard) {
+        if (Stopwatch(2.0f)) {
+            for (int i = 0; i < Total_screen_number; i++) {
+                if (Screen_key_array[i].value == Current_screen_name) {
+                    isgamepaused = false;
+                    Next_screen_name = Screen_key_array[i].subvalue;
+                    isScreenTransiting = true;
+                    break;
+                }
+            }
+
+        }
+    }
+}
+
 void Initialize_Screen_Keys(void) {
-    AddScreenKey(&key_count, Move_to_Level_1, Level_1, Screen_key_array);
-    AddScreenKey(&key_count, Move_to_Level_2, Level_2, Screen_key_array);
-    AddScreenKey(&key_count, Move_to_Level_3, Level_3, Screen_key_array);
-    AddScreenKey(&key_count, Move_to_Level_4, Level_4, Screen_key_array);
-    AddScreenKey(&key_count, Move_to_Level_5, Level_5, Screen_key_array);
-    AddScreenKey(&key_count, Move_to_Level_6, Level_6, Screen_key_array);
-    AddScreenKey(&key_count, Move_to_Level_7, Level_7, Screen_key_array);
-    AddScreenKey(&key_count, Move_to_Level_8, Level_8, Screen_key_array);
-    AddScreenKey(&key_count, Move_to_Level_9, Level_9, Screen_key_array);
-    AddScreenKey(&key_count, Move_to_Level_10, Level_10, Screen_key_array);
-    AddScreenKey(&key_count, Move_to_main_Menu, Main_menu, Screen_key_array);
-    AddScreenKey(&key_count, Move_to_options, Options, Screen_key_array);
-    AddScreenKey(&key_count, Move_to_credits, Credits_screen, Screen_key_array);
-    AddScreenKey(&key_count, Move_to_tutorial, Tutorial, Screen_key_array);
-    AddScreenKey(&key_count, Move_to_Level_Select, Level_Select, Screen_key_array);
+    AddScreenKey(&key_count, Move_to_Level_1, Level_1_title, Level_1, Screen_key_array);
+    AddScreenKey(&key_count, Move_to_Level_2, Level_2_title, Level_2, Screen_key_array);
+    AddScreenKey(&key_count, Move_to_Level_3, Level_3_title, Level_3, Screen_key_array);
+    AddScreenKey(&key_count, Move_to_Level_4, Level_4_title, Level_4, Screen_key_array);
+    AddScreenKey(&key_count, Move_to_Level_5, Level_5_title, Level_5, Screen_key_array);
+    AddScreenKey(&key_count, Move_to_Level_6, Level_6_title, Level_6, Screen_key_array);
+    AddScreenKey(&key_count, Move_to_Level_7, Level_7_title, Level_7, Screen_key_array);
+    AddScreenKey(&key_count, Move_to_Level_8, Level_8_title, Level_8, Screen_key_array);
+    AddScreenKey(&key_count, Move_to_Level_9, Level_9_title, Level_9, Screen_key_array);
+    AddScreenKey(&key_count, Move_to_Level_10, Level_10_title, Level_10, Screen_key_array);
+    AddScreenKey(&key_count, Move_to_main_Menu, Main_menu, No_screen, Screen_key_array);
+    AddScreenKey(&key_count, Move_to_options, Options, No_screen, Screen_key_array);
+    AddScreenKey(&key_count, Move_to_credits, Credits_screen, No_screen, Screen_key_array);
+    AddScreenKey(&key_count, Move_to_tutorial, Tutorial, No_screen, Screen_key_array);
+    AddScreenKey(&key_count, Move_to_Level_Select, Level_Select, No_screen, Screen_key_array);
 }
 
 void Initialize_Screens(void) {
@@ -837,6 +876,20 @@ void Initialize_Screens(void) {
     AddButton(&overlay_array[victory_overlay], CreateButtonObject(newVector2(700, 300), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Restart, CP_Color_Create(255, 255, 255, 255), "Restart", basebuttonbackground));
     AddButton(&overlay_array[victory_overlay], CreateButtonObject(newVector2(900, 300), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Next_Level, CP_Color_Create(255, 255, 255, 255), "Next Level", basebuttonbackground));
     AddButton(&overlay_array[victory_overlay], CreateButtonObject(newVector2(1100, 300), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_Level_Select, CP_Color_Create(255, 255, 255, 255), "Level Select", basebuttonbackground));
+
+
+    //titles
+    AddButton(&screen_array[Level_1_title], CreateButtonObject(newVector2(0 + CP_System_GetWindowWidth() / 2.0f - 1026.0f / 2.0f, 0 + CP_System_GetWindowHeight() / 2.0f - 249.0f / 2.0f), 1026, 249, 50, 0, TestDoge, CP_Color_Create(255, 255, 255, 200), None, CP_Color_Create(255, 255, 255, 255), "1", nobuttonbackground));
+    AddButton(&screen_array[Level_2_title], CreateButtonObject(newVector2(0 + CP_System_GetWindowWidth() / 2.0f - 1026.0f / 2.0f, 0 + CP_System_GetWindowHeight() / 2.0f - 249.0f / 2.0f), 1026, 249, 50, 0, TestDoge, CP_Color_Create(255, 255, 255, 200), None, CP_Color_Create(255, 255, 255, 255), "2", nobuttonbackground));
+    AddButton(&screen_array[Level_3_title], CreateButtonObject(newVector2(0 + CP_System_GetWindowWidth() / 2.0f - 1026.0f / 2.0f, 0 + CP_System_GetWindowHeight() / 2.0f - 249.0f / 2.0f), 1026, 249, 50, 0, TestDoge, CP_Color_Create(255, 255, 255, 200), None, CP_Color_Create(255, 255, 255, 255), "3", nobuttonbackground));
+    AddButton(&screen_array[Level_4_title], CreateButtonObject(newVector2(0 + CP_System_GetWindowWidth() / 2.0f - 1026.0f / 2.0f, 0 + CP_System_GetWindowHeight() / 2.0f - 249.0f / 2.0f), 1026, 249, 50, 0, TestDoge, CP_Color_Create(255, 255, 255, 200), None, CP_Color_Create(255, 255, 255, 255), "4", nobuttonbackground));
+    AddButton(&screen_array[Level_5_title], CreateButtonObject(newVector2(0 + CP_System_GetWindowWidth() / 2.0f - 1026.0f / 2.0f, 0 + CP_System_GetWindowHeight() / 2.0f - 249.0f / 2.0f), 1026, 249, 50, 0, TestDoge, CP_Color_Create(255, 255, 255, 200), None, CP_Color_Create(255, 255, 255, 255), "5", nobuttonbackground));
+    AddButton(&screen_array[Level_6_title], CreateButtonObject(newVector2(0 + CP_System_GetWindowWidth() / 2.0f - 1026.0f / 2.0f, 0 + CP_System_GetWindowHeight() / 2.0f - 249.0f / 2.0f), 1026, 249, 50, 0, TestDoge, CP_Color_Create(255, 255, 255, 200), None, CP_Color_Create(255, 255, 255, 255), "6", nobuttonbackground));
+    AddButton(&screen_array[Level_7_title], CreateButtonObject(newVector2(0 + CP_System_GetWindowWidth() / 2.0f - 1026.0f / 2.0f, 0 + CP_System_GetWindowHeight() / 2.0f - 249.0f / 2.0f), 1026, 249, 50, 0, TestDoge, CP_Color_Create(255, 255, 255, 200), None, CP_Color_Create(255, 255, 255, 255), "7", nobuttonbackground));
+    AddButton(&screen_array[Level_8_title], CreateButtonObject(newVector2(0 + CP_System_GetWindowWidth() / 2.0f - 1026.0f / 2.0f, 0 + CP_System_GetWindowHeight() / 2.0f - 249.0f / 2.0f), 1026, 249, 50, 0, TestDoge, CP_Color_Create(255, 255, 255, 200), None, CP_Color_Create(255, 255, 255, 255), "8", nobuttonbackground));
+    AddButton(&screen_array[Level_9_title], CreateButtonObject(newVector2(0 + CP_System_GetWindowWidth() / 2.0f - 1026.0f / 2.0f, 0 + CP_System_GetWindowHeight() / 2.0f - 249.0f / 2.0f), 1026, 249, 50, 0, TestDoge, CP_Color_Create(255, 255, 255, 200), None, CP_Color_Create(255, 255, 255, 255), "9", nobuttonbackground));
+    AddButton(&screen_array[Level_10_title], CreateButtonObject(newVector2(0 + CP_System_GetWindowWidth() / 2.0f - 1026.0f / 2.0f, 0 + CP_System_GetWindowHeight() / 2.0f - 249.0f / 2.0f), 1026, 249, 50, 0, TestDoge, CP_Color_Create(255, 255, 255, 200), None, CP_Color_Create(255, 255, 255, 255), "10", nobuttonbackground));
+
 
     //create splash screen
     screen_array[Splash_screen].ButtonObjectArrayLengthCounter = 0;
@@ -936,7 +989,7 @@ void Initialize_Screens(void) {
     screen_array[Level_5].LineArrayLengthCounter = 0;
     screen_array[Level_5].CircleArrayLengthCounter = 0;
     screen_array[Level_5].overlay_name = pause_overlay;
-    screen_array[Level_5].NoDrawZoneArray[0] = createNoDrawZone(newVector2(900, 350), 0, 400, 400);
+    AddNoDrawZone(&screen_array[Level_5], createNoDrawZone(newVector2(900, 350), 0, 400, 400));
     screen_array[Level_5].ScoringContainerArray[0] = createScoringContainer(newVector2(600, 350), 0, 100, 100, 30);
     screen_array[Level_5].ScoringContainerArray[1] = createScoringContainer(newVector2(1000, 800), 0, 100, 100, 30);
     screen_array[Level_5].ScoringContainerArray[2] = createScoringContainer(newVector2(1500, 200), 0, 100, 100, 25);
@@ -948,8 +1001,8 @@ void Initialize_Screens(void) {
     screen_array[Level_6].overlay_name = pause_overlay;
     screen_array[Level_6].BallSpawnerArray[0] = CreateBallSpawner(newVector2(100, 450), 100.0f, 100.0f, 0, 2.0f, true, 500, 30, Spawner);
     screen_array[Level_6].BallSpawnerArrayLengthCounter++;
-    screen_array[Level_6].NoDrawZoneArray[0] = createNoDrawZone(newVector2(350, 0), 0, 900, 1400);
-    screen_array[Level_6].NoDrawZoneArray[1] = createNoDrawZone(newVector2(0, 300), 0, 350, 1400);
+    AddNoDrawZone(&screen_array[Level_6], createNoDrawZone(newVector2(350, 0), 0, 900, 1400));
+    AddNoDrawZone(&screen_array[Level_6], createNoDrawZone(newVector2(0, 300), 0, 350, 1400));
     screen_array[Level_6].SuperBouncePlatformArray[1] = createSuperBouncePlatform(newVector2(1700, 500), 45, 250, 50, 1.65f);
     screen_array[Level_6].ScoringContainerArray[0] = createScoringContainer(newVector2(100, 100), 0, 100, 100, 50);
 
@@ -958,8 +1011,8 @@ void Initialize_Screens(void) {
     screen_array[Level_7].overlay_name = pause_overlay;
     screen_array[Level_7].BallSpawnerArray[0] = CreateBallSpawner(newVector2(975, 975), 100.0f, 100.0f, 270, 2.0f, true, 300, 45, Spawner);
     screen_array[Level_7].BallSpawnerArrayLengthCounter++;
-    screen_array[Level_7].NoDrawZoneArray[0] = createNoDrawZone(newVector2(0,50), 0, 1975, 650);
-    screen_array[Level_7].NoDrawZoneArray[1] = createNoDrawZone(newVector2(50, 0), 0, 1825, 50);
+    AddNoDrawZone(&screen_array[Level_7], createNoDrawZone(newVector2(0,50), 0, 1975, 650));
+    AddNoDrawZone(&screen_array[Level_7], createNoDrawZone(newVector2(50, 0), 0, 1825, 50));
     screen_array[Level_7].ScoringContainerArray[0] = createScoringContainer(newVector2(0, 0), 0, 50, 50, 50);
     screen_array[Level_7].ScoringContainerArray[1] = createScoringContainer(newVector2(1875, 0), 0, 50, 50, 50);
     screen_array[Level_7].SuperBouncePlatformArray[0] = createSuperBouncePlatform(newVector2(50, 800), 0, 50, 25, 1.65f);
@@ -975,7 +1028,7 @@ void Initialize_Screens(void) {
     screen_array[Level_8].BoxGameObjectArray[0] = CreateBoxGameObject(newVector2(500, 0), 25, 1200 , 1.0f, 0, NULL, CP_Color_Create(0, 0, 0, 255));
     screen_array[Level_8].BallSpawnerArray[0] = CreateBallSpawner(newVector2(50, 0), 50.0f, 50.0f, 45, 2.0f, true, 300, 45, Spawner);
     screen_array[Level_8].BallSpawnerArrayLengthCounter++; 
-    screen_array[Level_8].NoDrawZoneArray[0] = createNoDrawZone(newVector2(800, 0), 0,950 , 450);
+    AddNoDrawZone(&screen_array[Level_8], createNoDrawZone(newVector2(800, 0), 0,950 , 450));
     screen_array[Level_8].ScoringContainerArray[0] = createScoringContainer(newVector2(1000, 0), 0, 50, 50, 50);
     screen_array[Level_8].ScoringContainerArray[1] = createScoringContainer(newVector2(1500, 0), 0, 50, 50, 50);
     screen_array[Level_8].ScoringContainerArray[2] = createScoringContainer(newVector2(1500, 900), 0, 50, 50, 50);
@@ -1007,8 +1060,8 @@ void Initialize_Screens(void) {
     screen_array[Level_10].LineArrayLengthCounter = 0;
     screen_array[Level_10].CircleArrayLengthCounter = 0;
     screen_array[Level_10].overlay_name = pause_overlay;
-    screen_array[Level_10].NoDrawZoneArray[0] = createNoDrawZone(newVector2(1500, 0), 0, 450, 400);
-    screen_array[Level_10].NoDrawZoneArray[1] = createNoDrawZone(newVector2(1300, 0), 0, 200, 900);
+    AddNoDrawZone(&screen_array[Level_10], createNoDrawZone(newVector2(1500, 0), 0, 450, 400));
+    AddNoDrawZone(&screen_array[Level_10], createNoDrawZone(newVector2(1300, 0), 0, 200, 900));
     screen_array[Level_10].BallSpawnerArray[0] = CreateBallSpawner(newVector2(1850, 0), 50.0f, 50.0f, 90, 2.0f, true, 300, 15, Spawner);
     screen_array[Level_10].BallSpawnerArrayLengthCounter++;
     screen_array[Level_10].BallSpawnerArrayLengthCounter++;

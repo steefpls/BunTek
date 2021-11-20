@@ -207,7 +207,7 @@ bool screen_transition_from_black(float* transition_opacity) {
 }
 
 //transition Control
-void Screen_transition(bool* isScreenTransiting, bool* isoverlayActive, float* transition_opacity, Screen_name* Current_screen_name, Screen_name* Next_screen_name, Screen* current_screen, const Screen* screen_array, Screen* current_screen_overlay, const Screen* overlay_array) {
+void Screen_transition(bool* isScreenTransiting, bool* isoverlayActive, float* transition_opacity, Screen_name* Current_screen_name, Screen_name* Next_screen_name, Screen* current_screen, const Screen* screen_array, Overlay_name* current_overlay_name ,Screen* current_screen_overlay, const Screen* overlay_array) {
 	if (*isScreenTransiting) {//transitioning to new screen
 		if (*Current_screen_name != *Next_screen_name) {
 			if (screen_transition_to_black(transition_opacity)) {
@@ -216,8 +216,12 @@ void Screen_transition(bool* isScreenTransiting, bool* isoverlayActive, float* t
 				*isoverlayActive = false;
 				*overlay_bg_opacity = 0;
 				*overlay_opacity = 0;
+				*current_overlay_name = current_screen->overlay_name;
 				if (current_screen->overlay_name != No_overlay) {
 					*current_screen_overlay = overlay_array[current_screen->overlay_name];
+				}
+				else {
+					*current_screen_overlay = overlay_array[No_overlay];
 				}
 
 			}
@@ -231,12 +235,13 @@ void Screen_transition(bool* isScreenTransiting, bool* isoverlayActive, float* t
 }
 
 //restart transition Control
-void Restart_transition(bool* restartingLevel, bool* isoverlayActive, bool* isgamepaused, Screen_name* Current_screen_name, Screen* current_screen, const Screen* screen_array, Screen* current_screen_overlay, const Screen* overlay_array) {
+void Restart_transition(bool* restartingLevel, bool* isoverlayActive, bool* isgamepaused, Screen_name* Current_screen_name, Screen* current_screen, const Screen* screen_array, Overlay_name* current_overlay_name, Screen* current_screen_overlay, const Screen* overlay_array) {
 	if (*restartingLevel) {//restart level transitioning
 		if (*isoverlayActive == true) {
 			if (screen_transition_to_black(overlay_bg_opacity)) {
 				*isoverlayActive = false;//turn off overlay
 				*current_screen = screen_array[*Current_screen_name];//restart screen
+				*current_overlay_name = current_screen->overlay_name;
 				*current_screen_overlay = overlay_array[current_screen->overlay_name];//reset array
 			}
 		}
@@ -437,6 +442,7 @@ void AddNoDrawZone(Screen* sc, BoxGameObject b1) {
 	sc->NoDrawZonesArrayLengthCounter++;
 
 }
+
 
 //add Screen keys
 void AddScreenKey(int* count, Button_effects key, Screen_name value, Screen_name subvalue, Screen_keys* Screen_key_array) {

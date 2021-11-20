@@ -78,6 +78,14 @@ ScoringContainerObject createScoringContainer(Vector2 position, float angle, flo
 	return scoring_container; 
 }
 
+//add NodrawZone to screen
+void AddScoringContainer(Screen* sc, ScoringContainer s1) {
+	sc->ScoringContainerArray[sc->ScoringContainerArrayLengthCounter] = s1;
+	sc->ScoringContainerArrayLengthCounter++;
+
+}
+
+
 //// Converting 'int type' ballcount to 'char * str' type. - for printing in CP_Draw_text -> number on the container. 
 //const char* ballCountString(int ballcount) {
 //	char countString[100]; 

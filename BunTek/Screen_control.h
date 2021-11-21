@@ -492,6 +492,21 @@ Vector2 RemoveBall(Screen* sc, CircleGameObject c1) {
 	}
 	return (c1.gameObject.position);
 }
+
+void RemoveOOB(Screen* sc, CircleGameObject c1) {
+	if (c1.gameObject.position.x - c1.radius > CP_System_GetWindowWidth()) {
+		RemoveBall(sc, c1);
+	}
+	else if (c1.gameObject.position.x + c1.radius < 0) {
+		RemoveBall(sc, c1);
+	}
+	if (c1.gameObject.position.y - c1.radius > CP_System_GetWindowHeight()) {
+		RemoveBall(sc, c1);
+	}
+	else if (c1.gameObject.position.y + c1.radius < 0) {
+		RemoveBall(sc, c1);
+	}
+}
 /*
 void AddBallSpawner() {
 

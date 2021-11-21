@@ -896,24 +896,9 @@ void CirclePhys(CircleGameObject* c1) {
 
 	c1->gameObject.position.x += c1->gameObject.velocity.x * FrameTime;
 	c1->gameObject.position.y += c1->gameObject.velocity.y * FrameTime;
-
-	if (c1->gameObject.position.x + c1->radius > CP_System_GetWindowWidth() ) {
-		c1->gameObject.position.x = CP_System_GetWindowWidth() - c1->radius;
-		c1->gameObject.velocity.x *= -1 * c1->gameObject.bounciness;
-	}
-	else if (c1->gameObject.position.x - c1->radius < 0) {
-		c1->gameObject.position.x = 0+ c1->radius;
-		c1->gameObject.velocity.x *= -1 * c1->gameObject.bounciness;
-	}
-	if (c1->gameObject.position.y + c1->radius > CP_System_GetWindowHeight()) {
-		c1->gameObject.position.y = CP_System_GetWindowHeight() - c1->radius;
-		c1->gameObject.velocity.y *= -1 * c1->gameObject.bounciness;
-	}
-	else if (c1->gameObject.position.y - c1->radius < 0) {
-		c1->gameObject.position.y = 0 + c1->radius;
-		c1->gameObject.velocity.y *= -1 * c1->gameObject.bounciness;
-	}
 }
+
+
 
 // Returns the middle of the boxobject
 Vector2 CenterOfBox(BoxGameObject* b1) {

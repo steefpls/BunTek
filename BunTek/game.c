@@ -488,23 +488,15 @@ void CalculateAllPhysics(void)
     for (int i = 0; i < Current_screen.CircleArrayLengthCounter; i++)
     {
         CircleGameObject* c1 = &Current_screen.CircleGameObjectArray[i];
-        if (Current_screen.CircleGameObjectArray[i].radius == 0.0f) // TODO: SUB WITH CODE THAT DETECTS END OF ARRAY
-        {
-            //End of Array
-            break;
-        }
-        else if(c1->teleportinfo.teleportStatus == Not_teleporting)
+        
+        if(c1->teleportinfo.teleportStatus == Not_teleporting)
         {
             for (int o = i+1; o < Current_screen.CircleArrayLengthCounter; o++)
             {
                 CircleGameObject* c2 = &Current_screen.CircleGameObjectArray[o];
-                if (Current_screen.CircleGameObjectArray[o].radius == 0.0f) // TODO: SUB WITH CODE THAT DETECTS END OF ARRAY
-                {
-                    //End of Array
-                    break;
-                }
-                else if(c2->teleportinfo.teleportStatus == Not_teleporting)
-                {
+                
+                 if(c2->teleportinfo.teleportStatus == Not_teleporting)
+                 {
                     if (c1 == c2) 
                     {
                         continue;
@@ -517,8 +509,9 @@ void CalculateAllPhysics(void)
                             
                         }
                     }
-                }
+                 }
             }
+            RemoveOOB(&Current_screen, *c1);
         }
         
     }

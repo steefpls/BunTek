@@ -10,9 +10,9 @@
 #define Screen_keys struct screen_keys
 
 
-#define LerpDuration 6.0f
-#define OverlaypDuration 8.0f
-#define ButtonLerpDuration 12.0f
+#define LerpDuration 9.0f
+#define OverlaypDuration 14.0f
+#define ButtonLerpDuration 18.0f
 
 #define LineArrayLength 1000
 #define CircleGameObjectArrayLength 1000

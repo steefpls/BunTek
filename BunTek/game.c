@@ -922,30 +922,30 @@ void Initialize_Screen_Keys(void) {
 void Initialize_Screens(void) {
     //create pause overlay;
     overlay_array[pause_overlay].ButtonObjectArrayLengthCounter = 0;
-    AddButton(&overlay_array[pause_overlay], CreateButtonObject(newVector2(900, 100), 150, 150, 0, 0, pausepage, CP_Color_Create(0, 0, 0, 0), None, CP_Color_Create(255, 255, 255, 255), "Paused", nobuttonbackground));
-    AddButton(&overlay_array[pause_overlay], CreateButtonObject(newVector2(700, 300), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_main_Menu, CP_Color_Create(255, 255, 255, 255), "Main Menu", basebuttonbackground));
-    AddButton(&overlay_array[pause_overlay], CreateButtonObject(newVector2(900, 300), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Restart, CP_Color_Create(255, 255, 255, 255), "Restart", basebuttonbackground));
-    AddButton(&overlay_array[pause_overlay], CreateButtonObject(newVector2(1100, 300), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_Level_Select, CP_Color_Create(255, 255, 255, 255), "Level Select", basebuttonbackground));
+    AddButton(&overlay_array[pause_overlay], CreateButtonObject(newVector2(740, 100), 480, 270, 0, 0, pausepage, CP_Color_Create(0, 0, 0, 0), None, CP_Color_Create(255, 255, 255, 255), "Paused", nobuttonbackground));
+    AddButton(&overlay_array[pause_overlay], CreateButtonObject(newVector2(700, 500), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_main_Menu, CP_Color_Create(255, 255, 255, 255), "Main Menu", basebuttonbackground));
+    AddButton(&overlay_array[pause_overlay], CreateButtonObject(newVector2(900, 500), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Restart, CP_Color_Create(255, 255, 255, 255), "Restart", basebuttonbackground));
+    AddButton(&overlay_array[pause_overlay], CreateButtonObject(newVector2(1100, 500), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_Level_Select, CP_Color_Create(255, 255, 255, 255), "Level Select", basebuttonbackground));
 
     //create victory overlay;
     overlay_array[victory_overlay].ButtonObjectArrayLengthCounter = 0;
-    AddButton(&overlay_array[victory_overlay], CreateButtonObject(newVector2(900, 100), 150, 150, 0, 0, victorypage, CP_Color_Create(0, 0, 0, 0), None, CP_Color_Create(255, 255, 255, 255), "Victory", nobuttonbackground));
-    AddButton(&overlay_array[victory_overlay], CreateButtonObject(newVector2(700, 300), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Restart, CP_Color_Create(255, 255, 255, 255), "Restart", basebuttonbackground));
-    AddButton(&overlay_array[victory_overlay], CreateButtonObject(newVector2(900, 300), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Next_Level, CP_Color_Create(255, 255, 255, 255), "Next Level", basebuttonbackground));
-    AddButton(&overlay_array[victory_overlay], CreateButtonObject(newVector2(1100, 300), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_Level_Select, CP_Color_Create(255, 255, 255, 255), "Level Select", basebuttonbackground));
+    AddButton(&overlay_array[victory_overlay], CreateButtonObject(newVector2(740, 100), 480, 270, 0, 0, victorypage, CP_Color_Create(0, 0, 0, 0), None, CP_Color_Create(255, 255, 255, 255), "Victory", nobuttonbackground));
+    AddButton(&overlay_array[victory_overlay], CreateButtonObject(newVector2(700, 500), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Restart, CP_Color_Create(255, 255, 255, 255), "Restart", basebuttonbackground));
+    AddButton(&overlay_array[victory_overlay], CreateButtonObject(newVector2(900, 500), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Next_Level, CP_Color_Create(255, 255, 255, 255), "Next Level", basebuttonbackground));
+    AddButton(&overlay_array[victory_overlay], CreateButtonObject(newVector2(1100, 500), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_Level_Select, CP_Color_Create(255, 255, 255, 255), "Level Select", basebuttonbackground));
 
 
     //titles
-    AddButton(&screen_array[Level_1_title], CreateButtonObject(newVector2(0 + CP_System_GetWindowWidth() / 2.0f - 1026.0f / 2.0f, 0 + CP_System_GetWindowHeight() / 2.0f - 249.0f / 2.0f), 1026, 249, 50, 0, L1, CP_Color_Create(255, 255, 255, 200), None, CP_Color_Create(255, 255, 255, 255), "1", nobuttonbackground));
-    AddButton(&screen_array[Level_2_title], CreateButtonObject(newVector2(0 + CP_System_GetWindowWidth() / 2.0f - 1026.0f / 2.0f, 0 + CP_System_GetWindowHeight() / 2.0f - 249.0f / 2.0f), 1026, 249, 50, 0, L2, CP_Color_Create(255, 255, 255, 200), None, CP_Color_Create(255, 255, 255, 255), "2", nobuttonbackground));
-    AddButton(&screen_array[Level_3_title], CreateButtonObject(newVector2(0 + CP_System_GetWindowWidth() / 2.0f - 1026.0f / 2.0f, 0 + CP_System_GetWindowHeight() / 2.0f - 249.0f / 2.0f), 1026, 249, 50, 0, L3, CP_Color_Create(255, 255, 255, 200), None, CP_Color_Create(255, 255, 255, 255), "3", nobuttonbackground));
-    AddButton(&screen_array[Level_4_title], CreateButtonObject(newVector2(0 + CP_System_GetWindowWidth() / 2.0f - 1026.0f / 2.0f, 0 + CP_System_GetWindowHeight() / 2.0f - 249.0f / 2.0f), 1026, 249, 50, 0, L4, CP_Color_Create(255, 255, 255, 200), None, CP_Color_Create(255, 255, 255, 255), "4", nobuttonbackground));
-    AddButton(&screen_array[Level_5_title], CreateButtonObject(newVector2(0 + CP_System_GetWindowWidth() / 2.0f - 1026.0f / 2.0f, 0 + CP_System_GetWindowHeight() / 2.0f - 249.0f / 2.0f), 1026, 249, 50, 0, L5, CP_Color_Create(255, 255, 255, 200), None, CP_Color_Create(255, 255, 255, 255), "5", nobuttonbackground));
-    AddButton(&screen_array[Level_6_title], CreateButtonObject(newVector2(0 + CP_System_GetWindowWidth() / 2.0f - 1026.0f / 2.0f, 0 + CP_System_GetWindowHeight() / 2.0f - 249.0f / 2.0f), 1026, 249, 50, 0, L6, CP_Color_Create(255, 255, 255, 200), None, CP_Color_Create(255, 255, 255, 255), "6", nobuttonbackground));
-    AddButton(&screen_array[Level_7_title], CreateButtonObject(newVector2(0 + CP_System_GetWindowWidth() / 2.0f - 1026.0f / 2.0f, 0 + CP_System_GetWindowHeight() / 2.0f - 249.0f / 2.0f), 1026, 249, 50, 0, L7, CP_Color_Create(255, 255, 255, 200), None, CP_Color_Create(255, 255, 255, 255), "7", nobuttonbackground));
-    AddButton(&screen_array[Level_8_title], CreateButtonObject(newVector2(0 + CP_System_GetWindowWidth() / 2.0f - 1026.0f / 2.0f, 0 + CP_System_GetWindowHeight() / 2.0f - 249.0f / 2.0f), 1026, 249, 50, 0, L8, CP_Color_Create(255, 255, 255, 200), None, CP_Color_Create(255, 255, 255, 255), "8", nobuttonbackground));
-    AddButton(&screen_array[Level_9_title], CreateButtonObject(newVector2(0 + CP_System_GetWindowWidth() / 2.0f - 1026.0f / 2.0f, 0 + CP_System_GetWindowHeight() / 2.0f - 249.0f / 2.0f), 1026, 249, 50, 0, L9, CP_Color_Create(255, 255, 255, 200), None, CP_Color_Create(255, 255, 255, 255), "9", nobuttonbackground));
-    AddButton(&screen_array[Level_10_title], CreateButtonObject(newVector2(0 + CP_System_GetWindowWidth() / 2.0f - 1026.0f / 2.0f, 0 + CP_System_GetWindowHeight() / 2.0f - 249.0f / 2.0f), 1026, 249, 50, 0, L10, CP_Color_Create(255, 255, 255, 200), None, CP_Color_Create(255, 255, 255, 255), "10", nobuttonbackground));
+    AddButton(&screen_array[Level_1_title], CreateButtonObject(newVector2(0 + CP_System_GetWindowWidth() / 2.0f - 1920.0f / 2.0f, 0 + CP_System_GetWindowHeight() / 2.0f - 1080.0f / 2.0f), 1920, 1080, 50, 0, L1, CP_Color_Create(255, 255, 255, 200), None, CP_Color_Create(255, 255, 255, 255), "1", nobuttonbackground));
+    AddButton(&screen_array[Level_2_title], CreateButtonObject(newVector2(0 + CP_System_GetWindowWidth() / 2.0f - 1920.0f / 2.0f, 0 + CP_System_GetWindowHeight() / 2.0f - 1080.0f / 2.0f), 1920, 1080, 50, 0, L2, CP_Color_Create(255, 255, 255, 200), None, CP_Color_Create(255, 255, 255, 255), "2", nobuttonbackground));
+    AddButton(&screen_array[Level_3_title], CreateButtonObject(newVector2(0 + CP_System_GetWindowWidth() / 2.0f - 1920.0f / 2.0f, 0 + CP_System_GetWindowHeight() / 2.0f - 1080.0f / 2.0f), 1920, 1080, 50, 0, L3, CP_Color_Create(255, 255, 255, 200), None, CP_Color_Create(255, 255, 255, 255), "3", nobuttonbackground));
+    AddButton(&screen_array[Level_4_title], CreateButtonObject(newVector2(0 + CP_System_GetWindowWidth() / 2.0f - 1920.0f / 2.0f, 0 + CP_System_GetWindowHeight() / 2.0f - 1080.0f / 2.0f), 1920, 1080, 50, 0, L4, CP_Color_Create(255, 255, 255, 200), None, CP_Color_Create(255, 255, 255, 255), "4", nobuttonbackground));
+    AddButton(&screen_array[Level_5_title], CreateButtonObject(newVector2(0 + CP_System_GetWindowWidth() / 2.0f - 1920.0f / 2.0f, 0 + CP_System_GetWindowHeight() / 2.0f - 1080.0f / 2.0f), 1920, 1080, 50, 0, L5, CP_Color_Create(255, 255, 255, 200), None, CP_Color_Create(255, 255, 255, 255), "5", nobuttonbackground));
+    AddButton(&screen_array[Level_6_title], CreateButtonObject(newVector2(0 + CP_System_GetWindowWidth() / 2.0f - 1920.0f / 2.0f, 0 + CP_System_GetWindowHeight() / 2.0f - 1080.0f / 2.0f), 1920, 1080, 50, 0, L6, CP_Color_Create(255, 255, 255, 200), None, CP_Color_Create(255, 255, 255, 255), "6", nobuttonbackground));
+    AddButton(&screen_array[Level_7_title], CreateButtonObject(newVector2(0 + CP_System_GetWindowWidth() / 2.0f - 1920.0f / 2.0f, 0 + CP_System_GetWindowHeight() / 2.0f - 1080.0f / 2.0f), 1920, 1080, 50, 0, L7, CP_Color_Create(255, 255, 255, 200), None, CP_Color_Create(255, 255, 255, 255), "7", nobuttonbackground));
+    AddButton(&screen_array[Level_8_title], CreateButtonObject(newVector2(0 + CP_System_GetWindowWidth() / 2.0f - 1920.0f / 2.0f, 0 + CP_System_GetWindowHeight() / 2.0f - 1080.0f / 2.0f), 1920, 1080, 50, 0, L8, CP_Color_Create(255, 255, 255, 200), None, CP_Color_Create(255, 255, 255, 255), "8", nobuttonbackground));
+    AddButton(&screen_array[Level_9_title], CreateButtonObject(newVector2(0 + CP_System_GetWindowWidth() / 2.0f - 1920.0f / 2.0f, 0 + CP_System_GetWindowHeight() / 2.0f - 1080.0f / 2.0f), 1920, 1080, 50, 0, L9, CP_Color_Create(255, 255, 255, 200), None, CP_Color_Create(255, 255, 255, 255), "9", nobuttonbackground));
+    AddButton(&screen_array[Level_10_title], CreateButtonObject(newVector2(0 + CP_System_GetWindowWidth() / 2.0f - 1920.0f / 2.0f, 0 + CP_System_GetWindowHeight() / 2.0f - 1080.0f / 2.0f), 1920, 1080, 50, 0, L10, CP_Color_Create(255, 255, 255, 200), None, CP_Color_Create(255, 255, 255, 255), "10", nobuttonbackground));
 
 
     //create splash screen
@@ -955,7 +955,7 @@ void Initialize_Screens(void) {
 
     //Create Main Menu Screen
     screen_array[Main_menu].ButtonObjectArrayLengthCounter = 0;
-    AddButton(&screen_array[Main_menu], CreateButtonObject(newVector2(900, 150), 150, 75, 0, 0, mainpage, CP_Color_Create(0, 0, 0, 0), Move_to_credits , CP_Color_Create(255, 255, 255, 255), "", basebuttonbackground));
+    AddButton(&screen_array[Main_menu], CreateButtonObject(newVector2(740, 50), 480, 270, 0, 0, mainpage, CP_Color_Create(0, 0, 0, 0), None , CP_Color_Create(255, 255, 255, 255), "", nobuttonbackground));
     AddButton(&screen_array[Main_menu], CreateButtonObject(newVector2(900, 350), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_Level_Select, CP_Color_Create(255, 255, 255, 255), "Level Select", basebuttonbackground));
     AddButton(&screen_array[Main_menu], CreateButtonObject(newVector2(900, 500), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_tutorial, CP_Color_Create(255, 255, 255, 255), "How to play", basebuttonbackground));
     AddButton(&screen_array[Main_menu], CreateButtonObject(newVector2(900, 650), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_credits, CP_Color_Create(255, 255, 255, 255), "Credit", basebuttonbackground));

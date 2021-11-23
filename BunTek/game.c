@@ -45,7 +45,7 @@ void UpdateAllSpawners(void);
 void Initialize_Screen_Keys(void);
 void TitlecardTransition(void);
 void victorycontrol(void);
-
+void sound_control(Screen_name* current_sc_name);
 
 //Initialize array
 Screen screen_array[Total_screen_number];
@@ -59,6 +59,7 @@ Screen_name Start_Screen = Splash_screen;
 Screen_name Current_screen_name;
 Screen_name Next_screen_name;
 Overlay_name Current_overlay_name;
+Screen_name* current_screen_name = &Current_screen_name; 
 
 //struct screen being displayed and calculated
 Screen Current_screen;
@@ -86,6 +87,13 @@ bool titlecard = false;
 
 bool victory = false;
 
+bool soundplaying = false; 
+bool soundstopped = false; 
+bool gameplaying = false; 
+bool gamestopped = false; 
+bool backtomenu = false; 
+
+
 //Sprites
 CP_Image TestDoge = NULL;
 CP_Image L1 = NULL;
@@ -103,9 +111,14 @@ CP_Image pausepage = NULL;
 CP_Image victorypage = NULL;
 CP_Image DigipenLogo = NULL;
 CP_Image Spawner = NULL;
+CP_Image tutorialpage = NULL; 
+CP_Image creditspage = NULL;
 ButtonbgInfo basebuttonbackground;
 ButtonbgInfo nobuttonbackground;
 
+// Sounds 
+#define MainMenuBGM	CP_Sound_Load("./Assets/Main_menu.wav")
+#define LevelBGM CP_Sound_Load("./Assets/Level_BGM.wav")
 
 
 void game_init(void)
@@ -131,7 +144,8 @@ void game_init(void)
 }
 
 void game_update(void)
-{
+{   
+    
     CP_Graphics_ClearBackground(CP_Color_Create(50, 50, 50, 255));
     MousePos = newVector2(CP_Input_GetMouseX(), CP_Input_GetMouseY());
     
@@ -178,6 +192,9 @@ void game_update(void)
 
     // Profiling info and frameRate testing
     if (debug) draw_framerate();
+
+    // Sound Control
+    sound_control(current_screen_name);
 }
 
 void AddLine(void) {
@@ -460,8 +477,23 @@ void DrawAllShapes(void)
 
         }
     }
-               
     
+    // Draw Tutorial Elements
+    for (int i = 0; i < TutorialObjectArrayLength; i++)
+    {
+        TutorialScreenObject* x = &Current_screen.TutorialObjectArray[i];
+        if (x->boxGameObject.width == 0 || x->boxGameObject.height == 0) {
+
+        }
+        else
+        {   
+            CP_Graphics_DrawRectAdvanced(x->boxGameObject.gameObject.position.x, x->boxGameObject.gameObject.position.y, x->boxGameObject.width, x->boxGameObject.height, x->boxGameObject.gameObject.angle, 1);
+            CP_Settings_Fill(x->TextColor);
+            CP_Settings_TextAlignment(CP_TEXT_ALIGN_H_LEFT, CP_TEXT_ALIGN_V_TOP);
+            CP_Settings_TextSize(40);
+            CP_Font_DrawTextBox(x->TutorialBoxText, x->boxGameObject.gameObject.position.x, x->boxGameObject.gameObject.position.y + x->boxGameObject.height / 2, x->boxGameObject.width);
+        }
+    }
 
     /*
     for (int i = 0; i < Current_screen.RotatedboxportalpairArrayLengthCounter; i++) {
@@ -963,10 +995,14 @@ void Initialize_Screens(void) {
 
     //Create Tutorial screen
     AddButton(&screen_array[Tutorial], CreateButtonObject(newVector2(900, 800), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_main_Menu, CP_Color_Create(255, 255, 255, 255), "Main Menu", basebuttonbackground));
-
+    // TODO 
+    AddButton(&screen_array[Tutorial], CreateButtonObject(newVector2(740, 50), 480, 270, 0, 0, mainpage, CP_Color_Create(0, 0, 0, 0), None, CP_Color_Create(255, 255, 255, 255), "", nobuttonbackground));
+    AddTutorialBox(&screen_array[Tutorial], CreateTutorialObject(newVector2(200, 200), 600, 100, CP_Color_Create(0, 0, 0, 0), CP_Color_Create(255, 255, 255, 255), "How to play? \n Just click anywhere on the screen.")); 
+    //AddTutorialBox(&screen_array[Tutorial], CreateTutorialObject(newVector2(200, 400), 800, 100, CP_Color_Create(0, 0, 0, 0), CP_Color_Create(255, 255, 255, 255), "All you need is your left mouse click button."));
+  
     //Create Credits
     AddButton(&screen_array[Credits_screen], CreateButtonObject(newVector2(900, 800), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_main_Menu, CP_Color_Create(255, 255, 255, 255), "Main Menu", basebuttonbackground));
-
+    AddButton(&screen_array[Credits_screen], CreateButtonObject(newVector2(740, 50), 480, 270, 0, 0, mainpage, CP_Color_Create(0, 0, 0, 0), None, CP_Color_Create(255, 255, 255, 255), "", nobuttonbackground));
     //level select
     screen_array[Level_Select].ButtonObjectArrayLengthCounter = 0;
     AddButton(&screen_array[Level_Select], CreateButtonObject(newVector2(500, 70), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_Level_1, CP_Color_Create(255, 255, 255, 255), "Level 1", basebuttonbackground));
@@ -1174,6 +1210,10 @@ void Initialize_Sprites(void) {
     pausepage = CP_Image_Load("./Assets/Pause.png");
     victorypage = CP_Image_Load("./Assets/Victory.png");
     DigipenLogo = CP_Image_Load("./Assets/DigiPen_WHITE.png");
+    // TODO : 'How to Play' heading + 'Credits' heading
+    //tutorialpage = CP_Image_Load("./Assets/"); 
+    //creditspage = CP_Image_Load("./Assets/");
+
     //initialize base button background
     basebuttonbackground.border = CP_Image_Load("./Assets/Buttons/ButtonDeactivated.png");
     basebuttonbackground.borderalpha = 255;
@@ -1218,6 +1258,55 @@ void UpdateAllSpawners(void)
         }
     }
     
+}
+
+// Notes : Screen_name Current_screen_name =
+// How do i toggle music based on level? 
+void sound_control(Screen_name* current_sc_name) {
+    
+    switch (*current_sc_name) {
+    case Main_menu:
+    case Level_Select: 
+        if (gameplaying == true) {
+            StopMusic(); 
+            soundplaying = false; 
+            gameplaying = false; 
+        }
+        if (gameplaying == false && soundplaying == false) {
+            PlayMusic(MainMenuBGM); 
+            soundplaying = true; 
+        }
+
+        soundstopped = false; 
+        break; 
+
+    case Level_1:
+    case Level_2:
+    case Level_3:
+    case Level_4:
+    case Level_5:
+    case Level_6:
+    case Level_7:
+    case Level_8:
+    case Level_9:
+    case Level_10:
+        if (soundstopped == false) {
+            StopMusic();
+            soundstopped = true;
+            soundplaying = false;
+        }
+
+        if (soundplaying == false) {
+            PlayMusic(LevelBGM);
+            soundplaying = true;
+            gameplaying = true; 
+        }
+        break;
+    }
+    
+
+     
+
 }
 
 void game_exit(void)

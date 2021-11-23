@@ -8,7 +8,7 @@
 #define ButtonbgInfo struct buttonbgInfo
 
 #define Screen_keys struct screen_keys
-
+#define TutorialScreenObject struct tutorialobject
 
 #define LerpDuration 9.0f
 #define OverlaypDuration 14.0f
@@ -20,6 +20,7 @@
 #define ButtonObjectArrayLength 50
 #define TextLimit 100
 #define SpawnerGameObjectArrayLength 1000
+#define TutorialObjectArrayLength 10
 #define PortalArrayLength 10
 
 float Overlay_bg_opacity = 0;
@@ -126,6 +127,12 @@ struct buttonObject {
 	ButtonbgInfo buttonbgInfo;
 };
 
+struct tutorialobject {
+	BoxGameObject boxGameObject; 
+	CP_Color TextColor; 
+	char TutorialBoxText[TextLimit];
+};
+
 struct screen {
 	
 	//Array for all collidable circles
@@ -168,8 +175,18 @@ struct screen {
 	int BallSpawnerArrayLengthCounter;
 	BallSpawner BallSpawnerArray[SpawnerGameObjectArrayLength];
 	
+	int TutorialObjectArrayLengthCounter; 
+	TutorialScreenObject TutorialObjectArray[TutorialObjectArrayLength]; 
+
 };
 
+TutorialScreenObject CreateTutorialObject(Vector2 position, float width, float height, CP_Color textboxcolor, CP_Color textcolor, char * tutorialtext) {
+	TutorialScreenObject t;
+	t.boxGameObject = CreateBoxGameObject(position, width, height, 0.0f, 0, NULL, textboxcolor); 
+	t.TextColor = textcolor; 
+	strcpy_s(t.TutorialBoxText, TextLimit, tutorialtext); 
+	return t; 
+}
 
 //create button object for screen
 ButtonObject CreateButtonObject(Vector2 position, float width, float height,float bounciness, float angle, CP_Image image, CP_Color color, Button_effects effect, CP_Color textcolor, char* buttontext, ButtonbgInfo background) {
@@ -474,6 +491,10 @@ void AddCircleportalpair(Screen* sc, Circleportalpair cpp1) {
 	sc->CircleportalpairArrayLengthCounter++;
 }
 
+void AddTutorialBox(Screen* sc, TutorialScreenObject tso1) {
+	sc->TutorialObjectArray[sc->TutorialObjectArrayLengthCounter] = tso1;
+	sc->TutorialObjectArrayLengthCounter++; 
+}
 /*
 void AddRotatedboxportalpair(Screen* sc, Rotatedboxportalpair rbpp) {
 	sc->RotatedboxportalpairArray[sc->RotatedboxportalpairArrayLengthCounter] = rbpp;

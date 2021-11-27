@@ -21,6 +21,7 @@
 #define TextLimit 100
 #define SpawnerGameObjectArrayLength 1000
 #define TutorialObjectArrayLength 10
+#define VolumeObjectArrayLength 10
 #define PortalArrayLength 10
 
 float Overlay_bg_opacity = 0;
@@ -101,6 +102,10 @@ typedef enum Button_effects {
 	Pause_Game,
 	Restart,
 	Exit_game,
+	Increase_Volume_BGM, 
+	Decrease_Volume_BGM,
+	Increase_Volume_SFX, 
+	Decrease_Volume_SFX, 
 } Button_effects;
 
 struct buttonbgInfo {
@@ -132,6 +137,14 @@ struct tutorialobject {
 	CP_Color TextColor; 
 	char TutorialBoxText[TextLimit];
 };
+
+typedef struct volumeobject {
+	BoxGameObject boxGameObject;
+	Vector2 vector;
+	bool lit;
+} volumeObject;
+
+typedef volumeObject volume[2];
 
 struct screen {
 	
@@ -178,6 +191,9 @@ struct screen {
 	int TutorialObjectArrayLengthCounter; 
 	TutorialScreenObject TutorialObjectArray[TutorialObjectArrayLength]; 
 
+	// Array of Volume Components 
+	int VolumeObjectArrayLengthCounter; 
+	VolumeObject VolumeObjectArray[VolumeObjectArrayLength];
 };
 
 TutorialScreenObject CreateTutorialObject(Vector2 position, float width, float height, CP_Color textboxcolor, CP_Color textcolor, char * tutorialtext) {
@@ -188,7 +204,13 @@ TutorialScreenObject CreateTutorialObject(Vector2 position, float width, float h
 	return t; 
 }
 
-//create button object for screen
+VolumeObject CreateVolumeObject(Vector2 position, float width, float height, CP_Color color, bool litbool) {
+	VolumeObject v; 
+	v.boxGameObject = CreateBoxGameObject(position, width, height, 0, 0, NULL, color); 
+	v.lit = litbool;
+	return v; 
+}
+
 ButtonObject CreateButtonObject(Vector2 position, float width, float height,float bounciness, float angle, CP_Image image, CP_Color color, Button_effects effect, CP_Color textcolor, char* buttontext, ButtonbgInfo background) {
 	ButtonObject b;
 	b.boxGameObject = CreateBoxGameObject(position, width, height, bounciness, angle, image,color);

@@ -45,7 +45,10 @@ void UpdateAllSpawners(void);
 void Initialize_Screen_Keys(void);
 void TitlecardTransition(void);
 void victorycontrol(void);
-void sound_control(Screen_name* current_sc_name);
+void bgm_control(Screen_name* current_sc_name);
+void play_ballbounce_sfx();
+void AddVolumeMeter();
+void InitializeVolumeControl(); 
 
 //Initialize array
 Screen screen_array[Total_screen_number];
@@ -87,11 +90,8 @@ bool titlecard = false;
 
 bool victory = false;
 
-bool soundplaying = false; 
-bool soundstopped = false; 
-bool gameplaying = false; 
-bool gamestopped = false; 
-bool backtomenu = false; 
+// Volume Control 
+
 
 
 //Sprites
@@ -113,17 +113,19 @@ CP_Image DigipenLogo = NULL;
 CP_Image Spawner = NULL;
 CP_Image tutorialpage = NULL; 
 CP_Image creditspage = NULL;
+CP_Image addvolume = NULL; 
+CP_Image decvolume = NULL; 
+CP_Image volumepage = NULL;
+CP_Image bgm = NULL;
+CP_Image sfx = NULL;
 ButtonbgInfo basebuttonbackground;
 ButtonbgInfo nobuttonbackground;
-
-// Sounds 
-#define MainMenuBGM	CP_Sound_Load("./Assets/Main_menu.wav")
-#define LevelBGM CP_Sound_Load("./Assets/Level_BGM.wav")
-
+ButtonbgInfo incvolbuttonbackground; 
+ButtonbgInfo decvolbuttonbackground;
 
 void game_init(void)
 {
-    
+    CP_System_ShowConsole(); 
     Initialize_Sprites();
     CP_Font_Set(CP_Font_GetDefault());
 
@@ -145,7 +147,6 @@ void game_init(void)
 
 void game_update(void)
 {   
-    
     CP_Graphics_ClearBackground(CP_Color_Create(50, 50, 50, 255));
     MousePos = newVector2(CP_Input_GetMouseX(), CP_Input_GetMouseY());
     
@@ -185,7 +186,9 @@ void game_update(void)
     }
 
     // Testing 
-    
+    if (CP_Input_KeyTriggered(KEY_A)) {
+        play_ballbounce_sfx(); 
+    }
     
 
 
@@ -194,7 +197,7 @@ void game_update(void)
     if (debug) draw_framerate();
 
     // Sound Control
-    sound_control(current_screen_name);
+    bgm_control(current_screen_name);
 }
 
 void AddLine(void) {
@@ -388,6 +391,17 @@ void DrawAllShapes(void)
     {
         BoxGameObject* x = &Current_screen.SuperBouncePlatformArray[i];
 
+        // Volume Options flow
+        if (Current_screen_name == Options) {
+            if (x->width == 0 || x->height == 0) {
+
+            }
+            else {
+                CP_Settings_Fill(x->gameObject.color);
+                CP_Settings_NoStroke();
+                CP_Graphics_DrawRectAdvanced(x->gameObject.position.x, x->gameObject.position.y, x->width, x->height, x->gameObject.angle, 1);
+            }
+        }
         // Invalid Object - if there is no width & height (the object drawn won't be seen)
         if (x->width == 0 || x->height == 0) {
 
@@ -405,7 +419,6 @@ void DrawAllShapes(void)
     {
         BoxGameObject* x = &Current_screen.BoxGameObjectArray[i];
        
-
         // Invalid Object - if there is no width & height (the object drawn won't be seen)
         if (x->width == 0 || x->height == 0) {
 
@@ -495,6 +508,93 @@ void DrawAllShapes(void)
         }
     }
 
+    // Volume Boxes
+    for (int i = 0; i < VolumeObjectArrayLength; i++)
+    {
+        VolumeObject* x = &Current_screen.VolumeObjectArray[i];
+        if (x->boxGameObject.width == 0 || x->boxGameObject.height == 0) {
+
+        }
+        else
+        {
+            if (x->lit == true) {
+                CP_Settings_Fill(COLOR_PASTEL_GREEN);
+                CP_Settings_Stroke(COLOR_WHITE);
+                CP_Graphics_DrawRectAdvanced(x->boxGameObject.gameObject.position.x, x->boxGameObject.gameObject.position.y, x->boxGameObject.width, x->boxGameObject.height, x->boxGameObject.gameObject.angle, 1);
+            }
+            else 
+            {
+                CP_Settings_Fill(COLOR_GREY);
+                CP_Settings_Stroke(COLOR_WHITE);
+                CP_Graphics_DrawRectAdvanced(x->boxGameObject.gameObject.position.x, x->boxGameObject.gameObject.position.y, x->boxGameObject.width, x->boxGameObject.height, x->boxGameObject.gameObject.angle, 1);
+
+            }
+            
+          // 1. Scan Array - Check Status
+          // [Logic for BGM] - array index 0 to 4. 
+          // Iterate through array to find which cells are litted - include in count. 
+          //int volume_BGM_active = 0;
+          //int volume_SFX_active = 0;
+          //int counter_BGM_cells = 0;    // account for how many cells it have read. 
+          //  // This loop iterates through element 0 - 4
+          //  for (int j = 0; j < 4; j++) {
+          //      if (x->lit == true && counter_BGM_cells != 5) {
+          //          volume_BGM_active++; 
+          //          
+          //      }
+          //      counter_BGM_cells++;        // increase everytime it reads a volume cell object. 
+          //  }
+
+          //  counter_BGM_cells = 0;          // reset for use (info on sfx meter)
+
+            // This loop iterates through element 5 - 9 
+            //for (int k = 0; k < 4; k++) {
+            //    if (x->lit == true && counter_BGM_cells != 5) {
+            //        volume_SFX_active++; 
+            //        CP_Settings_Fill(COLOR_PASTEL_GREEN);
+            //        CP_Settings_Stroke(COLOR_WHITE); 
+            //        CP_Graphics_DrawRectAdvanced(x->boxGameObject.gameObject.position.x, x->boxGameObject.gameObject.position.y, x->boxGameObject.width, x->boxGameObject.height, x->boxGameObject.gameObject.angle, 1);
+            //    }
+            //    else
+            //    {
+            //        CP_Settings_Fill(COLOR_WHITE); 
+            //        CP_Graphics_DrawRectAdvanced(x->boxGameObject.gameObject.position.x, x->boxGameObject.gameObject.position.y, x->boxGameObject.width, x->boxGameObject.height, x->boxGameObject.gameObject.angle, 1);
+            //    }
+            //    counter_BGM_cells++;        // increase everytime it reads a volume cell object.
+            //}
+            
+            //int volume_BGM_not_active = 5 - volume_BGM_active; 
+            //int volume_SFX_not_active = 5 - volume_SFX_active;
+            //// 2. Print Visuals 
+            //// Loop to print 'active' cell (1 cell rep 1 level of volume)
+            //for (int j = 0; j < volume_BGM_active; j++) {
+            //    CP_Settings_Fill(COLOR_PASTEL_GREEN);  // Pastel Green (show level of volume)
+            //    CP_Graphics_DrawRectAdvanced(x->boxGameObject.gameObject.position.x, x->boxGameObject.gameObject.position.y, x->boxGameObject.width, x->boxGameObject.height, x->boxGameObject.gameObject.angle, 1);
+            //}
+
+            //for (int k = 0; k < volume_BGM_not_active; k++) {
+            //    CP_Settings_Fill(x->boxGameObject.gameObject.color); 
+            //    CP_Graphics_DrawRectAdvanced(x->boxGameObject.gameObject.position.x, x->boxGameObject.gameObject.position.y, x->boxGameObject.width, x->boxGameObject.height, x->boxGameObject.gameObject.angle, 1);
+            //}
+
+            //for (int l = 0; l < volume_SFX_active; l++) {
+            //    CP_Settings_Fill(CP_Color_Create(181, 218, 157, 0));  // Pastel Green (show level of volume)
+            //    CP_Graphics_DrawRectAdvanced(x->boxGameObject.gameObject.position.x, x->boxGameObject.gameObject.position.y, x->boxGameObject.width, x->boxGameObject.height, x->boxGameObject.gameObject.angle, 1);
+            //}
+
+            //for (int m = 0; m < volume_SFX_not_active; m++) {
+            //    CP_Settings_Fill(COLOR_WHITE);
+            //    CP_Graphics_DrawRectAdvanced(x->boxGameObject.gameObject.position.x, x->boxGameObject.gameObject.position.y, x->boxGameObject.width, x->boxGameObject.height, x->boxGameObject.gameObject.angle, 1);
+            //}
+            
+
+            // Normal Print
+         /*   CP_Settings_Fill(x->boxGameObject.gameObject.color);
+            CP_Settings_NoStroke();
+            CP_Graphics_DrawRectAdvanced(x->boxGameObject.gameObject.position.x, x->boxGameObject.gameObject.position.y, x->boxGameObject.width, x->boxGameObject.height, x->boxGameObject.gameObject.angle, 1);*/
+        }
+    }
+    
     /*
     for (int i = 0; i < Current_screen.RotatedboxportalpairArrayLengthCounter; i++) {
         Rotatedboxportalpair* rbpp = &Current_screen.RotatedboxportalpairArray[i];
@@ -550,7 +650,8 @@ void CalculateAllPhysics(void)
                     {
                         if (CircleCol(c1, c2, true))  //If circle collides with cicle
                         {
-                            //PlayPitchedSoundEffect(BallBounce, 0.1f); //  Audio : ball bouncing off other balls 
+                            play_ballbounce_sfx(); 
+                            
                             
                         }
                     }
@@ -577,7 +678,7 @@ void CalculateAllPhysics(void)
                 }
                 else {
                     if (CircleRectCol(c1, b1, true)) {
-                        //PlayPitchedSoundEffect(BallBounce, 0.1f); //  Audio : ball bouncing off other balls 
+                        play_ballbounce_sfx(); 
                     }
                 }
             }
@@ -601,7 +702,7 @@ void CalculateAllPhysics(void)
                 }
                 else {
                     if (CircleRectCol(c1, b1, true)) {
-                        //PlayPitchedSoundEffect(BallBounce, 0.1f); //  Audio : ball bouncing off other balls 
+                        play_ballbounce_sfx(); 
                     }
                 }
             }
@@ -625,7 +726,7 @@ void CalculateAllPhysics(void)
                 }
                 else {
                     if (CircleRectCol(c1, b1, true)) {
-                        //PlayPitchedSoundEffect(BallBounce, 0.1f); //  Audio : ball bouncing off other balls 
+                        play_ballbounce_sfx(); 
                     }
                 }
             }
@@ -841,6 +942,17 @@ bool CheckAllButtons(void){
 void TriggerButtonEffects(ButtonObject* x) {
     //check what is the buttons effect and run accordingly
     
+    
+    /*int volume_BGM_active = 0;*/
+   /* int volume_SFX_active = 0;*/
+
+    bool vol_added; 
+    bool vol_decreased;
+    bool once = false;
+
+    int index_to_delete_from_right = 0;
+    int bars_lit_counter = 0;
+
     switch (x->button_effect)
     {
     
@@ -854,6 +966,178 @@ void TriggerButtonEffects(ButtonObject* x) {
         //isScreenTransiting = true;
         restartingLevel = true;
         break;
+    case Increase_Volume_BGM:
+
+        // Visual Feedback (add bar)
+        vol_added = false;
+        bars_lit_counter = 0;       
+
+        for (int i = 0; i < 5; i++)
+        {
+            VolumeObject* v = &Current_screen.VolumeObjectArray[i];
+
+            if (v->lit == false)
+            {
+                if (vol_added == false && i < 5) {
+                    v->lit = true; 
+                    vol_added = true; 
+                }
+            }
+
+        }
+
+        // Effects on sound (add volume by 1 fold) - if not full
+        //                  (do not do anything)   - if full
+
+        // Check how many bars are lit. 
+        for (int check = 0; check < 5; check++)
+        {
+            //printf("%d\n", check);
+            VolumeObject* v = &Current_screen.VolumeObjectArray[check];
+
+            if (v->lit == true) // based on the first cell?
+            {
+                bars_lit_counter++;
+                //printf("bar lit counter increased. final value %d!\n", bars_lit_counter);
+            }
+        }
+
+        if (bars_lit_counter == 0) {
+            break; 
+        }
+
+        SetMusicVolume(0.2f * (float) (bars_lit_counter - 1)); // re-adjust based on the number of bars lit
+        printf("Music set to level %d\n", bars_lit_counter - 1);
+        
+
+        break; 
+    case Decrease_Volume_BGM :
+
+        vol_decreased = false;
+        index_to_delete_from_right = 0;
+        bars_lit_counter = 0;
+
+        // Algorithm to check how many bars lit up
+        for (int check = 0; check < 5; check++) 
+        {
+            //printf("%d\n", check);
+            VolumeObject* v = &Current_screen.VolumeObjectArray[check];
+
+            if (v->lit == true) // based on the first cell?
+            {
+                bars_lit_counter++; 
+                //printf("bar lit counter increased. final value %d!\n", bars_lit_counter);
+            }
+        }
+        
+        if (once == false) {
+            //printf("Number of Lit Bars: %d\n", bars_lit_counter);
+            once = true; 
+        }
+
+        index_to_delete_from_right = bars_lit_counter - 1;  // bars_lit_counter = how many elements. (must account for which index to delete so -1)
+
+        for (int i = 0; i < 5; i++)
+        {
+            VolumeObject* v = &Current_screen.VolumeObjectArray[i];
+
+            //printf("%d\n", i);
+
+            if (v->lit == true)
+            {
+                (v + index_to_delete_from_right)->lit = false;
+                printf("Deleted Element %d\n", i + index_to_delete_from_right);
+                index_to_delete_from_right--;
+            }
+
+        }
+        
+        SetMusicVolume(0.2f * (float) (bars_lit_counter - 1)); // re-adjust based on the number of bars lit
+        printf("Music set to level %d\n", bars_lit_counter - 1); // for debugging
+        break; 
+    case Increase_Volume_SFX :
+
+        // Check how many bars are lit. 
+        for (int check = 0; check < 5; check++)
+        {
+            //printf("%d\n", check);
+            VolumeObject* v = &Current_screen.VolumeObjectArray[check];
+
+            if (v->lit == true) // based on the first cell?
+            {
+                bars_lit_counter++;
+                //printf("bar lit counter increased. final value %d!\n", bars_lit_counter);
+            }
+        }
+
+        SetSFXVolume(0.2f * (float)(bars_lit_counter - 1)); // re-adjust based on the number of bars lit
+        play_ballbounce_sfx(); // sample for users
+        printf("Music set to level %d\n", bars_lit_counter - 1); // for debugging
+
+        vol_added = false;
+
+        for (int j = 5; j < 10; j++)
+        {
+            VolumeObject* v = &Current_screen.VolumeObjectArray[j];
+
+            if (v->lit == false)
+            {
+                if (vol_added == false && (j >= 5 && j <= 9)) {
+                    v->lit = true;
+                    vol_added = true;
+                }
+            }
+
+        }
+        break;
+
+    case Decrease_Volume_SFX :
+
+        vol_decreased = false;
+        bars_lit_counter = 0;
+        index_to_delete_from_right = 0;
+
+        // Algorithm to check how many bars lit up
+        for (int check = 5; check < 10; check++)
+        {
+            //printf("%d\n", check);
+            VolumeObject* v = &Current_screen.VolumeObjectArray[check];
+
+            if (v->lit == true) // based on the first cell?
+            {
+                bars_lit_counter++;
+                printf("bar lit counter increased. final value %d!\n", bars_lit_counter);
+            }
+        }
+
+        if (once == false) {
+            //printf("Number of Lit Bars: %d\n", bars_lit_counter);
+            once = true;
+        }
+
+        index_to_delete_from_right = bars_lit_counter - 1;  // bars_lit_counter = how many elements. (must account for which index to delete so -1)
+
+        for (int j = 5; j < 10; j++)
+        {
+            VolumeObject* v = &Current_screen.VolumeObjectArray[j];
+
+            if (v->lit == true)
+            {
+                if (vol_decreased == false) {
+                    (v + index_to_delete_from_right)->lit = false;
+                    vol_decreased = true;
+                }
+            }
+
+        }
+
+        SetSFXVolume(0.2f * (float)(bars_lit_counter - 1)); // re-adjust based on the number of bars lit
+        play_ballbounce_sfx(); // sample for users
+        printf("Music set to level %d\n", bars_lit_counter - 1); // for debugging
+
+        break; 
+        
+       
     default:
         for (int i = 0; i < key_count; i++) {
             if (Screen_key_array[i].key == x->button_effect) {
@@ -1018,9 +1302,22 @@ void Initialize_Screens(void) {
     AddButton(&screen_array[Level_Select], CreateButtonObject(newVector2(1300, 300), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_Level_10, CP_Color_Create(255, 255, 255, 255), "Level 10", basebuttonbackground));
     AddButton(&screen_array[Level_Select], CreateButtonObject(newVector2(900, 800), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_main_Menu, CP_Color_Create(255, 255, 255, 255), "Main Menu", basebuttonbackground));
 
-
+    // Volume Control
     screen_array[Options].ButtonObjectArrayLengthCounter = 0;
+    AddButton(&screen_array[Options], CreateButtonObject(newVector2(900, 150), 200, 80, 0, 0, volumepage, CP_Color_Create(0, 0, 0, 0), None, CP_Color_Create(255, 255, 255, 255), " ", nobuttonbackground));
     AddButton(&screen_array[Options], CreateButtonObject(newVector2(900, 800), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_main_Menu, CP_Color_Create(255, 255, 255, 255), "Main Menu", basebuttonbackground));
+    InitializeVolumeControl(); 
+
+    // Volume Buttons 
+    // [Main Volume]
+    AddButton(&screen_array[Options], CreateButtonObject(newVector2(450, 300), 120, 60, 0, 0, bgm, CP_Color_Create(0, 0, 0, 0), None, CP_Color_Create(255, 255, 255, 255), " ", nobuttonbackground));
+    AddButton(&screen_array[Options], CreateButtonObject(newVector2(650, 300), 50, 50, 0, 0, addvolume, CP_Color_Create(0, 0, 0, 0), Increase_Volume_BGM, CP_Color_Create(0, 0, 0, 0), " ", incvolbuttonbackground));
+    AddButton(&screen_array[Options], CreateButtonObject(newVector2(1300, 310), 50, 25, 0, 0, decvolume, CP_Color_Create(0, 0, 0, 0), Decrease_Volume_BGM, CP_Color_Create(0, 0, 0, 0), " ", decvolbuttonbackground));
+
+    // [SFX]
+    AddButton(&screen_array[Options], CreateButtonObject(newVector2(450, 600), 120, 60, 0, 0, sfx, CP_Color_Create(0, 0, 0, 0), None, CP_Color_Create(255, 255, 255, 255), " ", nobuttonbackground));
+    AddButton(&screen_array[Options], CreateButtonObject(newVector2(650, 600), 50, 50, 0, 0, addvolume, CP_Color_Create(0, 0, 0, 0), Increase_Volume_SFX, CP_Color_Create(0, 0, 0, 0), " ", incvolbuttonbackground));
+    AddButton(&screen_array[Options], CreateButtonObject(newVector2(1300, 610), 50, 25, 0, 0, decvolume, CP_Color_Create(0, 0, 0, 0), Decrease_Volume_SFX, CP_Color_Create(0, 0, 0, 0), " ", decvolbuttonbackground));
 
     
 
@@ -1197,20 +1494,23 @@ void Initialize_Screens(void) {
 
 void Initialize_Sprites(void) {
     TestDoge = CP_Image_Load("./Sprites/MahLe.jpg");
-    L1 = CP_Image_Load("./Assets/Level1.png");
-    L2 = CP_Image_Load("./Assets/Level2.png");
-    L3 = CP_Image_Load("./Assets/Level3.png");
-    L4 = CP_Image_Load("./Assets/Level4.png");
-    L5 = CP_Image_Load("./Assets/Level5.png");
-    L6 = CP_Image_Load("./Assets/Level6.png");
-    L7 = CP_Image_Load("./Assets/Level7.png");
-    L8 = CP_Image_Load("./Assets/Level8.png");
-    L9 = CP_Image_Load("./Assets/Level9.png");
-    L10 = CP_Image_Load("./Assets/Level10.png");
-    mainpage = CP_Image_Load("./Assets/Main.png");
-    pausepage = CP_Image_Load("./Assets/Pause.png");
-    victorypage = CP_Image_Load("./Assets/Victory.png");
-    DigipenLogo = CP_Image_Load("./Assets/DigiPen_WHITE.png");
+    L1 = CP_Image_Load("./Assets/Art/Level1.png");
+    L2 = CP_Image_Load("./Assets/Art/Level2.png");
+    L3 = CP_Image_Load("./Assets/Art/Level3.png");
+    L4 = CP_Image_Load("./Assets/Art/Level4.png");
+    L5 = CP_Image_Load("./Assets/Art/Level5.png");
+    L6 = CP_Image_Load("./Assets/Art/Level6.png");
+    L7 = CP_Image_Load("./Assets/Art/Level7.png");
+    L8 = CP_Image_Load("./Assets/Art/Level8.png");
+    L9 = CP_Image_Load("./Assets/Art/Level9.png");
+    L10 = CP_Image_Load("./Assets/Art/Level10.png");
+    mainpage = CP_Image_Load("./Assets/Art/Main.png");
+    pausepage = CP_Image_Load("./Assets/Art/Pause.png");
+    victorypage = CP_Image_Load("./Assets/Art/Victory.png");
+    DigipenLogo = CP_Image_Load("./Assets/Art/DigiPen_WHITE.png"); 
+    volumepage = CP_Image_Load("./Assets/Art/volume_title.png");
+    bgm = CP_Image_Load("./Assets/Art/BGM.png");
+    sfx = CP_Image_Load("./Assets/Art/sfx.png");
     // TODO : 'How to Play' heading + 'Credits' heading
     //tutorialpage = CP_Image_Load("./Assets/"); 
     //creditspage = CP_Image_Load("./Assets/");
@@ -1223,8 +1523,23 @@ void Initialize_Sprites(void) {
     basebuttonbackground.clickedbg = CP_Image_Load("./Assets/Buttons/ButtonDown.png");
     basebuttonbackground.clickedalpha = 0;
 
+    // Initialize increase volume button
+    incvolbuttonbackground.border = CP_Image_Load("./Assets/Buttons/Add_Volume.png"); 
+    incvolbuttonbackground.borderalpha = 255; 
+    incvolbuttonbackground.hoverbg = NULL; 
+    incvolbuttonbackground.hoveralpha = 0;
+    incvolbuttonbackground.clickedbg = NULL; 
+    incvolbuttonbackground.clickedalpha = 0;
+
+    // Initialize decrease volume button 
+    decvolbuttonbackground.border = CP_Image_Load("./Assets/Buttons/Dec_Volume.png");
+    decvolbuttonbackground.borderalpha = 255;
+    decvolbuttonbackground.hoverbg = NULL;
+    decvolbuttonbackground.hoveralpha = 0;
+    decvolbuttonbackground.clickedbg = NULL;
+    decvolbuttonbackground.clickedalpha = 0;
     //initialise background for spawner
-    Spawner = CP_Image_Load("./Assets/Spawner.png");
+    Spawner = CP_Image_Load("./Assets/Art/Spawner.png");
 }
 
 void UpdateAllSpawners(void)
@@ -1261,53 +1576,76 @@ void UpdateAllSpawners(void)
     
 }
 
-// Notes : Screen_name Current_screen_name =
-// How do i toggle music based on level? 
-void sound_control(Screen_name* current_sc_name) {
+void AddVolumeMeter(Vector2 position) {
+    float rect_posx = position.x;
+    float rect_posy = position.y;
+
+    float width = 50; 
+    float height = 50; 
+
+    CP_Graphics_DrawRect(position.x, position.y, width, height);
     
-    switch (*current_sc_name) {
-    case Main_menu:
-    case Level_Select: 
-        if (gameplaying == true) {
-            StopMusic(); 
-            soundplaying = false; 
-            gameplaying = false; 
-        }
-        if (gameplaying == false && soundplaying == false) {
-            PlayMusic(MainMenuBGM); 
-            soundplaying = true; 
-        }
 
-        soundstopped = false; 
-        break; 
-
-    case Level_1:
-    case Level_2:
-    case Level_3:
-    case Level_4:
-    case Level_5:
-    case Level_6:
-    case Level_7:
-    case Level_8:
-    case Level_9:
-    case Level_10:
-        if (soundstopped == false) {
-            StopMusic();
-            soundstopped = true;
-            soundplaying = false;
-        }
-
-        if (soundplaying == false) {
-            PlayMusic(LevelBGM);
-            soundplaying = true;
-            gameplaying = true; 
-        }
-        break;
+    // Draw 4 other rects (5 rectangles in total)
+    for (int i = 0; i < 4; i++) {
+        rect_posx += 50; 
+        rect_posy += 50;
+        CP_Graphics_DrawRect(rect_posx, rect_posy, width, height); 
     }
+}
+
+void InitializeVolumeControl() {
+
+
     
+    // Volume Meter -  BGM 
+    
+    // 2 meters of 5 elements. - total array of 10 elements to be accessed
+    // [BGM] - Elements 0 - 4, [SFX] - Elements 5 - 9
+    // [BGM] - 1 row, [SFX] - 1 row
+    // 2 rows of volume meter to initialize
+    for (int i = 0; i < 2; i++) {
+        // 5 cols / cells of the volume meter to initalize
+        for (int j = 0; j < 5; j++) {
 
-     
+            if (i == 0) {
+                float rect_distance_from_1st = (float)j * 100; // consecutively initialize boxes side by side. 
+                screen_array[Options].VolumeObjectArray[j] = CreateVolumeObject(newVector2(750 + rect_distance_from_1st, 300), 100, 50, CP_Color_Create(0,0,0,0), true);
+               /* screen_array[Options].VolumeObjectArray[j] = CreateVolumeObject(newVector2(750 + rect_distance_from_1st, 300), 100, 50, COLOR_PASTEL_GREEN, true);*/
+            }
 
+            
+            if (i == 1) {
+                float rect_distance_from_1st = (float)j * 100; // consecutively initialize boxes side by side. 
+                screen_array[Options].VolumeObjectArray[5 + j] = CreateVolumeObject(newVector2(750 + rect_distance_from_1st, 600), 100, 50, CP_Color_Create(0, 0, 0, 0), true);
+                //screen_array[Options].VolumeObjectArray[j] = CreateVolumeObject(newVector2(750 + rect_distance_from_1st, 300), 100, 50, COLOR_PASTEL_GREEN, true);
+            }
+         
+        }
+    }
+
+
+
+
+
+
+
+
+    //for (int i = 0; i < 5; i++) {
+    //    float rect_distance_from_1st = (float)i * 100; // consecutively initialize boxes side by side. 
+    //    screen_array[Options].VolumeObjectArray[i] = CreateVolumeObject(newVector2(750 + rect_distance_from_1st, 300), 100, 50, COLOR_WHITE, true);
+    //    //screen_array[Options].BoxGameObjectArray[i] = CreateBoxGameObject(newVector2(750 + rect_distance_from_1st, 300), 100, 50, 0, 0, NULL, COLOR_WHITE);
+    //    //printf("printed %d", i);
+    //}
+
+    // Volume Meter - SFX
+    // (using index 5 - 9) to store status of meter for [SFX Volume] (total of 5 elements)
+    //for (int j = 0; j < 5; j++) {
+    //    float rect_distance_from_1st = (float)j * 100; // consecutively initialize boxes side by side. 
+    //    screen_array[Options].VolumeObjectArray[5 + j] = CreateVolumeObject(newVector2(750 + rect_distance_from_1st, 500), 100, 50, COLOR_WHITE , true);
+    //    //screen_array[Options].BoxGameObjectArray[5 + j] = CreateBoxGameObject(newVector2(750 + rect_distance_from_1st, 500), 100, 50, 0, 0, NULL, COLOR_WHITE);
+    //    //printf("printed %d", j);
+    //}
 }
 
 void game_exit(void)

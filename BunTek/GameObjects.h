@@ -9,6 +9,11 @@
 #define COLOR_GREEN CP_Color_Create(0,255,0,255) 
 #define COLOR_RED CP_Color_Create(255,0,0,80)
 #define COLOR_WHITE CP_Color_Create(255,255,255,255)
+#define COLOR_BLACK CP_Color_Create(0, 0, 0, 255)
+#define COLOR_GREY CP_Color_Create(128, 128, 128 , 255)
+#define COLOR_PASTEL_GREEN CP_Color_Create(181, 218, 157, 255)
+#define COLOR_PASTEL_PINK CP_Color_Create(235, 167, 167, 255)
+
 #define TEXT_COLOR CP_Color_Create(0,0,0,255)
 
 #define ScoringContainer struct scoringContainer

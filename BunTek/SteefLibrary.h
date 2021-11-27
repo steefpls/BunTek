@@ -8,6 +8,7 @@
 #define BoxGameObject struct boxGameObject
 #define BallSpawner struct ballSpawner
 #define ScoringContainerObject struct scoringContainer
+#define VolumeObject struct volumeobject
 #define Circleportalpair struct circleportalpair
 #define Rotatedboxportalpair struct rotatedboxportalpair
 #define TeleportInfo struct teleportInfo

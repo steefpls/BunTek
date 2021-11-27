@@ -2,13 +2,23 @@
 #include "cprocessing.h"
 
 // Store the sounds file location
-#define BallBounce CP_Sound_Load("./Assets/Ball_Bounce_trimmed.wav")
-#define GameOverSound CP_Sound_Load("./Assets/mixkit-arcade-retro-game-over-213.wav")
+#define BallBounce CP_Sound_Load("./Assets/Audio/Rubber_Ball.wav")
+#define GameOverSound CP_Sound_Load("./Assets/Audio/mixkit-arcade-retro-game-over-213.wav")
+#define MainMenuBGM	CP_Sound_Load("./Assets/Audio/Main_menu.wav")
+#define LevelBGM CP_Sound_Load("./Assets/Audio/Level_BGM.wav")
+
 
 //Global Variables
 float GlobalVolume = 1;
 float SFXVolume = 1;
 float MusicVolume = 1;
+
+// Transition Control
+bool soundplaying = false;
+bool soundstopped = false;
+bool gameplaying = false;
+bool gamestopped = false;
+bool backtomenu = false;
 
 
 // Playing sound effect with the correctly set volume
@@ -76,4 +86,58 @@ void SetMusicVolume(float vol) {
 void SetGlobalVolume(float vol) {
 	SetSFXVolume(vol);
 	SetMusicVolume(vol);
+}
+
+
+// Notes : Screen_name Current_screen_name =
+// How do i toggle music based on level? 
+void bgm_control(Screen_name* current_sc_name) {
+
+    switch (*current_sc_name) {
+    case Main_menu:
+    case Level_Select:
+        if (gameplaying == true) {
+            StopMusic();
+            soundplaying = false;
+            gameplaying = false;
+        }
+        if (gameplaying == false && soundplaying == false) {
+            PlayMusic(MainMenuBGM);
+            soundplaying = true;
+        }
+
+        soundstopped = false;
+        break;
+
+    case Level_1:
+    case Level_2:
+    case Level_3:
+    case Level_4:
+    case Level_5:
+    case Level_6:
+    case Level_7:
+    case Level_8:
+    case Level_9:
+    case Level_10:
+        if (soundstopped == false) {
+            StopMusic();
+            soundstopped = true;
+            soundplaying = false;
+        }
+
+        if (soundplaying == false) {
+            PlayMusic(LevelBGM);
+            soundplaying = true;
+            gameplaying = true;
+        }
+        break;
+    }
+
+
+
+
+}
+
+void play_ballbounce_sfx() {
+    PlayPitchedSoundEffect(BallBounce, 0.1f); //  Audio : ball bouncing off other balls 
 }

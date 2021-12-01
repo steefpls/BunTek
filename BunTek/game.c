@@ -125,7 +125,7 @@ ButtonbgInfo decvolbuttonbackground;
 
 void game_init(void)
 {
-    CP_System_ShowConsole(); 
+     
     Initialize_Sprites();
     CP_Font_Set(CP_Font_GetDefault());
 
@@ -1052,7 +1052,13 @@ void TriggerButtonEffects(ButtonObject* x) {
 
         }
         
-        SetMusicVolume(0.2f * (float) (bars_lit_counter - 1)); // re-adjust based on the number of bars lit
+        if (bars_lit_counter != 0) {
+            SetMusicVolume(0.2f * (float)(bars_lit_counter - 1)); // re-adjust based on the number of bars lit
+        }
+        else {
+            SetMusicVolume(0.0f);
+        }
+        
         printf("Music set to level %d\n", bars_lit_counter - 1); // for debugging
         break; 
     case Increase_Volume_SFX :
@@ -1131,7 +1137,9 @@ void TriggerButtonEffects(ButtonObject* x) {
 
         }
 
-        SetSFXVolume(0.2f * (float)(bars_lit_counter - 1)); // re-adjust based on the number of bars lit
+        if (bars_lit_counter != 0) {
+            SetSFXVolume(0.2f * (float)(bars_lit_counter - 1)); // re-adjust based on the number of bars lit
+        }
         play_ballbounce_sfx(); // sample for users
         printf("Music set to level %d\n", bars_lit_counter - 1); // for debugging
 

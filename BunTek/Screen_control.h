@@ -8,7 +8,6 @@
 #define ButtonbgInfo struct buttonbgInfo
 
 #define Screen_keys struct screen_keys
-#define TutorialScreenObject struct tutorialobject
 
 #define LerpDuration 9.0f
 #define OverlaypDuration 14.0f
@@ -20,7 +19,6 @@
 #define ButtonObjectArrayLength 50
 #define TextLimit 100
 #define SpawnerGameObjectArrayLength 1000
-#define TutorialObjectArrayLength 10
 #define VolumeObjectArrayLength 10
 #define PortalArrayLength 10
 
@@ -37,9 +35,8 @@ float TimeElapse = 0;
 //names of the screen
 typedef enum Screen_name {
 	No_screen,
-	Test_Menu,
-	Test_Room,
 	Splash_screen,
+	Splash_Logo,
 	Main_menu,
 	Level_Select,
 	Level_1,
@@ -64,6 +61,8 @@ typedef enum Screen_name {
 	Level_10_title,
 	Options,
 	Credits_screen,
+	Credits_screen2,
+	Credits_screen3,
 	Tutorial,
 	//V make sure this is last in the ENUM
 	Total_screen_number,
@@ -81,7 +80,6 @@ typedef enum Overlay_name{
 
 typedef enum Button_effects {
 	None,
-	Move_to_test_room,
 	Move_to_Level_Select,
 	Move_to_Level_1,
 	Move_to_Level_2,
@@ -93,10 +91,11 @@ typedef enum Button_effects {
 	Move_to_Level_8,
 	Move_to_Level_9,
 	Move_to_Level_10,
-	Move_to_test_Menu,
 	Move_to_main_Menu,
 	Move_to_options,
 	Move_to_credits,
+	Move_to_credits2,
+	Move_to_credits3,
 	Move_to_tutorial,
 	Next_Level,
 	Pause_Game,
@@ -130,12 +129,6 @@ struct buttonObject {
 	CP_Color TextColor;
 	char buttontext[TextLimit];
 	ButtonbgInfo buttonbgInfo;
-};
-
-struct tutorialobject {
-	BoxGameObject boxGameObject; 
-	CP_Color TextColor; 
-	char TutorialBoxText[TextLimit];
 };
 
 typedef struct volumeobject {
@@ -188,21 +181,12 @@ struct screen {
 	int BallSpawnerArrayLengthCounter;
 	BallSpawner BallSpawnerArray[SpawnerGameObjectArrayLength];
 	
-	int TutorialObjectArrayLengthCounter; 
-	TutorialScreenObject TutorialObjectArray[TutorialObjectArrayLength]; 
-
 	// Array of Volume Components 
 	int VolumeObjectArrayLengthCounter; 
 	VolumeObject VolumeObjectArray[VolumeObjectArrayLength];
 };
 
-TutorialScreenObject CreateTutorialObject(Vector2 position, float width, float height, CP_Color textboxcolor, CP_Color textcolor, char * tutorialtext) {
-	TutorialScreenObject t;
-	t.boxGameObject = CreateBoxGameObject(position, width, height, 0.0f, 0, NULL, textboxcolor); 
-	t.TextColor = textcolor; 
-	strcpy_s(t.TutorialBoxText, TextLimit, tutorialtext); 
-	return t; 
-}
+
 
 VolumeObject CreateVolumeObject(Vector2 position, float width, float height, CP_Color color, bool litbool) {
 	VolumeObject v; 
@@ -307,6 +291,12 @@ void startupsequence(Screen_name* Current_screen_name, Screen_name* Next_screen_
 	switch (*Current_screen_name)
 	{
 	case Splash_screen:
+		if (Stopwatch(3.0f)) {
+			*Next_screen_name = Splash_Logo;
+			*isScreenTransiting = true;
+		}
+		break;
+	case Splash_Logo:
 		if (Stopwatch(3.0f)) {
 			*Next_screen_name = Main_menu;
 			*isScreenTransiting = true;
@@ -513,10 +503,6 @@ void AddCircleportalpair(Screen* sc, Circleportalpair cpp1) {
 	sc->CircleportalpairArrayLengthCounter++;
 }
 
-void AddTutorialBox(Screen* sc, TutorialScreenObject tso1) {
-	sc->TutorialObjectArray[sc->TutorialObjectArrayLengthCounter] = tso1;
-	sc->TutorialObjectArrayLengthCounter++; 
-}
 /*
 void AddRotatedboxportalpair(Screen* sc, Rotatedboxportalpair rbpp) {
 	sc->RotatedboxportalpairArray[sc->RotatedboxportalpairArrayLengthCounter] = rbpp;

@@ -95,7 +95,6 @@ bool victory = false;
 
 
 //Sprites
-CP_Image TestDoge = NULL;
 CP_Image L1 = NULL;
 CP_Image L2 = NULL;
 CP_Image L3 = NULL;
@@ -110,9 +109,12 @@ CP_Image mainpage = NULL;
 CP_Image pausepage = NULL;
 CP_Image victorypage = NULL;
 CP_Image DigipenLogo = NULL;
+CP_Image GameLogo = NULL;
+CP_Image HowToPlay = NULL;
+CP_Image Credit1 = NULL;
+CP_Image Credit2 = NULL;
+CP_Image Credit3 = NULL;
 CP_Image Spawner = NULL;
-CP_Image tutorialpage = NULL; 
-CP_Image creditspage = NULL;
 CP_Image addvolume = NULL; 
 CP_Image decvolume = NULL; 
 CP_Image volumepage = NULL;
@@ -381,7 +383,7 @@ void DrawAllShapes(void)
                 CP_Settings_Fill(x->TextColor);
                 CP_Settings_TextAlignment(CP_TEXT_ALIGN_H_CENTER, CP_TEXT_ALIGN_V_TOP);
                 CP_Settings_TextSize(20);
-                CP_Font_DrawTextBox(x->buttontext, x->boxGameObject.gameObject.position.x, x->boxGameObject.gameObject.position.y + x->boxGameObject.height/2, x->boxGameObject.width);
+                CP_Font_DrawTextBox(x->buttontext, x->boxGameObject.gameObject.position.x, x->boxGameObject.gameObject.position.y + x->boxGameObject.height/3, x->boxGameObject.width);
             }
 
         }
@@ -491,23 +493,6 @@ void DrawAllShapes(void)
         }
     }
     
-    // Draw Tutorial Elements
-    for (int i = 0; i < TutorialObjectArrayLength; i++)
-    {
-        TutorialScreenObject* x = &Current_screen.TutorialObjectArray[i];
-        if (x->boxGameObject.width == 0 || x->boxGameObject.height == 0) {
-
-        }
-        else
-        {   
-            CP_Graphics_DrawRectAdvanced(x->boxGameObject.gameObject.position.x, x->boxGameObject.gameObject.position.y, x->boxGameObject.width, x->boxGameObject.height, x->boxGameObject.gameObject.angle, 1);
-            CP_Settings_Fill(x->TextColor);
-            CP_Settings_TextAlignment(CP_TEXT_ALIGN_H_LEFT, CP_TEXT_ALIGN_V_TOP);
-            CP_Settings_TextSize(40);
-            CP_Font_DrawTextBox(x->TutorialBoxText, x->boxGameObject.gameObject.position.x, x->boxGameObject.gameObject.position.y + x->boxGameObject.height / 2, x->boxGameObject.width);
-        }
-    }
-
     // Volume Boxes
     for (int i = 0; i < VolumeObjectArrayLength; i++)
     {
@@ -1228,6 +1213,8 @@ void Initialize_Screen_Keys(void) {
     AddScreenKey(&key_count, Move_to_main_Menu, Main_menu, No_screen, Screen_key_array);
     AddScreenKey(&key_count, Move_to_options, Options, No_screen, Screen_key_array);
     AddScreenKey(&key_count, Move_to_credits, Credits_screen, No_screen, Screen_key_array);
+    AddScreenKey(&key_count, Move_to_credits2, Credits_screen2, No_screen, Screen_key_array);
+    AddScreenKey(&key_count, Move_to_credits3, Credits_screen3, No_screen, Screen_key_array);
     AddScreenKey(&key_count, Move_to_tutorial, Tutorial, No_screen, Screen_key_array);
     AddScreenKey(&key_count, Move_to_Level_Select, Level_Select, No_screen, Screen_key_array);
 
@@ -1246,15 +1233,15 @@ void Initialize_Screen_Keys(void) {
 void Initialize_Screens(void) {
     //create pause overlay;
     overlay_array[pause_overlay].ButtonObjectArrayLengthCounter = 0;
-    AddButton(&overlay_array[pause_overlay], CreateButtonObject(newVector2(740, 100), 480, 270, 0, 0, pausepage, CP_Color_Create(0, 0, 0, 0), None, CP_Color_Create(255, 255, 255, 255), "Paused", nobuttonbackground));
-    AddButton(&overlay_array[pause_overlay], CreateButtonObject(newVector2(700, 500), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_main_Menu, CP_Color_Create(255, 255, 255, 255), "Main Menu", basebuttonbackground));
-    AddButton(&overlay_array[pause_overlay], CreateButtonObject(newVector2(900, 500), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Restart, CP_Color_Create(255, 255, 255, 255), "Restart", basebuttonbackground));
+    AddButton(&overlay_array[pause_overlay], CreateButtonObject(newVector2(740, 100), 480, 270, 0, 0, pausepage, CP_Color_Create(0, 0, 0, 0), None, CP_Color_Create(255, 255, 255, 255), "", nobuttonbackground));
+    AddButton(&overlay_array[pause_overlay], CreateButtonObject(newVector2(700, 500), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_main_Menu, CP_Color_Create(255, 255, 255, 255), "Return to Main Menu", basebuttonbackground));
+    AddButton(&overlay_array[pause_overlay], CreateButtonObject(newVector2(900, 500), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Restart, CP_Color_Create(255, 255, 255, 255), "Restart Game", basebuttonbackground));
     AddButton(&overlay_array[pause_overlay], CreateButtonObject(newVector2(1100, 500), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_Level_Select, CP_Color_Create(255, 255, 255, 255), "Level Select", basebuttonbackground));
 
     //create victory overlay;
     overlay_array[victory_overlay].ButtonObjectArrayLengthCounter = 0;
     AddButton(&overlay_array[victory_overlay], CreateButtonObject(newVector2(740, 100), 480, 270, 0, 0, victorypage, CP_Color_Create(0, 0, 0, 0), None, CP_Color_Create(255, 255, 255, 255), "Victory", nobuttonbackground));
-    AddButton(&overlay_array[victory_overlay], CreateButtonObject(newVector2(700, 500), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Restart, CP_Color_Create(255, 255, 255, 255), "Restart", basebuttonbackground));
+    AddButton(&overlay_array[victory_overlay], CreateButtonObject(newVector2(700, 500), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Restart, CP_Color_Create(255, 255, 255, 255), "Restart Game", basebuttonbackground));
     AddButton(&overlay_array[victory_overlay], CreateButtonObject(newVector2(900, 500), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Next_Level, CP_Color_Create(255, 255, 255, 255), "Next Level", basebuttonbackground));
     AddButton(&overlay_array[victory_overlay], CreateButtonObject(newVector2(1100, 500), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_Level_Select, CP_Color_Create(255, 255, 255, 255), "Level Select", basebuttonbackground));
 
@@ -1273,31 +1260,40 @@ void Initialize_Screens(void) {
 
 
     //create splash screen
-    screen_array[Splash_screen].ButtonObjectArrayLengthCounter = 0;
-    AddButton(&screen_array[Splash_screen], CreateButtonObject(newVector2(0 + CP_System_GetWindowWidth() / 2.0f - 1026.0f / 2.0f, 0 + CP_System_GetWindowHeight() / 2.0f - 249.0f / 2.0f), 1026, 249, 50, 0, DigipenLogo, CP_Color_Create(255, 255, 255, 200), None, CP_Color_Create(255, 255, 255, 255), "", nobuttonbackground));
+    AddButton(&screen_array[Splash_screen], CreateButtonObject(newVector2(0 + CP_System_GetWindowWidth() / 2.0f - 1920.0f / 2.0f, 0 + CP_System_GetWindowHeight() / 2.0f - 1080.0f / 2.0f), 1920, 1080, 50, 0, DigipenLogo, CP_Color_Create(255, 255, 255, 200), None, CP_Color_Create(255, 255, 255, 255), "", nobuttonbackground));
+
+    //create splash logo screen
+    AddButton(&screen_array[Splash_Logo], CreateButtonObject(newVector2(0 + CP_System_GetWindowWidth() / 2.0f - 1920.0f / 2.0f, 0 + CP_System_GetWindowHeight() / 2.0f - 1080.0f / 2.0f), 1920, 1080, 50, 0, GameLogo, CP_Color_Create(255, 255, 255, 200), None, CP_Color_Create(255, 255, 255, 255), "", nobuttonbackground));
 
 
     //Create Main Menu Screen
-    screen_array[Main_menu].ButtonObjectArrayLengthCounter = 0;
     AddButton(&screen_array[Main_menu], CreateButtonObject(newVector2(740, 50), 480, 270, 0, 0, mainpage, CP_Color_Create(0, 0, 0, 0), None , CP_Color_Create(255, 255, 255, 255), "", nobuttonbackground));
-    AddButton(&screen_array[Main_menu], CreateButtonObject(newVector2(900, 350), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_Level_Select, CP_Color_Create(255, 255, 255, 255), "Level Select", basebuttonbackground));
+    AddButton(&screen_array[Main_menu], CreateButtonObject(newVector2(900, 350), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_Level_Select, CP_Color_Create(255, 255, 255, 255), "Start Game", basebuttonbackground));
     AddButton(&screen_array[Main_menu], CreateButtonObject(newVector2(900, 500), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_tutorial, CP_Color_Create(255, 255, 255, 255), "How to play", basebuttonbackground));
-    AddButton(&screen_array[Main_menu], CreateButtonObject(newVector2(900, 650), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_credits, CP_Color_Create(255, 255, 255, 255), "Credit", basebuttonbackground));
+    AddButton(&screen_array[Main_menu], CreateButtonObject(newVector2(900, 650), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_credits, CP_Color_Create(255, 255, 255, 255), "Credits", basebuttonbackground));
     AddButton(&screen_array[Main_menu], CreateButtonObject(newVector2(900, 800), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_options, CP_Color_Create(255, 255, 255, 255), "Options", basebuttonbackground));
     AddButton(&screen_array[Main_menu], CreateButtonObject(newVector2(900, 950), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Exit_game, CP_Color_Create(255, 255, 255, 255), "Quit game", basebuttonbackground));
 
     //Create Tutorial screen
-    AddButton(&screen_array[Tutorial], CreateButtonObject(newVector2(900, 800), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_main_Menu, CP_Color_Create(255, 255, 255, 255), "Main Menu", basebuttonbackground));
-    // TODO 
-    AddButton(&screen_array[Tutorial], CreateButtonObject(newVector2(740, 50), 480, 270, 0, 0, mainpage, CP_Color_Create(0, 0, 0, 0), None, CP_Color_Create(255, 255, 255, 255), "", nobuttonbackground));
-    AddTutorialBox(&screen_array[Tutorial], CreateTutorialObject(newVector2(200, 200), 600, 100, CP_Color_Create(0, 0, 0, 0), CP_Color_Create(255, 255, 255, 255), "How to play? \n Just click anywhere on the screen.")); 
-    //AddTutorialBox(&screen_array[Tutorial], CreateTutorialObject(newVector2(200, 400), 800, 100, CP_Color_Create(0, 0, 0, 0), CP_Color_Create(255, 255, 255, 255), "All you need is your left mouse click button."));
+    AddButton(&screen_array[Tutorial], CreateButtonObject(newVector2(900, 980), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_main_Menu, CP_Color_Create(255, 255, 255, 255), "Return to Main Menu", basebuttonbackground));
+    AddButton(&screen_array[Tutorial], CreateButtonObject(newVector2(0 + CP_System_GetWindowWidth() / 2.0f - 1600.0f / 2.0f, 0 + CP_System_GetWindowHeight() / 2.0f - 900.0f / 2.0f), 1600, 900, 50, 0, HowToPlay, CP_Color_Create(255, 255, 255, 200), None, CP_Color_Create(255, 255, 255, 255), "", nobuttonbackground));
+
   
-    //Create Credits
-    AddButton(&screen_array[Credits_screen], CreateButtonObject(newVector2(900, 800), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_main_Menu, CP_Color_Create(255, 255, 255, 255), "Main Menu", basebuttonbackground));
-    AddButton(&screen_array[Credits_screen], CreateButtonObject(newVector2(740, 50), 480, 270, 0, 0, mainpage, CP_Color_Create(0, 0, 0, 0), None, CP_Color_Create(255, 255, 255, 255), "", nobuttonbackground));
+    //Create Credits 1
+    AddButton(&screen_array[Credits_screen], CreateButtonObject(newVector2(900, 980), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_main_Menu, CP_Color_Create(255, 255, 255, 255), "Return to Main Menu", basebuttonbackground));
+    AddButton(&screen_array[Credits_screen], CreateButtonObject(newVector2(1100, 980), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_credits2, CP_Color_Create(255, 255, 255, 255), "Next", basebuttonbackground));
+    AddButton(&screen_array[Credits_screen], CreateButtonObject(newVector2(0 + CP_System_GetWindowWidth() / 2.0f - 1600.0f / 2.0f, 0 + CP_System_GetWindowHeight() / 2.0f - 950.0f / 2.0f), 1600, 900, 50, 0, Credit1, CP_Color_Create(255, 255, 255, 200), None, CP_Color_Create(255, 255, 255, 255), "", nobuttonbackground));
+
+    AddButton(&screen_array[Credits_screen2], CreateButtonObject(newVector2(900, 980), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_main_Menu, CP_Color_Create(255, 255, 255, 255), "Return to Main Menu", basebuttonbackground));
+    AddButton(&screen_array[Credits_screen2], CreateButtonObject(newVector2(1100, 980), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_credits3, CP_Color_Create(255, 255, 255, 255), "Next", basebuttonbackground));
+    AddButton(&screen_array[Credits_screen2], CreateButtonObject(newVector2(700, 980), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_credits, CP_Color_Create(255, 255, 255, 255), "Back", basebuttonbackground));
+    AddButton(&screen_array[Credits_screen2], CreateButtonObject(newVector2(0 + CP_System_GetWindowWidth() / 2.0f - 1600.0f / 2.0f, 0 + CP_System_GetWindowHeight() / 2.0f - 950.0f / 2.0f), 1600, 900, 50, 0, Credit2, CP_Color_Create(255, 255, 255, 200), None, CP_Color_Create(255, 255, 255, 255), "", nobuttonbackground));
+
+    AddButton(&screen_array[Credits_screen3], CreateButtonObject(newVector2(900, 980), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_main_Menu, CP_Color_Create(255, 255, 255, 255), "Return to Main Menu", basebuttonbackground));
+    AddButton(&screen_array[Credits_screen3], CreateButtonObject(newVector2(700, 980), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_credits2, CP_Color_Create(255, 255, 255, 255), "Back", basebuttonbackground));
+    AddButton(&screen_array[Credits_screen3], CreateButtonObject(newVector2(0 + CP_System_GetWindowWidth() / 2.0f - 1600.0f / 2.0f, 0 + CP_System_GetWindowHeight() / 2.0f - 950.0f / 2.0f), 1600, 900, 50, 0, Credit3, CP_Color_Create(255, 255, 255, 200), None, CP_Color_Create(255, 255, 255, 255), "", nobuttonbackground));
+
     //level select
-    screen_array[Level_Select].ButtonObjectArrayLengthCounter = 0;
     AddButton(&screen_array[Level_Select], CreateButtonObject(newVector2(500, 70), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_Level_1, CP_Color_Create(255, 255, 255, 255), "Level 1", basebuttonbackground));
     AddButton(&screen_array[Level_Select], CreateButtonObject(newVector2(700, 70), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_Level_2, CP_Color_Create(255, 255, 255, 255), "Level 2", basebuttonbackground));
     AddButton(&screen_array[Level_Select], CreateButtonObject(newVector2(900, 70), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_Level_3, CP_Color_Create(255, 255, 255, 255), "Level 3", basebuttonbackground));
@@ -1308,12 +1304,12 @@ void Initialize_Screens(void) {
     AddButton(&screen_array[Level_Select], CreateButtonObject(newVector2(900, 300), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_Level_8, CP_Color_Create(255, 255, 255, 255), "Level 8", basebuttonbackground));
     AddButton(&screen_array[Level_Select], CreateButtonObject(newVector2(1100, 300), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_Level_9, CP_Color_Create(255, 255, 255, 255), "Level 9", basebuttonbackground));
     AddButton(&screen_array[Level_Select], CreateButtonObject(newVector2(1300, 300), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_Level_10, CP_Color_Create(255, 255, 255, 255), "Level 10", basebuttonbackground));
-    AddButton(&screen_array[Level_Select], CreateButtonObject(newVector2(900, 800), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_main_Menu, CP_Color_Create(255, 255, 255, 255), "Main Menu", basebuttonbackground));
+    AddButton(&screen_array[Level_Select], CreateButtonObject(newVector2(900, 800), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_main_Menu, CP_Color_Create(255, 255, 255, 255), "Return to Main Menu", basebuttonbackground));
 
     // Volume Control
     screen_array[Options].ButtonObjectArrayLengthCounter = 0;
     AddButton(&screen_array[Options], CreateButtonObject(newVector2(900, 150), 200, 80, 0, 0, volumepage, CP_Color_Create(0, 0, 0, 0), None, CP_Color_Create(255, 255, 255, 255), " ", nobuttonbackground));
-    AddButton(&screen_array[Options], CreateButtonObject(newVector2(900, 800), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_main_Menu, CP_Color_Create(255, 255, 255, 255), "Main Menu", basebuttonbackground));
+    AddButton(&screen_array[Options], CreateButtonObject(newVector2(900, 800), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_main_Menu, CP_Color_Create(255, 255, 255, 255), "Return to Main Menu", basebuttonbackground));
     InitializeVolumeControl(); 
 
     // Volume Buttons 
@@ -1327,11 +1323,6 @@ void Initialize_Screens(void) {
     AddButton(&screen_array[Options], CreateButtonObject(newVector2(650, 600), 50, 50, 0, 0, addvolume, CP_Color_Create(0, 0, 0, 0), Increase_Volume_SFX, CP_Color_Create(0, 0, 0, 0), " ", incvolbuttonbackground));
     AddButton(&screen_array[Options], CreateButtonObject(newVector2(1300, 610), 50, 25, 0, 0, decvolume, CP_Color_Create(0, 0, 0, 0), Decrease_Volume_SFX, CP_Color_Create(0, 0, 0, 0), " ", decvolbuttonbackground));
 
-    
-
-    screen_array[Test_Room].LineArrayLengthCounter = 0;
-    screen_array[Test_Room].CircleArrayLengthCounter = 0;
-    AddButton(&screen_array[Test_Room], CreateButtonObject(newVector2(10, 10), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_main_Menu, CP_Color_Create(255, 255, 255, 255), "Move to Main Menu", basebuttonbackground));
     
     // Level 1 (warm up) - 1 container (20 balls)
     screen_array[Level_1].LineArrayLengthCounter = 0;
@@ -1501,7 +1492,6 @@ void Initialize_Screens(void) {
 }
 
 void Initialize_Sprites(void) {
-    TestDoge = CP_Image_Load("./Sprites/MahLe.jpg");
     L1 = CP_Image_Load("./Assets/Art/Level1.png");
     L2 = CP_Image_Load("./Assets/Art/Level2.png");
     L3 = CP_Image_Load("./Assets/Art/Level3.png");
@@ -1515,13 +1505,16 @@ void Initialize_Sprites(void) {
     mainpage = CP_Image_Load("./Assets/Art/Main.png");
     pausepage = CP_Image_Load("./Assets/Art/Pause.png");
     victorypage = CP_Image_Load("./Assets/Art/Victory.png");
-    DigipenLogo = CP_Image_Load("./Assets/Art/DigiPen_WHITE.png"); 
+    DigipenLogo = CP_Image_Load("./Assets/Art/DigiPen_WHITE.png");
     volumepage = CP_Image_Load("./Assets/Art/volume_title.png");
     bgm = CP_Image_Load("./Assets/Art/BGM.png");
     sfx = CP_Image_Load("./Assets/Art/sfx.png");
-    // TODO : 'How to Play' heading + 'Credits' heading
-    //tutorialpage = CP_Image_Load("./Assets/"); 
-    //creditspage = CP_Image_Load("./Assets/");
+    Credit1 = CP_Image_Load("./Assets/Art/credit1.png");
+    Credit2 = CP_Image_Load("./Assets/Art/credit2.png");
+    Credit3 = CP_Image_Load("./Assets/Art/credit3.png");
+    GameLogo = CP_Image_Load("./Assets/Art/GameLogo.png");
+    HowToPlay = CP_Image_Load("./Assets/Art/How to play.png");
+
 
     //initialize base button background
     basebuttonbackground.border = CP_Image_Load("./Assets/Buttons/ButtonDeactivated.png");

@@ -87,16 +87,25 @@ ScoringContainerObject createScoringContainer(Vector2 position, float angle, flo
 void AddScoringContainer(Screen* sc, ScoringContainer s1) {
 	sc->ScoringContainerArray[sc->ScoringContainerArrayLengthCounter] = s1;
 	sc->ScoringContainerArrayLengthCounter++;
-
 }
 
+//add BallSpawner to screen
+void AddBallSpawner(Screen* sc, BallSpawner bs1)
+{
+	sc->BallSpawnerArray[sc->BallSpawnerArrayLengthCounter] = bs1;
+	sc->BallSpawnerArrayLengthCounter++;
+}
 
-//// Converting 'int type' ballcount to 'char * str' type. - for printing in CP_Draw_text -> number on the container. 
-//const char* ballCountString(int ballcount) {
-//	char countString[100]; 
-//	snprintf(countString, 100, "%d", ballcount);
-//	return countString; 
-//}
-//
-//
+//Add BoxObject to screen
+void AddBoxGameObject(Screen* sc, BoxGameObject b1)
+{
+	sc->BoxGameObjectArray[sc->BoxGameObjectArrayLengthCounter] = b1;
+	sc->BoxGameObjectArrayLengthCounter++;
+}
 
+//Add Bounce platform to screen
+void AddBouncePlatform(Screen* sc, BoxGameObject bp1)
+{
+	sc->SuperBouncePlatformArray[sc->SuperBouncePlatformArrayLengthCounter] = bp1;
+	sc->SuperBouncePlatformArrayLengthCounter++;
+}

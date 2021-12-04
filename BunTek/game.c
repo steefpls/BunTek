@@ -47,7 +47,7 @@ void TitlecardTransition(void);
 void victorycontrol(void);
 void bgm_control(Screen_name* current_sc_name);
 void play_ballbounce_sfx();
-void AddVolumeMeter();
+void AddVolumeMeter(Vector2 position);
 void InitializeVolumeControl(); 
 
 //Initialize array
@@ -433,6 +433,7 @@ void DrawAllShapes(void)
 
     }
 
+    //Draw BallSpawner to spawn ball objects
     for (int i = 0; i < SpawnerGameObjectArrayLength; i++)
     {
         BallSpawner* x = &Current_screen.BallSpawnerArray[i];
@@ -442,7 +443,6 @@ void DrawAllShapes(void)
         }
         else
         {
-           // CP_Graphics_DrawRectAdvanced(x->b.gameObject.position.x, x->b.gameObject.position.y, x->b.width, x->b.height, x->b.gameObject.angle, 1);
         }
     }
 
@@ -512,91 +512,9 @@ void DrawAllShapes(void)
                 CP_Settings_Fill(COLOR_GREY);
                 CP_Settings_Stroke(COLOR_WHITE);
                 CP_Graphics_DrawRectAdvanced(x->boxGameObject.gameObject.position.x, x->boxGameObject.gameObject.position.y, x->boxGameObject.width, x->boxGameObject.height, x->boxGameObject.gameObject.angle, 1);
-
             }
-            
-          // 1. Scan Array - Check Status
-          // [Logic for BGM] - array index 0 to 4. 
-          // Iterate through array to find which cells are litted - include in count. 
-          //int volume_BGM_active = 0;
-          //int volume_SFX_active = 0;
-          //int counter_BGM_cells = 0;    // account for how many cells it have read. 
-          //  // This loop iterates through element 0 - 4
-          //  for (int j = 0; j < 4; j++) {
-          //      if (x->lit == true && counter_BGM_cells != 5) {
-          //          volume_BGM_active++; 
-          //          
-          //      }
-          //      counter_BGM_cells++;        // increase everytime it reads a volume cell object. 
-          //  }
-
-          //  counter_BGM_cells = 0;          // reset for use (info on sfx meter)
-
-            // This loop iterates through element 5 - 9 
-            //for (int k = 0; k < 4; k++) {
-            //    if (x->lit == true && counter_BGM_cells != 5) {
-            //        volume_SFX_active++; 
-            //        CP_Settings_Fill(COLOR_PASTEL_GREEN);
-            //        CP_Settings_Stroke(COLOR_WHITE); 
-            //        CP_Graphics_DrawRectAdvanced(x->boxGameObject.gameObject.position.x, x->boxGameObject.gameObject.position.y, x->boxGameObject.width, x->boxGameObject.height, x->boxGameObject.gameObject.angle, 1);
-            //    }
-            //    else
-            //    {
-            //        CP_Settings_Fill(COLOR_WHITE); 
-            //        CP_Graphics_DrawRectAdvanced(x->boxGameObject.gameObject.position.x, x->boxGameObject.gameObject.position.y, x->boxGameObject.width, x->boxGameObject.height, x->boxGameObject.gameObject.angle, 1);
-            //    }
-            //    counter_BGM_cells++;        // increase everytime it reads a volume cell object.
-            //}
-            
-            //int volume_BGM_not_active = 5 - volume_BGM_active; 
-            //int volume_SFX_not_active = 5 - volume_SFX_active;
-            //// 2. Print Visuals 
-            //// Loop to print 'active' cell (1 cell rep 1 level of volume)
-            //for (int j = 0; j < volume_BGM_active; j++) {
-            //    CP_Settings_Fill(COLOR_PASTEL_GREEN);  // Pastel Green (show level of volume)
-            //    CP_Graphics_DrawRectAdvanced(x->boxGameObject.gameObject.position.x, x->boxGameObject.gameObject.position.y, x->boxGameObject.width, x->boxGameObject.height, x->boxGameObject.gameObject.angle, 1);
-            //}
-
-            //for (int k = 0; k < volume_BGM_not_active; k++) {
-            //    CP_Settings_Fill(x->boxGameObject.gameObject.color); 
-            //    CP_Graphics_DrawRectAdvanced(x->boxGameObject.gameObject.position.x, x->boxGameObject.gameObject.position.y, x->boxGameObject.width, x->boxGameObject.height, x->boxGameObject.gameObject.angle, 1);
-            //}
-
-            //for (int l = 0; l < volume_SFX_active; l++) {
-            //    CP_Settings_Fill(CP_Color_Create(181, 218, 157, 0));  // Pastel Green (show level of volume)
-            //    CP_Graphics_DrawRectAdvanced(x->boxGameObject.gameObject.position.x, x->boxGameObject.gameObject.position.y, x->boxGameObject.width, x->boxGameObject.height, x->boxGameObject.gameObject.angle, 1);
-            //}
-
-            //for (int m = 0; m < volume_SFX_not_active; m++) {
-            //    CP_Settings_Fill(COLOR_WHITE);
-            //    CP_Graphics_DrawRectAdvanced(x->boxGameObject.gameObject.position.x, x->boxGameObject.gameObject.position.y, x->boxGameObject.width, x->boxGameObject.height, x->boxGameObject.gameObject.angle, 1);
-            //}
-            
-
-            // Normal Print
-         /*   CP_Settings_Fill(x->boxGameObject.gameObject.color);
-            CP_Settings_NoStroke();
-            CP_Graphics_DrawRectAdvanced(x->boxGameObject.gameObject.position.x, x->boxGameObject.gameObject.position.y, x->boxGameObject.width, x->boxGameObject.height, x->boxGameObject.gameObject.angle, 1);*/
         }
     }
-    
-    /*
-    for (int i = 0; i < Current_screen.RotatedboxportalpairArrayLengthCounter; i++) {
-        Rotatedboxportalpair* rbpp = &Current_screen.RotatedboxportalpairArray[i];
-
-        CP_Settings_Fill(rbpp->portal_1.gameObject.color);
-        if (rbpp->portal_1.width == 0 || rbpp->portal_1.height == 0) {
-
-        }
-        else {
-            CP_Settings_Fill(rbpp->portal_1.gameObject.color);
-            CP_Settings_NoStroke();
-            CP_Graphics_DrawRectAdvanced(rbpp->portal_1.gameObject.position.x, rbpp->portal_1.gameObject.position.y, rbpp->portal_1.width, rbpp->portal_1.height, rbpp->portal_1.gameObject.angle, 1);
-            CP_Graphics_DrawRectAdvanced(rbpp->portal_2.gameObject.position.x, rbpp->portal_2.gameObject.position.y, rbpp->portal_2.width, rbpp->portal_2.height, rbpp->portal_2.gameObject.angle, 1);
-        }
-    }*/
-        
-    
 }
 
 void CalculateAllPhysics(void)
@@ -636,8 +554,6 @@ void CalculateAllPhysics(void)
                         if (CircleCol(c1, c2, true))  //If circle collides with cicle
                         {
                             play_ballbounce_sfx(); 
-                            
-                            
                         }
                     }
                  }
@@ -848,46 +764,6 @@ void CalculateAllPhysics(void)
         }
 
     }
-    /*
-    for (int x = 0; x < Current_screen.CircleportalpairArrayLengthCounter; x++) {
-        Rotatedboxportalpair* rbpp = &Current_screen.RotatedboxportalpairArray[x];
-        if (rbpp->portal_1.width == 0 || rbpp->portal_1.height == 0) {
-
-        }
-        else {
-
-            for (int o = 0; o < Current_screen.CircleArrayLengthCounter; o++) {
-                CircleGameObject* c = &Current_screen.CircleGameObjectArray[o];
-                if (c->radius == 0.0f) {
-                    break;
-                }
-                else {
-                    Vector2 resultant;
-                    bool collided_portal_1 = CircleRectCol(c, &rbpp->portal_1, false);
-                    bool collided_portal_2 = CircleRectCol(c, &rbpp->portal_2, false);
-                    float angleDiff = rbpp->portal_1.gameObject.angle - rbpp->portal_2.gameObject.angle;
-                    if (collided_portal_1 && c->teleported == 0) {
-                        resultant = RotateVector(VectorMinus(CenterOfBox(&rbpp->portal_1), c->gameObject.position), angleDiff);
-                        c->gameObject.position = VectorAdd(CenterOfBox(&rbpp->portal_2), resultant);
-                        c->gameObject.velocity = RotateVector(c->gameObject.velocity, angleDiff);
-                        c->teleported = 2;
-
-                    }
-                    else if (collided_portal_2 && c->teleported == 0) {
-                        resultant = RotateVector(VectorMinus(CenterOfBox(&rbpp->portal_2), c->gameObject.position), angleDiff);
-                        c->gameObject.position = VectorAdd(CenterOfBox(&rbpp->portal_1), resultant);
-                        c->gameObject.velocity = RotateVector(c->gameObject.velocity, angleDiff);
-                        c->teleported = 2;
-                    }
-                    else if (!(collided_portal_1 ||collided_portal_2) && c->teleported == 2) {
-                        c->teleported = 0;
-                    }
-                }
-            }
-
-        }
-
-    }*/
 }
 
 bool CheckAllButtons(void){
@@ -926,8 +802,7 @@ bool CheckAllButtons(void){
 
 void TriggerButtonEffects(ButtonObject* x) {
     //check what is the buttons effect and run accordingly
-    
-    
+
     /*int volume_BGM_active = 0;*/
    /* int volume_SFX_active = 0;*/
 
@@ -992,9 +867,6 @@ void TriggerButtonEffects(ButtonObject* x) {
         }
 
         SetMusicVolume(0.2f * (float) (bars_lit_counter - 1)); // re-adjust based on the number of bars lit
-        printf("Music set to level %d\n", bars_lit_counter - 1);
-        
-
         break; 
     case Decrease_Volume_BGM :
 
@@ -1315,13 +1187,13 @@ void Initialize_Screens(void) {
     // Volume Buttons 
     // [Main Volume]
     AddButton(&screen_array[Options], CreateButtonObject(newVector2(450, 300), 120, 60, 0, 0, bgm, CP_Color_Create(0, 0, 0, 0), None, CP_Color_Create(255, 255, 255, 255), " ", nobuttonbackground));
-    AddButton(&screen_array[Options], CreateButtonObject(newVector2(650, 300), 50, 50, 0, 0, addvolume, CP_Color_Create(0, 0, 0, 0), Increase_Volume_BGM, CP_Color_Create(0, 0, 0, 0), " ", incvolbuttonbackground));
-    AddButton(&screen_array[Options], CreateButtonObject(newVector2(1300, 310), 50, 25, 0, 0, decvolume, CP_Color_Create(0, 0, 0, 0), Decrease_Volume_BGM, CP_Color_Create(0, 0, 0, 0), " ", decvolbuttonbackground));
+    AddButton(&screen_array[Options], CreateButtonObject(newVector2(1300, 310), 50, 50, 0, 0, addvolume, CP_Color_Create(0, 0, 0, 0), Increase_Volume_BGM, CP_Color_Create(0, 0, 0, 0), " ", incvolbuttonbackground));
+    AddButton(&screen_array[Options], CreateButtonObject(newVector2(650, 300), 50, 25, 0, 0, decvolume, CP_Color_Create(0, 0, 0, 0), Decrease_Volume_BGM, CP_Color_Create(0, 0, 0, 0), " ", decvolbuttonbackground));
 
     // [SFX]
     AddButton(&screen_array[Options], CreateButtonObject(newVector2(450, 600), 120, 60, 0, 0, sfx, CP_Color_Create(0, 0, 0, 0), None, CP_Color_Create(255, 255, 255, 255), " ", nobuttonbackground));
-    AddButton(&screen_array[Options], CreateButtonObject(newVector2(650, 600), 50, 50, 0, 0, addvolume, CP_Color_Create(0, 0, 0, 0), Increase_Volume_SFX, CP_Color_Create(0, 0, 0, 0), " ", incvolbuttonbackground));
-    AddButton(&screen_array[Options], CreateButtonObject(newVector2(1300, 610), 50, 25, 0, 0, decvolume, CP_Color_Create(0, 0, 0, 0), Decrease_Volume_SFX, CP_Color_Create(0, 0, 0, 0), " ", decvolbuttonbackground));
+    AddButton(&screen_array[Options], CreateButtonObject(newVector2(1300, 610), 50, 50, 0, 0, addvolume, CP_Color_Create(0, 0, 0, 0), Increase_Volume_SFX, CP_Color_Create(0, 0, 0, 0), " ", incvolbuttonbackground));
+    AddButton(&screen_array[Options], CreateButtonObject(newVector2(650, 600), 50, 25, 0, 0, decvolume, CP_Color_Create(0, 0, 0, 0), Decrease_Volume_SFX, CP_Color_Create(0, 0, 0, 0), " ", decvolbuttonbackground));
 
     
     // Level 1 (warm up) - 1 container (20 balls)
@@ -1329,52 +1201,43 @@ void Initialize_Screens(void) {
     screen_array[Level_1].CircleArrayLengthCounter = 0;
     screen_array[Level_1].overlay_name = pause_overlay;
     AddScoringContainer(&screen_array[Level_1], createScoringContainer(newVector2(600, 600), 0, 100, 100, 20));
-    screen_array[Level_1].BallSpawnerArray[0] = CreateBallSpawner(newVector2(200, 250), 100.0f, 100.0f, 0, 2.0f, true, 400, 15, Spawner);
-    screen_array[Level_1].BallSpawnerArrayLengthCounter++;
-    /*   screen_array[Level_1].SuperBouncePlatformArray[0] = createSuperBouncePlatform(newVector2(500, 500), 0, 100, 100);
-       screen_array[Level_1].NoDrawZoneArray[0] = createNoDrawZone(newVector2(1000, 500), 0,  100, 100);*/
+    AddBallSpawner(&screen_array[Level_1], CreateBallSpawner(newVector2(200, 250), 100.0f, 100.0f, 0, 2.0f, true, 400, 15, Spawner));
+    
 
-       // Level 2 - 2 containers 
+    // Level 2 - 2 containers 
     screen_array[Level_2].LineArrayLengthCounter = 0;
     screen_array[Level_2].CircleArrayLengthCounter = 0;
     screen_array[Level_2].overlay_name = pause_overlay;
-    screen_array[Level_2].BoxGameObjectArray[0] = CreateBoxGameObject(newVector2(1000, 800), 200, 50, 1.0f, 0, NULL, CP_Color_Create(0, 0, 0, 255));
+    AddBoxGameObject(&screen_array[Level_2], CreateBoxGameObject(newVector2(1000, 800), 200, 50, 1.0f, 0, NULL, CP_Color_Create(0, 0, 0, 255)));
     AddScoringContainer(&screen_array[Level_2], createScoringContainer(newVector2(1000, 700), 0, 100, 100, 30));
-    screen_array[Level_2].BoxGameObjectArray[1] = CreateBoxGameObject(newVector2(1200, 500), 200, 50, 1.0f, 0, NULL, CP_Color_Create(0, 0, 0, 255));
+    AddBoxGameObject(&screen_array[Level_2], CreateBoxGameObject(newVector2(1200, 500), 200, 50, 1.0f, 0, NULL, CP_Color_Create(0, 0, 0, 255)));
     AddScoringContainer(&screen_array[Level_2], createScoringContainer(newVector2(1300, 400), 0, 100, 100, 35));
-    screen_array[Level_2].BallSpawnerArray[0] = CreateBallSpawner(newVector2(400, 200), 100.0f, 100.0f, 90, 2.0f, true, 400, 15, Spawner);
-    screen_array[Level_2].BallSpawnerArrayLengthCounter++;
+    AddBallSpawner(&screen_array[Level_2], CreateBallSpawner(newVector2(400, 200), 100.0f, 100.0f, 90, 2.0f, true, 400, 15, Spawner));
 
     // Level 3 - introduction to super-bounce - 3 containers
     screen_array[Level_3].LineArrayLengthCounter = 0;
     screen_array[Level_3].CircleArrayLengthCounter = 0;
-
     screen_array[Level_3].overlay_name = pause_overlay;
 
-    screen_array[Level_3].SuperBouncePlatformArray[0] = createSuperBouncePlatform(newVector2(200, 1000), 0, 350, 50, 1.5);
-    screen_array[Level_3].BoxGameObjectArray[0] = CreateBoxGameObject(newVector2(1000, 800), 400, 50, 1.0f, 0, NULL,CP_Color_Create(0,0,0,255));
-    screen_array[Level_3].BoxGameObjectArray[1] = CreateBoxGameObject(newVector2(1200, 350), 600, 50, 1.0f, 0, NULL, CP_Color_Create(0, 0, 0, 255));
-    screen_array[Level_3].BoxGameObjectArray[2] = CreateBoxGameObject(newVector2(1800, 350), 50, 600, 1.0f, 0, NULL, CP_Color_Create(0, 0, 0, 255));
+    AddBouncePlatform(&screen_array[Level_3], createSuperBouncePlatform(newVector2(200, 1000), 0, 350, 50, 1.5));
+    AddBoxGameObject(&screen_array[Level_3], CreateBoxGameObject(newVector2(1000, 800), 400, 50, 1.0f, 0, NULL,CP_Color_Create(0,0,0,255)));
+    AddBoxGameObject(&screen_array[Level_3], CreateBoxGameObject(newVector2(1200, 350), 600, 50, 1.0f, 0, NULL, CP_Color_Create(0, 0, 0, 255)));
+    AddBoxGameObject(&screen_array[Level_3], CreateBoxGameObject(newVector2(1800, 350), 50, 600, 1.0f, 0, NULL, CP_Color_Create(0, 0, 0, 255)));
     AddScoringContainer(&screen_array[Level_3], createScoringContainer(newVector2(450, 350), 0, 100, 100, 20));
     AddScoringContainer(&screen_array[Level_3], createScoringContainer(newVector2(1200, 250), 0, 100, 100, 30));
     AddScoringContainer(&screen_array[Level_3], createScoringContainer(newVector2(1350, 550), 0, 100, 100, 30));
-    screen_array[Level_3].BallSpawnerArray[0] = CreateBallSpawner(newVector2(300, 150), 100.0f, 100.0f, 90, 2.0f, true, 400, 15, Spawner);
-    screen_array[Level_3].BallSpawnerArrayLengthCounter++;
+    AddBallSpawner(&screen_array[Level_3], CreateBallSpawner(newVector2(300, 150), 100.0f, 100.0f, 90, 2.0f, true, 400, 15, Spawner));
 
     // Level 4 - 
     screen_array[Level_4].LineArrayLengthCounter = 0;
     screen_array[Level_4].CircleArrayLengthCounter = 0;
     screen_array[Level_4].overlay_name = pause_overlay;
-    screen_array[Level_4].SuperBouncePlatformArray[0] = createSuperBouncePlatform(newVector2(400, 750), 45, 250, 50, 1.5);
-    screen_array[Level_4].SuperBouncePlatformArray[1] = createSuperBouncePlatform(newVector2(1200, 350), 45, 250, 50, 1.5);
+    AddBouncePlatform(&screen_array[Level_4], createSuperBouncePlatform(newVector2(400, 750), 45, 250, 50, 1.5));
+    AddBouncePlatform(&screen_array[Level_4], createSuperBouncePlatform(newVector2(1200, 350), 45, 250, 50, 1.5));
     AddScoringContainer(&screen_array[Level_4], createScoringContainer(newVector2(400, 350), 0, 100, 100, 20));
     AddScoringContainer(&screen_array[Level_4], createScoringContainer(newVector2(1200, 800), 0, 100, 100, 20));
     AddScoringContainer(&screen_array[Level_4], createScoringContainer(newVector2(1500, 200), 0, 100, 100, 20));
-    screen_array[Level_4].BallSpawnerArray[0] = CreateBallSpawner(newVector2(1000, 150), 100.0f, 100.0f, 120, 2.0f, true, 400, 15, Spawner);
-    screen_array[Level_4].BallSpawnerArray[0] = CreateBallSpawner(newVector2(700, 200), 100.0f, 100.0f, 120, 2.0f, true, 400, 15, Spawner);
-    //AddCircleportalpair(&screen_array[Level_4], Createcircleportalpair(newVector2(500, 500), newVector2(1000, 500), CP_Color_Create(255, 255, 255, 255), NULL, 50, 500));
-    //AddRotatedboxportalpair(&screen_array[Level_4], Createrotatedboxportalpair(CreateBoxGameObject(newVector2(1000, 400), 50, 50, 0, 0, NULL), CreateBoxGameObject(newVector2(500, 400), 50, 50, 0, 135, NULL)));
-    screen_array[Level_4].BallSpawnerArrayLengthCounter++;
+    AddBallSpawner(&screen_array[Level_4], CreateBallSpawner(newVector2(1000, 150), 100.0f, 100.0f, 120, 2.0f, true, 400, 15, Spawner));
 
     // Level 5 - introduce no draw zones
     screen_array[Level_5].LineArrayLengthCounter = 0;
@@ -1384,61 +1247,58 @@ void Initialize_Screens(void) {
     AddScoringContainer(&screen_array[Level_5], createScoringContainer(newVector2(600, 350), 0, 100, 100, 30));
     AddScoringContainer(&screen_array[Level_5], createScoringContainer(newVector2(1000, 800), 0, 100, 100, 30));
     AddScoringContainer(&screen_array[Level_5], createScoringContainer(newVector2(1500, 200), 0, 100, 100, 25));
-    screen_array[Level_5].BallSpawnerArray[0] = CreateBallSpawner(newVector2(250, 800), 100.0f, 100.0f, 315, 1.0f, true, 550, 15, Spawner);
-    screen_array[Level_5].BallSpawnerArrayLengthCounter++;
+    AddBallSpawner(&screen_array[Level_5], CreateBallSpawner(newVector2(250, 800), 100.0f, 100.0f, 315, 1.0f, true, 550, 15, Spawner));
 
+    //Level 6
     screen_array[Level_6].LineArrayLengthCounter = 0;
     screen_array[Level_6].CircleArrayLengthCounter = 0;
     screen_array[Level_6].overlay_name = pause_overlay;
-    screen_array[Level_6].BallSpawnerArray[0] = CreateBallSpawner(newVector2(100, 450), 100.0f, 100.0f, 0, 2.0f, true, 500, 30, Spawner);
-    screen_array[Level_6].BallSpawnerArrayLengthCounter++;
+    AddBallSpawner(&screen_array[Level_6], CreateBallSpawner(newVector2(100, 450), 100.0f, 100.0f, 0, 2.0f, true, 500, 30, Spawner));
     AddNoDrawZone(&screen_array[Level_6], createNoDrawZone(newVector2(350, 0), 0, 900, 1400));
     AddNoDrawZone(&screen_array[Level_6], createNoDrawZone(newVector2(0, 300), 0, 350, 1400));
-    screen_array[Level_6].SuperBouncePlatformArray[1] = createSuperBouncePlatform(newVector2(1700, 500), 45, 250, 50, 1.65f);
+    AddBouncePlatform(&screen_array[Level_6], createSuperBouncePlatform(newVector2(1700, 500), 45, 250, 50, 1.65f));
     AddScoringContainer(&screen_array[Level_6], createScoringContainer(newVector2(100, 100), 0, 100, 100, 50));
 
+    //Level 7
     screen_array[Level_7].LineArrayLengthCounter = 0;
     screen_array[Level_7].CircleArrayLengthCounter = 0;
     screen_array[Level_7].overlay_name = pause_overlay;
-    screen_array[Level_7].BallSpawnerArray[0] = CreateBallSpawner(newVector2(975, 975), 100.0f, 100.0f, 270, 2.0f, true, 300, 45, Spawner);
-    screen_array[Level_7].BallSpawnerArrayLengthCounter++;
+    AddBallSpawner(&screen_array[Level_7], CreateBallSpawner(newVector2(975, 975), 100.0f, 100.0f, 270, 2.0f, true, 300, 45, Spawner));
     AddNoDrawZone(&screen_array[Level_7], createNoDrawZone(newVector2(0,50), 0, 1975, 650));
     AddNoDrawZone(&screen_array[Level_7], createNoDrawZone(newVector2(50, 0), 0, 1825, 50));
     AddScoringContainer(&screen_array[Level_7], createScoringContainer(newVector2(0, 0), 0, 50, 50, 50));
     AddScoringContainer(&screen_array[Level_7], createScoringContainer(newVector2(1875, 0), 0, 50, 50, 50));
-    screen_array[Level_7].SuperBouncePlatformArray[0] = createSuperBouncePlatform(newVector2(50, 800), 0, 50, 25, 1.65f);
-    screen_array[Level_7].SuperBouncePlatformArray[1] = createSuperBouncePlatform(newVector2(100, 900), 0, 50, 25, 1.65f);
-    screen_array[Level_7].SuperBouncePlatformArray[2] = createSuperBouncePlatform(newVector2(1800, 900), 0, 50, 25, 1.65f);
-    screen_array[Level_7].SuperBouncePlatformArray[3] = createSuperBouncePlatform(newVector2(1850, 800), 0, 50, 25, 1.65f);
+    AddBouncePlatform(&screen_array[Level_7], createSuperBouncePlatform(newVector2(50, 800), 0, 50, 25, 1.65f));
+    AddBouncePlatform(&screen_array[Level_7], createSuperBouncePlatform(newVector2(100, 900), 0, 50, 25, 1.65f));
+    AddBouncePlatform(&screen_array[Level_7], createSuperBouncePlatform(newVector2(1800, 900), 0, 50, 25, 1.65f));
+    AddBouncePlatform(&screen_array[Level_7], createSuperBouncePlatform(newVector2(1850, 800), 0, 50, 25, 1.65f));
 
-
+    //Level 8 
     screen_array[Level_8].LineArrayLengthCounter = 0;
     screen_array[Level_8].CircleArrayLengthCounter = 0;
     screen_array[Level_8].overlay_name = pause_overlay;
     AddCircleportalpair(&screen_array[Level_8], Createcircleportalpair(newVector2(875, 350), newVector2(250, 500), CP_Color_Create(255, 255, 255, 255), NULL, 25, 300));
-    screen_array[Level_8].BoxGameObjectArray[0] = CreateBoxGameObject(newVector2(500, 0), 25, 1200 , 1.0f, 0, NULL, CP_Color_Create(0, 0, 0, 255));
-    screen_array[Level_8].BallSpawnerArray[0] = CreateBallSpawner(newVector2(50, 0), 50.0f, 50.0f, 45, 2.0f, true, 300, 45, Spawner);
-    screen_array[Level_8].BallSpawnerArrayLengthCounter++; 
+    AddBoxGameObject(&screen_array[Level_8], CreateBoxGameObject(newVector2(500, 0), 25, 1200 , 1.0f, 0, NULL, CP_Color_Create(0, 0, 0, 255)));
+    AddBallSpawner(&screen_array[Level_8], CreateBallSpawner(newVector2(50, 0), 50.0f, 50.0f, 45, 2.0f, true, 300, 45, Spawner));
     AddNoDrawZone(&screen_array[Level_8], createNoDrawZone(newVector2(800, 0), 0,950 , 450));
     AddScoringContainer(&screen_array[Level_8], createScoringContainer(newVector2(1000, 0), 0, 50, 50, 50));
     AddScoringContainer(&screen_array[Level_8], createScoringContainer(newVector2(1500, 0), 0, 50, 50, 50));
     AddScoringContainer(&screen_array[Level_8], createScoringContainer(newVector2(1500, 900), 0, 50, 50, 50));
-    screen_array[Level_8].SuperBouncePlatformArray[0] = createSuperBouncePlatform(newVector2(1700, 400), 135, 125, 25, 1.3f);
-    screen_array[Level_8].SuperBouncePlatformArray[1] = createSuperBouncePlatform(newVector2(900, 400), 45, 125, 25, 1.3f);
+    AddBouncePlatform(&screen_array[Level_8], createSuperBouncePlatform(newVector2(1700, 400), 135, 125, 25, 1.3f));
+    AddBouncePlatform(&screen_array[Level_8], createSuperBouncePlatform(newVector2(900, 400), 45, 125, 25, 1.3f));
 
+    //Level 9
     screen_array[Level_9].LineArrayLengthCounter = 0;
     screen_array[Level_9].CircleArrayLengthCounter = 0;
     screen_array[Level_9].overlay_name = pause_overlay;
-    screen_array[Level_9].BoxGameObjectArray[0] = CreateBoxGameObject(newVector2(0,700), 2000, 25, 1.0f, 0, NULL, CP_Color_Create(0, 0, 0, 255));
-    screen_array[Level_9].BoxGameObjectArray[1] = CreateBoxGameObject(newVector2(300,700), 25, 500, 1.0f, 0, NULL, CP_Color_Create(0, 0, 0, 5));
-    screen_array[Level_9].BoxGameObjectArray[2] = CreateBoxGameObject(newVector2(1800, 600), 25, 100, 1.0f, 0, NULL, CP_Color_Create(0, 0, 0, 5));
-    screen_array[Level_9].BoxGameObjectArray[4] = CreateBoxGameObject(newVector2(1700, 400), 25, 250, 1.0f, 270, NULL, CP_Color_Create(0, 0, 0, 255));
-    screen_array[Level_9].BoxGameObjectArray[5] = CreateBoxGameObject(newVector2(200, 400), 25, 250, 1.0f, 90, NULL, CP_Color_Create(0, 0, 0, 255));
-    screen_array[Level_9].BoxGameObjectArray[6] = CreateBoxGameObject(newVector2(1800, 600), 25, 100, 1.0f, 90, NULL, CP_Color_Create(0, 0, 0, 5));
-    screen_array[Level_9].BallSpawnerArray[0] = CreateBallSpawner(newVector2(50, 0), 50.0f, 50.0f, 45, 2.0f, true, 300, 15, Spawner);
-    screen_array[Level_9].BallSpawnerArray[1] = CreateBallSpawner(newVector2(1900, 35), 50.0f, 50.0f, 135, 2.0f, true, 300, 15, Spawner);
-    screen_array[Level_9].BallSpawnerArrayLengthCounter++;
-    screen_array[Level_9].BallSpawnerArrayLengthCounter++;
+    AddBoxGameObject(&screen_array[Level_9], CreateBoxGameObject(newVector2(0,700), 2000, 25, 1.0f, 0, NULL, CP_Color_Create(0, 0, 0, 255)));
+    AddBoxGameObject(&screen_array[Level_9], CreateBoxGameObject(newVector2(300,700), 25, 500, 1.0f, 0, NULL, CP_Color_Create(0, 0, 0, 5)));
+    AddBoxGameObject(&screen_array[Level_9], CreateBoxGameObject(newVector2(1800, 600), 25, 100, 1.0f, 0, NULL, CP_Color_Create(0, 0, 0, 5)));
+    AddBoxGameObject(&screen_array[Level_9], CreateBoxGameObject(newVector2(1700, 400), 25, 250, 1.0f, 270, NULL, CP_Color_Create(0, 0, 0, 255)));
+    AddBoxGameObject(&screen_array[Level_9], CreateBoxGameObject(newVector2(200, 400), 25, 250, 1.0f, 90, NULL, CP_Color_Create(0, 0, 0, 255)));
+    AddBoxGameObject(&screen_array[Level_9], CreateBoxGameObject(newVector2(1800, 600), 25, 100, 1.0f, 90, NULL, CP_Color_Create(0, 0, 0, 5)));
+    AddBallSpawner(&screen_array[Level_9], CreateBallSpawner(newVector2(50, 0), 50.0f, 50.0f, 45, 2.0f, true, 300, 15, Spawner));
+    AddBallSpawner(&screen_array[Level_9], CreateBallSpawner(newVector2(1900, 35), 50.0f, 50.0f, 135, 2.0f, true, 300, 15, Spawner));
     AddCircleportalpair(&screen_array[Level_9], Createcircleportalpair(newVector2(100, 75), newVector2(1800, 95), CP_Color_Create(255, 125, 255, 255), NULL, 25, 300));
     AddCircleportalpair(&screen_array[Level_9], Createcircleportalpair(newVector2(100, 650), newVector2(1800, 800), CP_Color_Create(255, 255, 125, 255), NULL, 25, 300));
     AddCircleportalpair(&screen_array[Level_9], Createcircleportalpair(newVector2(1750, 650), newVector2(100, 800), CP_Color_Create(0, 0, 0, 25), NULL, 25, 300));
@@ -1446,49 +1306,29 @@ void Initialize_Screens(void) {
     AddScoringContainer(&screen_array[Level_9], createScoringContainer(newVector2(100, 900), 0, 50, 50, 100));
     AddScoringContainer(&screen_array[Level_9], createScoringContainer(newVector2(975, 900), 0, 50, 50, 100));
 
-
-
-
+    //Level 10
     screen_array[Level_10].LineArrayLengthCounter = 0;
     screen_array[Level_10].CircleArrayLengthCounter = 0;
     screen_array[Level_10].overlay_name = pause_overlay;
     AddNoDrawZone(&screen_array[Level_10], createNoDrawZone(newVector2(1500, 0), 0, 450, 400));
     AddNoDrawZone(&screen_array[Level_10], createNoDrawZone(newVector2(1300, 0), 0, 200, 900));
-    screen_array[Level_10].BallSpawnerArray[0] = CreateBallSpawner(newVector2(1850, 0), 50.0f, 50.0f, 90, 2.0f, true, 300, 15, Spawner);
-    screen_array[Level_10].BallSpawnerArrayLengthCounter++;
-    screen_array[Level_10].BallSpawnerArrayLengthCounter++;
-    //screen_array[Level_10].BoxGameObjectArray[0] = CreateBoxGameObject(newVector2(400, 0), 2000, 25, 1.0f, 90, NULL, CP_Color_Create(0, 0, 0, 255));
-    screen_array[Level_10].BoxGameObjectArray[0] = CreateBoxGameObject(newVector2(1500, 0), 2000, 25, 1.0f, 90, NULL, CP_Color_Create(0, 0, 0, 255));
-    screen_array[Level_10].BoxGameObjectArray[1] = CreateBoxGameObject(newVector2(1500, 150),25, 100, 1.0f, 270, NULL, CP_Color_Create(0, 0, 0, 5));
-    screen_array[Level_10].BoxGameObjectArray[2] = CreateBoxGameObject(newVector2(1700, 0), 25, 100, 1.0f, 0, NULL, CP_Color_Create(0, 0, 0, 5));
-    screen_array[Level_10].BoxGameObjectArray[3] = CreateBoxGameObject(newVector2(0, 800), 250, 25, 1.0f, 0, NULL, CP_Color_Create(0, 0, 0, 5));
-    screen_array[Level_10].BoxGameObjectArray[4] = CreateBoxGameObject(newVector2(250, 800), 25, 400, 1.0f, 0, NULL, CP_Color_Create(0, 0, 0, 5));
-    screen_array[Level_10].BoxGameObjectArray[5] = CreateBoxGameObject(newVector2(1300, 0), 800, 25, 1.0f, 90, NULL, CP_Color_Create(0, 0, 0, 255));
-    screen_array[Level_10].BoxGameObjectArray[6] = CreateBoxGameObject(newVector2(250, 800), 800, 25, 1.0f, 0, NULL, CP_Color_Create(0, 0, 0, 5));
-    screen_array[Level_10].SuperBouncePlatformArray[0] = createSuperBouncePlatform(newVector2(1500, 400), 0, 125, 25, 1.015f);
-    screen_array[Level_10].SuperBouncePlatformArray[1] = createSuperBouncePlatform(newVector2(1800, 900), 0, 125, 25, 1.015f);
-    screen_array[Level_10].SuperBouncePlatformArray[2] = createSuperBouncePlatform(newVector2(1300, 900), 0, 175, 25, 1.65f);
+    AddBallSpawner(&screen_array[Level_10], CreateBallSpawner(newVector2(1850, 0), 50.0f, 50.0f, 90, 2.0f, true, 300, 15, Spawner));
+    AddBoxGameObject(&screen_array[Level_10], CreateBoxGameObject(newVector2(1500, 0), 2000, 25, 1.0f, 90, NULL, CP_Color_Create(0, 0, 0, 255)));
+    AddBoxGameObject(&screen_array[Level_10], CreateBoxGameObject(newVector2(1500, 150),25, 100, 1.0f, 270, NULL, CP_Color_Create(0, 0, 0, 5)));
+    AddBoxGameObject(&screen_array[Level_10], CreateBoxGameObject(newVector2(1700, 0), 25, 100, 1.0f, 0, NULL, CP_Color_Create(0, 0, 0, 5)));
+    AddBoxGameObject(&screen_array[Level_10], CreateBoxGameObject(newVector2(0, 800), 250, 25, 1.0f, 0, NULL, CP_Color_Create(0, 0, 0, 5)));
+    AddBoxGameObject(&screen_array[Level_10], CreateBoxGameObject(newVector2(250, 800), 25, 400, 1.0f, 0, NULL, CP_Color_Create(0, 0, 0, 5)));
+    AddBoxGameObject(&screen_array[Level_10], CreateBoxGameObject(newVector2(1300, 0), 800, 25, 1.0f, 90, NULL, CP_Color_Create(0, 0, 0, 255)));
+    AddBoxGameObject(&screen_array[Level_10], CreateBoxGameObject(newVector2(250, 800), 800, 25, 1.0f, 0, NULL, CP_Color_Create(0, 0, 0, 5)));
+    AddBouncePlatform(&screen_array[Level_10], createSuperBouncePlatform(newVector2(1500, 400), 0, 125, 25, 1.015f));
+    AddBouncePlatform(&screen_array[Level_10], createSuperBouncePlatform(newVector2(1800, 900), 0, 125, 25, 1.015f));
+    AddBouncePlatform(&screen_array[Level_10], createSuperBouncePlatform(newVector2(1300, 900), 0, 175, 25, 1.65f));
     AddCircleportalpair(&screen_array[Level_10], Createcircleportalpair(newVector2(1550, 50), newVector2(100, 50), CP_Color_Create(125, 255, 255, 255), NULL, 25, 300));
     AddCircleportalpair(&screen_array[Level_10], Createcircleportalpair(newVector2(1550, 1000), newVector2(100, 900), CP_Color_Create(255, 125, 255, 255), NULL, 25, 200));
     AddCircleportalpair(&screen_array[Level_10], Createcircleportalpair(newVector2(1335, 35), newVector2(300, 900), CP_Color_Create(255, 255, 125, 25), NULL, 25, 300));
     AddCircleportalpair(&screen_array[Level_10], Createcircleportalpair(newVector2(1900, 1000), newVector2(200, 1000), CP_Color_Create(125, 255, 125, 0), NULL, 25, 200));
     AddScoringContainer(&screen_array[Level_10], createScoringContainer(newVector2(1400, 0), 0, 50, 50, 50));
     AddScoringContainer(&screen_array[Level_10], createScoringContainer(newVector2(1400, 950), 0, 50, 50, 50));
-    //Create Test Room screen
-    //Fill up array with test circles
-    //for (int i = 0; i < 200; i++) {
-    //    float scale = CP_Random_RangeFloat(10, 15);
-    //    CircleGameObject tempc = CreateCircleGameObject(newVector2(CP_Random_RangeFloat(50, 1800), CP_Random_RangeFloat(50, 1000)), newVector2(CP_Random_RangeFloat(-100, 100), CP_Random_RangeFloat(-100, 100)), 0, CP_Color_Create(CP_Random_RangeInt(0, 255), CP_Random_RangeInt(0, 255), CP_Random_RangeInt(0, 255), 255), scale, false, scale, 1);
-    //    AddBall(&screen_array[Test_Room], tempc);
-    //    AddBall(&screen_array[Level_1], tempc);
-    //    AddBall(&screen_array[Level_2], tempc);
-    //    AddBall(&screen_array[Level_3], tempc);
-    //    AddBall(&screen_array[Level_10], tempc); // Using level 10 room to test score container. 
-    //}
-
-    // Testing for Scoring Containers 
-    //ScoringContainerObject tempinit = createScoringContainer(newVector2(500, 500), 0, 200, 200, 100); 
-    //AddScoreContainer(&screen_array[Level_10], tempinit); 
 }
 
 void Initialize_Sprites(void) {
@@ -1564,8 +1404,6 @@ void UpdateAllSpawners(void)
                 float randAng = CP_Random_RangeFloat(-spreadAngle, spreadAngle);
                 tempVel = RotateVector(tempVel, randAng);
 
-
-
                 CircleGameObject tempvariable = CreateCircleGameObject(positionVector, tempVel, 0, RandomColor(), scale, false, scale, 1);
                 AddBall(current_screen, tempvariable);
 
@@ -1596,8 +1434,6 @@ void AddVolumeMeter(Vector2 position) {
 }
 
 void InitializeVolumeControl() {
-
-
     
     // Volume Meter -  BGM 
     
@@ -1624,29 +1460,6 @@ void InitializeVolumeControl() {
          
         }
     }
-
-
-
-
-
-
-
-
-    //for (int i = 0; i < 5; i++) {
-    //    float rect_distance_from_1st = (float)i * 100; // consecutively initialize boxes side by side. 
-    //    screen_array[Options].VolumeObjectArray[i] = CreateVolumeObject(newVector2(750 + rect_distance_from_1st, 300), 100, 50, COLOR_WHITE, true);
-    //    //screen_array[Options].BoxGameObjectArray[i] = CreateBoxGameObject(newVector2(750 + rect_distance_from_1st, 300), 100, 50, 0, 0, NULL, COLOR_WHITE);
-    //    //printf("printed %d", i);
-    //}
-
-    // Volume Meter - SFX
-    // (using index 5 - 9) to store status of meter for [SFX Volume] (total of 5 elements)
-    //for (int j = 0; j < 5; j++) {
-    //    float rect_distance_from_1st = (float)j * 100; // consecutively initialize boxes side by side. 
-    //    screen_array[Options].VolumeObjectArray[5 + j] = CreateVolumeObject(newVector2(750 + rect_distance_from_1st, 500), 100, 50, COLOR_WHITE , true);
-    //    //screen_array[Options].BoxGameObjectArray[5 + j] = CreateBoxGameObject(newVector2(750 + rect_distance_from_1st, 500), 100, 50, 0, 0, NULL, COLOR_WHITE);
-    //    //printf("printed %d", j);
-    //}
 }
 
 void game_exit(void)

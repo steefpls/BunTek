@@ -1,3 +1,15 @@
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ * 
+ * file:	Screen_control.h
+ * author:	    [Bryan Boh]
+ * email:	    [b.boh@digipen.edu]
+ * Co-author:	[]
+ * email:	    []
+ *
+ * brief:	Contains the functions for screen flow control and screen creation and transition
+ * 
+* ---------------------------------------------------------*/
 #pragma once
 #include "SteefLibrary.h"
 #include <string.h>
@@ -33,6 +45,18 @@ float* overlay_opacity = &Overlay_opacity;
 float TimeElapse = 0;
 
 //names of the screen
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * Enum:	enum Screen_name
+ * author:	    [Bryan Boh]
+ * email:	    [b.boh@digipen.edu]
+ * Co-author:	[]
+ * email:	    []
+ *
+ * brief:	Contains the name of all the screens
+ *
+* ---------------------------------------------------------*/
 typedef enum Screen_name {
 	No_screen,
 	Splash_screen,
@@ -139,6 +163,18 @@ typedef struct volumeobject {
 
 typedef volumeObject volume[2];
 
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * Struct:	struct screen 
+ * author:	    [Bryan Boh]
+ * email:	    [b.boh@digipen.edu]
+ * Co-author:	[]
+ * email:	    []
+ *
+ * brief:	defination of screen struct
+ *
+* ---------------------------------------------------------*/
 struct screen {
 	
 	//Array for all collidable circles
@@ -229,6 +265,18 @@ bool screen_transition_from_black(float* transition_opacity) {
 	return false;
 }
 
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * Function:	Screen_transition
+ * author:	    [Bryan Boh]
+ * email:	    [b.boh@digipen.edu]
+ * Co-author:	[]
+ * email:	    []
+ *
+ * brief:	Controls the animations for the transitions between different screens
+ *
+* ---------------------------------------------------------*/
 //transition Control
 void Screen_transition(bool* isScreenTransiting, bool* isoverlayActive, float* transition_opacity, Screen_name* Current_screen_name, Screen_name* Next_screen_name, Screen* current_screen, const Screen* screen_array, Overlay_name* current_overlay_name ,Screen* current_screen_overlay, const Screen* overlay_array) {
 	if (*isScreenTransiting) {//transitioning to new screen

@@ -163,15 +163,8 @@ void ResumeMusic() {
  * void ResumeSFX()
  * author:	    [Cheong Ming Lun]
  * email:	    [m.cheong@digipen.edu]
- * Co-author:	[]
- * email:	    []
- * Co-author:   []
- * email:       []
  *
  * brief:       [SFX] - Resumes all sound effects.
- *
- *
- *
  *
 * ---------------------------------------------------------*/
 void ResumeSFX() {

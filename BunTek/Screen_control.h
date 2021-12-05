@@ -8,6 +8,9 @@
  * email:	    [steven.k@digipen.edu]
  * Co-author:	[Goh Kiat Beng]
  * email:	    [kiatbeng.goh@digipen.edu]
+ * Co-author:	[Cheong Ming Lun]
+ * email:	    [m.cheong@digipen.edu]
+ * 
  * brief:	Contains the functions for screen flow control and screen creation and transition
  * 
 * ---------------------------------------------------------*/
@@ -54,8 +57,8 @@ float TimeElapse = 0;
  * email:	    [b.boh@digipen.edu]
  * Co-author:	[Cheong Ming Lun]
  * email:	    [m.cheong@digipen.edu]
- * Co-author:   []
- * email:       []
+ * Co-author:	[Goh Kiat Beng]
+ * email:	    [kiatbeng.goh@digipen.edu]
  *
  * brief:	Contains the name of all the screens
  *
@@ -95,7 +98,19 @@ typedef enum Screen_name {
 	Total_screen_number,
 } Screen_name;
 
+
 //names of the overlays
+//names of the screen
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * Enum:	enum Overlay_name
+ * author:	    [Bryan Boh]
+ * email:	    [b.boh@digipen.edu]
+ *
+ * brief:	Contains the name of all the overlay screens
+ *
+* ---------------------------------------------------------*/
 typedef enum Overlay_name{
 	No_overlay,
 	pause_overlay,
@@ -104,7 +119,21 @@ typedef enum Overlay_name{
 	Total_overlay_number,
 	
 } Overlay_name;
-
+//names of the screen
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * Enum:	enum Button_effects 
+ * author:	    [Bryan Boh]
+ * email:	    [b.boh@digipen.edu]
+ * Co-author:	[Goh Kiat Beng]
+ * email:	    [kiatbeng.goh@digipen.edu]
+ * Co-author:	[Cheong Ming Lun]
+ * email:	    [m.cheong@digipen.edu]
+ *
+ * brief:	Contains the name of all the button effects
+ *
+* ---------------------------------------------------------*/
 typedef enum Button_effects {
 	None,
 	Move_to_Level_Select,
@@ -134,6 +163,16 @@ typedef enum Button_effects {
 	Decrease_Volume_SFX, 
 } Button_effects;
 
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * Struct:	struct buttonbgInfo
+ * author:	    [Bryan Boh]
+ * email:	    [b.boh@digipen.edu]
+ *
+ * brief:	Defination of Button Background Info struct
+ *
+* ---------------------------------------------------------*/
 struct buttonbgInfo {
 	CP_Image border;
 	CP_Image hoverbg;
@@ -144,12 +183,32 @@ struct buttonbgInfo {
 	
 };
 
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * Struct:	struct screen_keys
+ * author:	    [Bryan Boh]
+ * email:	    [b.boh@digipen.edu]
+ *
+ * brief:	Defination of Screen Keys struct
+ *
+* ---------------------------------------------------------*/
 struct screen_keys {
 	Button_effects key;
 	Screen_name value;
 	Screen_name subvalue;
 };
 
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * Struct:	struct buttonObject
+ * author:	    [Bryan Boh]
+ * email:	    [b.boh@digipen.edu]
+ *
+ * brief:	Defination of Button object struct
+ *
+* ---------------------------------------------------------*/
 struct buttonObject {
 	BoxGameObject boxGameObject;
 	Button_effects button_effect;
@@ -158,6 +217,16 @@ struct buttonObject {
 	ButtonbgInfo buttonbgInfo;
 };
 
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * Struct:	struct volume object
+ * author:	[Cheong Ming Lun]
+ * email:	[m.cheong@digipen.edu]
+ *
+ * brief:	Defination of screen struct
+ *
+* ---------------------------------------------------------*/
 typedef struct volumeobject {
 	BoxGameObject boxGameObject;
 	Vector2 vector;
@@ -172,12 +241,12 @@ typedef volumeObject volume[2];
  * Struct:	struct screen 
  * author:	    [Bryan Boh]
  * email:	    [b.boh@digipen.edu]
+ * Co-author:	[Goh Kiat Beng]
+ * email:	    [kiatbeng.goh@digipen.edu]
  * Co-author:	[Cheong Ming Lun]
  * email:	    [m.cheong@digipen.edu]
- * Co-author:   []
- * email:       []
  *
- * brief:	defination of screen struct
+ * brief:	Defination of screen struct
  *
 * ---------------------------------------------------------*/
 struct screen {
@@ -202,11 +271,9 @@ struct screen {
 	int NoDrawZonesArrayLengthCounter; 
 	BoxGameObject NoDrawZoneArray[BoxGameObjectArrayLength]; 
 
+	// Array for all portal pairs
 	int CircleportalpairArrayLengthCounter;
 	Circleportalpair CircleportalpairArray[PortalArrayLength];
-
-	//int RotatedboxportalpairArrayLengthCounter;
-	//Rotatedboxportalpair RotatedboxportalpairArray[PortalArrayLength];
 	
 	// Array for super-bounce platforms 
 	int SuperBouncePlatformArrayLengthCounter;
@@ -216,6 +283,7 @@ struct screen {
 	int ScoringContainerArrayLengthCounter; 
 	ScoringContainerObject ScoringContainerArray[BoxGameObjectArrayLength]; 
 
+	//overlay name
 	Overlay_name overlay_name;
 
 	//Array for all Spawners
@@ -228,14 +296,33 @@ struct screen {
 };
 
 
-
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * Function:	VolumeObject CreateVolumeObject(Vector2 position, float width, float height, CP_Color color, bool litbool)
+ * author:		[Cheong Ming Lun]
+ * email:	    [m.cheong@digipen.edu]
+ *
+ * brief:	Creates an instance of a volume object and returns it
+ *
+* ---------------------------------------------------------*/
 VolumeObject CreateVolumeObject(Vector2 position, float width, float height, CP_Color color, bool litbool) {
 	VolumeObject v; 
 	v.boxGameObject = CreateBoxGameObject(position, width, height, 0, 0, NULL, color); 
 	v.lit = litbool;
 	return v; 
 }
-
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * Function:	ButtonObject CreateButtonObject(Vector2 position, float width, float height,float bounciness, float angle, CP_Image image, 
+				CP_Color color, Button_effects effect, CP_Color textcolor, char* buttontext, ButtonbgInfo background)
+ * author:	    [Bryan Boh]
+ * email:	    [b.boh@digipen.edu]
+ *
+ * brief:	Creates an instance of a button object and returns it
+ *
+* ---------------------------------------------------------*/
 ButtonObject CreateButtonObject(Vector2 position, float width, float height,float bounciness, float angle, CP_Image image, CP_Color color, Button_effects effect, CP_Color textcolor, char* buttontext, ButtonbgInfo background) {
 	ButtonObject b;
 	b.boxGameObject = CreateBoxGameObject(position, width, height, bounciness, angle, image,color);
@@ -248,6 +335,16 @@ ButtonObject CreateButtonObject(Vector2 position, float width, float height,floa
 }
 
 //transition to black
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * Function:	bool screen_transition_to_black(float* transition_opacity)
+ * author:	    [Bryan Boh]
+ * email:	    [b.boh@digipen.edu]
+ *
+ * brief:	Controls the animations for the transitions to black
+ *
+* ---------------------------------------------------------*/
 bool screen_transition_to_black(float* transition_opacity) {
 	//fade to black
 	*transition_opacity = CP_Math_LerpFloat(*transition_opacity, 255, LerpDuration * FrameTime);
@@ -259,6 +356,16 @@ bool screen_transition_to_black(float* transition_opacity) {
 	return false;
 }
 //transition from black
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * Function:	bool screen_transition_from_black(float* transition_opacity)
+ * author:	    [Bryan Boh]
+ * email:	    [b.boh@digipen.edu]
+ *
+ * brief:	Controls the animations for the transitions from black
+ *
+* ---------------------------------------------------------*/
 bool screen_transition_from_black(float* transition_opacity) {
 	//fade from black
 	*transition_opacity = CP_Math_LerpFloat(*transition_opacity, 0, LerpDuration * FrameTime);
@@ -269,20 +376,19 @@ bool screen_transition_from_black(float* transition_opacity) {
 	}
 	return false;
 }
-
+//transition Control
 /*---------------------------------------------------------
  * Copyright © 2021 DigiPen, All rights reserved.
  *
- * Function:	Screen_transition
+ * Function:	void Screen_transition(bool* isScreenTransiting, bool* isoverlayActive, float* transition_opacity, Screen_name* Current_screen_name, 
+				Screen_name* Next_screen_name, Screen* current_screen, const Screen* screen_array,
+				Overlay_name* current_overlay_name ,Screen* current_screen_overlay, const Screen* overlay_array)
  * author:	    [Bryan Boh]
  * email:	    [b.boh@digipen.edu]
- * Co-author:	[]
- * email:	    []
  *
  * brief:	Controls the animations for the transitions between different screens
  *
 * ---------------------------------------------------------*/
-//transition Control
 void Screen_transition(bool* isScreenTransiting, bool* isoverlayActive, float* transition_opacity, Screen_name* Current_screen_name, Screen_name* Next_screen_name, Screen* current_screen, const Screen* screen_array, Overlay_name* current_overlay_name ,Screen* current_screen_overlay, const Screen* overlay_array) {
 	if (*isScreenTransiting) {//transitioning to new screen
 		if (*Current_screen_name != *Next_screen_name) {
@@ -311,6 +417,17 @@ void Screen_transition(bool* isScreenTransiting, bool* isoverlayActive, float* t
 }
 
 //restart transition Control
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * Function:	void Restart_transition(bool* restartingLevel, bool* isoverlayActive, bool* isgamepaused, Screen_name* Current_screen_name, Screen* current_screen,
+				const Screen* screen_array, Overlay_name* current_overlay_name, Screen* current_screen_overlay, const Screen* overlay_array)
+ * author:	    [Bryan Boh]
+ * email:	    [b.boh@digipen.edu]
+ *
+ * brief:	Controls the animations for the transitions to restart a level
+ *
+* ---------------------------------------------------------*/
 void Restart_transition(bool* restartingLevel, bool* isoverlayActive, bool* isgamepaused, Screen_name* Current_screen_name, Screen* current_screen, const Screen* screen_array, Overlay_name* current_overlay_name, Screen* current_screen_overlay, const Screen* overlay_array) {
 	if (*restartingLevel) {//restart level transitioning
 		if (*isoverlayActive == true) {
@@ -330,16 +447,34 @@ void Restart_transition(bool* restartingLevel, bool* isoverlayActive, bool* isga
 }
 
 //Stopwatch
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * Function:	bool Stopwatch(float duration)
+ * author:	    [Bryan Boh]
+ * email:	    [b.boh@digipen.edu]
+ *
+ * brief:	Stopwatch to count the time passed
+ *
+* ---------------------------------------------------------*/
 bool Stopwatch(float duration) {
 	TimeElapse += FrameTime;
 	if (TimeElapse >= duration) {
 		TimeElapse = 0;
 		return true;
 	}
-	//printf("time: %f\n", TimeElapse);
 	return false;
 }
-
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * Function:	void startupsequence(Screen_name* Current_screen_name, Screen_name* Next_screen_name, bool* isScreenTransiting, bool* startup, bool* isgamepaused)
+ * author:	    [Goh Kiat Beng]
+ * email:	    [kiatbeng.goh@digipen.edu]
+ *
+ * brief:	Controls the startup display at the beginning of the game
+ *
+* ---------------------------------------------------------*/
 void startupsequence(Screen_name* Current_screen_name, Screen_name* Next_screen_name, bool* isScreenTransiting, bool* startup, bool* isgamepaused) {
 	switch (*Current_screen_name)
 	{
@@ -362,6 +497,16 @@ void startupsequence(Screen_name* Current_screen_name, Screen_name* Next_screen_
 	}
 }
 //draw button badcjground sprite
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * Function:	void DrawButtonBackgroundImage(BoxGameObject* b, ButtonbgInfo* bg, bool* isoverlayTransiting)
+ * author:	    [Bryan Boh]
+ * email:	    [b.boh@digipen.edu]
+ *
+ * brief:	Draws the background images for the buttons
+ *
+* ---------------------------------------------------------*/
 void DrawButtonBackgroundImage(BoxGameObject* b, ButtonbgInfo* bg, bool* isoverlayTransiting) {
 	Vector2 Center = CenterOfBox(b);
 	if (*isoverlayTransiting) {
@@ -374,7 +519,18 @@ void DrawButtonBackgroundImage(BoxGameObject* b, ButtonbgInfo* bg, bool* isoverl
 		CP_Image_DrawAdvanced(bg->border, Center.x, Center.y, b->width, b->height, (int)bg->borderalpha, b->gameObject.angle);
 	}
 }
-
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * Function:	void Drawoverlay(bool* isoverlayTransiting, bool* isoverlayActive, bool* isgamepaused, Overlay_name overlay_name, Screen* currentOverLay)
+ * author:	    [Bryan Boh]
+ * email:	    [b.boh@digipen.edu]
+ * Co-author:	[Goh Kiat Beng]
+ * email:	    [kiatbeng.goh@digipen.edu]
+ *
+ * brief:	Controls the transitions and draws the screen overlays
+ *
+* ---------------------------------------------------------*/
 void Drawoverlay(bool* isoverlayTransiting, bool* isoverlayActive, bool* isgamepaused, Overlay_name overlay_name, Screen* currentOverLay) {
 	
 	if (overlay_name != No_overlay) {
@@ -440,9 +596,16 @@ void Drawoverlay(bool* isoverlayTransiting, bool* isoverlayActive, bool* isgamep
 	}
 }//
 
-
-
-
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * Function:	void ButtonLerp(Vector2 MousePos, bool* isoverlayActive,  Screen* current_screen, Screen* currentOverLay)
+ * author:	    [Bryan Boh]
+ * email:	    [b.boh@digipen.edu]
+ *
+ * brief:	Lerp the buttons colour
+ *
+* ---------------------------------------------------------*/
 void ButtonLerp(Vector2 MousePos, bool* isoverlayActive,  Screen* current_screen, Screen* currentOverLay) {
 	//lerp overlay buttons
 	if (*isoverlayActive) {
@@ -511,22 +674,17 @@ void ButtonLerp(Vector2 MousePos, bool* isoverlayActive,  Screen* current_screen
 		}
 	}
 }
-//add button to screen
-void AddButton(Screen* sc, ButtonObject b1) {
-	sc->ButtonObjectArray[sc->ButtonObjectArrayLengthCounter] = b1;
-	sc->ButtonObjectArrayLengthCounter++;
-
-}
-
-//add NodrawZone to screen
-void AddNoDrawZone(Screen* sc, BoxGameObject b1) {
-	sc->NoDrawZoneArray[sc->NoDrawZonesArrayLengthCounter] = b1;
-	sc->NoDrawZonesArrayLengthCounter++;
-
-}
-
-
 //add Screen keys
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * Function:	void AddScreenKey(int* count, Button_effects key, Screen_name value, Screen_name subvalue, Screen_keys* Screen_key_array)
+ * author:	    [Bryan Boh]
+ * email:	    [b.boh@digipen.edu]
+ *
+ * brief:	Add screen keys to the screen key array
+ *
+* ---------------------------------------------------------*/
 void AddScreenKey(int* count, Button_effects key, Screen_name value, Screen_name subvalue, Screen_keys* Screen_key_array) {
 	if (*count < Total_screen_number) {
 		Screen_keys sk;
@@ -537,32 +695,16 @@ void AddScreenKey(int* count, Button_effects key, Screen_name value, Screen_name
 		(*count)++;
 	}
 }
-
-
-void AddBall(Screen* sc, CircleGameObject c1) {
-	sc->CircleGameObjectArray[sc->CircleArrayLengthCounter] = c1;
-	sc->CircleArrayLengthCounter++;
-
-}
-
-// add scoring container to screen 
-void AddScoreContainer(Screen* sc, ScoringContainerObject sc1) {
-	sc->ScoringContainerArray[sc->ScoringContainerArrayLengthCounter] = sc1; // Accessing the particular scoring container array's position, and storing the newly defined scoring container object. 
-	sc->ScoringContainerArrayLengthCounter++; 
-}
-
-void AddCircleportalpair(Screen* sc, Circleportalpair cpp1) {
-	sc->CircleportalpairArray[sc->CircleportalpairArrayLengthCounter] = cpp1;
-	sc->CircleportalpairArrayLengthCounter++;
-}
-
-/*
-void AddRotatedboxportalpair(Screen* sc, Rotatedboxportalpair rbpp) {
-	sc->RotatedboxportalpairArray[sc->RotatedboxportalpairArrayLengthCounter] = rbpp;
-	sc->RotatedboxportalpairArrayLengthCounter++;
-}
-*/
-
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * Vector2 RemoveBall(Screen* sc, CircleGameObject c1)
+ * author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
+ *
+ * brief:       Remove a ball in the array
+ *
+* ---------------------------------------------------------*/
 Vector2 RemoveBall(Screen* sc, CircleGameObject c1) {
 	for (int i = 0; i < sc->CircleArrayLengthCounter; i++) {
 		if (sc->CircleGameObjectArray[i].gameObject.position.x == c1.gameObject.position.x && sc->CircleGameObjectArray[i].gameObject.position.y == c1.gameObject.position.y) {
@@ -574,7 +716,16 @@ Vector2 RemoveBall(Screen* sc, CircleGameObject c1) {
 	}
 	return (c1.gameObject.position);
 }
-
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * void AddCircleportalpair(Screen* sc, Circleportalpair cpp1)
+ * author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
+ *
+ * brief:      Remove balls the are out of bounds of the screen
+ *
+* ---------------------------------------------------------*/
 void RemoveOOB(Screen* sc, CircleGameObject c1) {
 	if (c1.gameObject.position.x - c1.radius > CP_System_GetWindowWidth()) {
 		RemoveBall(sc, c1);
@@ -589,8 +740,3 @@ void RemoveOOB(Screen* sc, CircleGameObject c1) {
 		RemoveBall(sc, c1);
 	}
 }
-/*
-void AddBallSpawner() {
-
-}
-*/

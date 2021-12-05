@@ -52,7 +52,6 @@ void TitlecardTransition(void);
 void victorycontrol(void);
 void bgm_control(Screen_name* current_sc_name);
 void play_ballbounce_sfx();
-void AddVolumeMeter(Vector2 position);
 void InitializeVolumeControl(); 
 
 //Initialize array
@@ -129,6 +128,18 @@ ButtonbgInfo nobuttonbackground;
 ButtonbgInfo incvolbuttonbackground; 
 ButtonbgInfo decvolbuttonbackground;
 
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * void game_init(void)
+ * author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
+ * Co-author:	[Bryan Boh]
+ * email:	    [b.boh@digipen.edu]
+ *
+ * brief:       Game update init
+ *
+* ---------------------------------------------------------*/
 void game_init(void)
 {
     Initialize_Sprites();
@@ -149,7 +160,22 @@ void game_init(void)
 
     
 }
-
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * void game_update(void)
+ * author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
+ * Co-author:	[Cheong Ming Lun]
+ * email:	    [m.cheong@digipen.edu]
+ * Co-author:	[Goh Kiat Beng]
+ * email:	    [kiatbeng.goh@digipen.edu]
+ * Co-author:	[Bryan Boh]
+ * email:	    [b.boh@digipen.edu]
+ *
+ * brief:       Game update loop
+ *
+* ---------------------------------------------------------*/
 void game_update(void)
 {   
     CP_Graphics_ClearBackground(CP_Color_Create(50, 50, 50, 255));
@@ -212,8 +238,6 @@ void game_update(void)
  * email:	    [steven.k@digipen.edu]
  * Co-author:	[Cheong Ming Lun]
  * email:	    [m.cheong@digipen.edu]
- * Co-author:   []
- * email:       []
  *
  * brief:   A function that saves and initializes lines. 
  *          - It is dictated by the collision of the line and the no-draw zone. 
@@ -292,6 +316,10 @@ void AddLine(void) {
  * email:	    [steven.k@digipen.edu]
  * Co-author:	[Cheong Ming Lun]
  * email:	    [m.cheong@digipen.edu]
+ * Co-author:	[Goh Kiat Beng]
+ * email:	    [kiatbeng.goh@digipen.edu]
+ * Co-author:	[Bryan Boh]
+ * email:	    [b.boh@digipen.edu]
  *
  * brief:       Iterates through Current_screen array 
  *              Access information from each struct member stored in this array
@@ -553,6 +581,8 @@ void DrawAllShapes(void)
  * void CalculateAllPhysics(void)
  * author:	    [Steven Koe]
  * email:	    [steven.k@digipen.edu]
+ * Co-author:	[Bryan Boh]
+ * email:	    [b.boh@digipen.edu]
  *
  * brief:       Checks collision and does collision response, as well as applies physics to every physics object 
  *
@@ -803,8 +833,16 @@ void CalculateAllPhysics(void)
 
     }
 }
-
-
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * bool CheckAllButtons(void)
+ * author:	    [Bryan Boh]
+ * email:	    [b.boh@digipen.edu]
+ *
+ * brief:   Check all button objects in the screen for mouse click and return bool
+ *
+* ---------------------------------------------------------*/
 bool CheckAllButtons(void){
     //lerp buttons
     ButtonLerp(MousePos, &isoverlayActive, current_screen, current_overlay);
@@ -842,12 +880,10 @@ bool CheckAllButtons(void){
  * Copyright © 2021 DigiPen, All rights reserved.
  *
  * void TriggerButtonEffects(ButtonObject * x)
- * author:	    [Cheong Ming Lun]
- * email:	    [m.cheong@digipen.edu]
- * Co-author:	[Bryan Boh]
+ * author:	    [Bryan Boh]
  * email:	    [b.boh@digipen.edu]
- * Co-author:   []
- * email:       []
+ * co-author:	[Cheong Ming Lun]
+ * email:	    [m.cheong@digipen.edu]
  *
  * brief:   switch case - for button effects, when particular buttons are pressed. 
  *
@@ -1053,7 +1089,16 @@ void TriggerButtonEffects(ButtonObject* x) {
         break;
     }
 }
-
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * void TitlecardTransition(void)
+ * author:	    [Bryan Boh]
+ * email:	    [b.boh@digipen.edu]
+ *
+ * brief:   Controls the title cards before each level
+ *
+* ---------------------------------------------------------*/
 void TitlecardTransition(void) {
     if (titlecard) {
         if (Stopwatch(2.0f)) {
@@ -1070,7 +1115,16 @@ void TitlecardTransition(void) {
         }
     }
 }
-
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * bool VictoryCheck(void)
+ * author:	    [Bryan Boh]
+ * email:	    [b.boh@digipen.edu]
+ *
+ * brief:   Checks if victory conditions are met, returns true if it is else false
+ *
+* ---------------------------------------------------------*/
 bool VictoryCheck(void) {
     if (Current_screen.ScoringContainerArrayLengthCounter != 0) {
         for (int x = 0; x < Current_screen.ScoringContainerArrayLengthCounter; x++) {
@@ -1082,6 +1136,16 @@ bool VictoryCheck(void) {
     }
     return false;
 }
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * void victorycontrol(void)
+ * author:	    [Bryan Boh]
+ * email:	    [b.boh@digipen.edu]
+ *
+ * brief:   Controls the display of the victory ovelay
+ *
+* ---------------------------------------------------------*/
 void victorycontrol(void) {
     if (Current_overlay_name != victory_overlay) {
         victory = false;
@@ -1093,8 +1157,16 @@ void victorycontrol(void) {
         Current_overlay = overlay_array[victory_overlay];
     }
 }
-
-
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * void Initialize_Screen_Keys(void)
+ * author:	    [Bryan Boh]
+ * email:	    [b.boh@digipen.edu]
+ *
+ * brief:   Initialize the screen keys for screen transitions
+ *
+* ---------------------------------------------------------*/
 void Initialize_Screen_Keys(void) {
     AddScreenKey(&key_count, Move_to_Level_1, Level_1_title, Level_1, Screen_key_array);
     AddScreenKey(&key_count, Move_to_Level_2, Level_2_title, Level_2, Screen_key_array);
@@ -1130,17 +1202,14 @@ void Initialize_Screen_Keys(void) {
  * Copyright © 2021 DigiPen, All rights reserved.
  *
  * void Initialize_Screens(void)
- * author:	    []
- * email:	    []
+ * author:	    [Goh Kiat Beng]
+ * email:	    [kiatbeng.goh@digipen.edu]
  * Co-author:	[Cheong Ming Lun]
  * email:	    [m.cheong@digipen.edu]
- * Co-author:   []
- * email:       []
+ * Co-author:	[Bryan Boh]
+ * email:	    [b.boh@digipen.edu]
  *
  * brief:       Function for initializing each screen with its individual components
- *
- *
- *
  *
 * ---------------------------------------------------------*/
 void Initialize_Screens(void) {
@@ -1183,8 +1252,8 @@ void Initialize_Screens(void) {
     AddButton(&screen_array[Main_menu], CreateButtonObject(newVector2(740, 50), 480, 270, 0, 0, mainpage, CP_Color_Create(0, 0, 0, 0), None , CP_Color_Create(255, 255, 255, 255), "", nobuttonbackground));
     AddButton(&screen_array[Main_menu], CreateButtonObject(newVector2(900, 350), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_Level_Select, CP_Color_Create(255, 255, 255, 255), "Start Game", basebuttonbackground));
     AddButton(&screen_array[Main_menu], CreateButtonObject(newVector2(900, 500), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_tutorial, CP_Color_Create(255, 255, 255, 255), "How to play", basebuttonbackground));
-    AddButton(&screen_array[Main_menu], CreateButtonObject(newVector2(900, 650), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_credits, CP_Color_Create(255, 255, 255, 255), "Credits", basebuttonbackground));
-    AddButton(&screen_array[Main_menu], CreateButtonObject(newVector2(900, 800), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_options, CP_Color_Create(255, 255, 255, 255), "Options", basebuttonbackground));
+    AddButton(&screen_array[Main_menu], CreateButtonObject(newVector2(900, 650), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_options, CP_Color_Create(255, 255, 255, 255), "Options", basebuttonbackground));
+    AddButton(&screen_array[Main_menu], CreateButtonObject(newVector2(900, 800), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Move_to_credits, CP_Color_Create(255, 255, 255, 255), "Credits", basebuttonbackground));
     AddButton(&screen_array[Main_menu], CreateButtonObject(newVector2(900, 950), 150, 75, 0, 0, NULL, CP_Color_Create(0, 0, 0, 0), Exit_game, CP_Color_Create(255, 255, 255, 255), "Quit game", basebuttonbackground));
 
     //Create Tutorial screen
@@ -1375,17 +1444,14 @@ void Initialize_Screens(void) {
  * Copyright © 2021 DigiPen, All rights reserved.
  *
  * void Initialize_Sprites(void)
- * author:	    []
- * email:	    []
+ * author:	    [Goh Kiat Beng]
+ * email:	    [kiatbeng.goh@digipen.edu]
  * Co-author:	[Cheong Ming Lun]
  * email:	    [m.cheong@digipen.edu]
- * Co-author:   []
- * email:       []
+ * Co-author:	[Bryan Boh]
+ * email:	    [b.boh@digipen.edu]
  *
  * brief:       Function for initializing screen images/art.
- *
- *
- *
  *
 * ---------------------------------------------------------*/
 void Initialize_Sprites(void) {
@@ -1484,33 +1550,12 @@ void UpdateAllSpawners(void)
     
 }
 
-void AddVolumeMeter(Vector2 position) {
-    float rect_posx = position.x;
-    float rect_posy = position.y;
-
-    float width = 50; 
-    float height = 50; 
-
-    CP_Graphics_DrawRect(position.x, position.y, width, height);
-    
-
-    // Draw 4 other rects (5 rectangles in total)
-    for (int i = 0; i < 4; i++) {
-        rect_posx += 50; 
-        rect_posy += 50;
-        CP_Graphics_DrawRect(rect_posx, rect_posy, width, height); 
-    }
-}
 /*---------------------------------------------------------
  * Copyright © 2021 DigiPen, All rights reserved.
  *
  * void InitializeVolumeControl()
  * author:	    [Cheong Ming Lun]
  * email:	    [m.cheong@digipen.edu]
- * Co-author:	[]
- * email:	    []
- * Co-author:   []
- * email:       []
  *
  * brief:       Initialize 2 rows of 5 bars of volume meter bar w the use of arrays. 
  *              [BGM bar]     - Uses elements 0 - 4

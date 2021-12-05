@@ -1,5 +1,5 @@
 /*---------------------------------------------------------
- * file:	game.c
+ * file:	main.c
  * author:	[Steven Koe]
  * email:	[steven.k@digipen.edu]
 *

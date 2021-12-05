@@ -1,9 +1,13 @@
 /*---------------------------------------------------------
  * file:	game.c
- * author:	    []
- * email:	    []
- * Co-author:	[]
- * email:	    []
+ * Author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
+ * Co-author:	[Bryan Boh]
+ * email:	    [b.boh@digipen.edu]
+ * Co-author:	[Cheong Ming Lun]
+ * email:	    [m.cheong@digipen.edu]
+ * Co-author:	[Goh Kiat Beng]
+ * email:	    [kiatbeng.goh@digipen.edu]
  * 
  * brief:	Main entry point for the sample project
             of the CProcessing library
@@ -284,12 +288,10 @@ void AddLine(void) {
  * Copyright © 2021 DigiPen, All rights reserved.
  *
  * void DrawAllShapes(void)
- * author:	    []
- * email:	    []
+ * author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
  * Co-author:	[Cheong Ming Lun]
  * email:	    [m.cheong@digipen.edu]
- * Co-author:   []
- * email:       []
  *
  * brief:       Iterates through Current_screen array 
  *              Access information from each struct member stored in this array
@@ -547,8 +549,6 @@ void DrawAllShapes(void)
 
 void CalculateAllPhysics(void)
 {
-    
-    
     //Calculating circle physics
     for (int i = 0; i < CircleGameObjectArrayLength; i++)
     {

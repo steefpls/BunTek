@@ -2,10 +2,10 @@
  * Copyright © 2021 DigiPen, All rights reserved.
  *
  * file:	    Sound_Effect.h
- * author:	    [Cheong Ming Lun]
+ * Author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
+ * Co-author:	[Cheong Ming Lun]
  * email:	    [m.cheong@digipen.edu]
- * Co-author:	[]
- * email:	    []
  *
  * brief:	Contains the functions for audio flow and controls. 
  *
@@ -39,17 +39,10 @@ float current_volume = 3;
  * Copyright © 2021 DigiPen, All rights reserved.
  *
  * void PlaySoundEffect(CP_Sound audio)
- * author:	    [Cheong Ming Lun]
- * email:	    [m.cheong@digipen.edu]
- * Co-author:	[]
- * email:	    []
- * Co-author:   []
- * email:       []
+ * author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
  *
  * brief:       [SFX]- Function for playing a certain sound effect at a fixed volume. 
- *              
- *             
- *             
  *              
 * ---------------------------------------------------------*/
 // Playing sound effect with the correctly set volume
@@ -60,17 +53,10 @@ void PlaySoundEffect(CP_Sound audio) {
  * Copyright © 2021 DigiPen, All rights reserved.
  *
  * void PlayPitchedSoundEffect(CP_Sound audio, float pitchrange)
- * author:	    [Cheong Ming Lun]
- * email:	    [m.cheong@digipen.edu]
- * Co-author:	[]
- * email:	    []
- * Co-author:   []
- * email:       []
+ * author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
  *
  * brief:       [SFX] - Function for playing a certain sound effect at an adjustable pitch. 
- *
- *
- *
  *
 * ---------------------------------------------------------*/
 // Playing sound effect with random-ish pitch
@@ -78,21 +64,15 @@ void PlayPitchedSoundEffect(CP_Sound audio, float pitchrange) {
 	float pitch = CP_Random_RangeFloat(1 - pitchrange, 1 + pitchrange);
 	CP_Sound_PlayAdvanced(audio, GlobalVolume * SFXVolume, pitch, false, CP_SOUND_GROUP_SFX);
 }
+
 /*---------------------------------------------------------
  * Copyright © 2021 DigiPen, All rights reserved.
  *
  * void PlayMusic(CP_Sound audio)
- * author:	    [Cheong Ming Lun]
- * email:	    [m.cheong@digipen.edu]
- * Co-author:	[]
- * email:	    []
- * Co-author:   []
- * email:       []
+ * author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
  *
  * brief:       [BGM] - Sets selected audio file and loop it once audio clip has played finished. 
- *
- *
- *
  *
 * ---------------------------------------------------------*/
 //play Looping Music
@@ -103,17 +83,10 @@ void PlayMusic(CP_Sound audio) {
  * Copyright © 2021 DigiPen, All rights reserved.
  *
  * void StopMusic() 
- * author:	    [Cheong Ming Lun]
- * email:	    [m.cheong@digipen.edu]
- * Co-author:	[]
- * email:	    []
- * Co-author:   []
- * email:       []
+ * author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
  *
  * brief:       [BGM] - Stops currently playing music. 
- *
- *
- *
  *
 * ---------------------------------------------------------*/
 void StopMusic() {
@@ -123,17 +96,10 @@ void StopMusic() {
  * Copyright © 2021 DigiPen, All rights reserved.
  *
  * void StopSFX()
- * author:	    [Cheong Ming Lun]
- * email:	    [m.cheong@digipen.edu]
- * Co-author:	[]
- * email:	    []
- * Co-author:   []
- * email:       []
+ * author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
  *
  * brief:       [SFX] - Stops currently playing sound effects. 
- *
- *
- *
  *
 * ---------------------------------------------------------*/
 void StopSFX() {
@@ -143,17 +109,10 @@ void StopSFX() {
  * Copyright © 2021 DigiPen, All rights reserved.
  *
  * void StopAllSounds()
- * author:	    [Cheong Ming Lun]
- * email:	    [m.cheong@digipen.edu]
- * Co-author:	[]
- * email:	    []
- * Co-author:   []
- * email:       []
+ * author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
  *
  * brief:       [SFX & BGM] - stops every sound in the game. 
- *
- *
- *
  *
 * ---------------------------------------------------------*/
 void StopAllSounds() {
@@ -163,17 +122,10 @@ void StopAllSounds() {
  * Copyright © 2021 DigiPen, All rights reserved.
  *
  * void PauseMusic()
- * author:	    [Cheong Ming Lun]
- * email:	    [m.cheong@digipen.edu]
- * Co-author:	[]
- * email:	    []
- * Co-author:   []
- * email:       []
+ * author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
  *
  * brief:       [BGM] - Pauses all background music playing currently.
- *
- *
- *
  *
 * ---------------------------------------------------------*/
 void PauseMusic() {
@@ -183,17 +135,10 @@ void PauseMusic() {
  * Copyright © 2021 DigiPen, All rights reserved.
  *
  * void PauseSFX()
- * author:	    [Cheong Ming Lun]
- * email:	    [m.cheong@digipen.edu]
- * Co-author:	[]
- * email:	    []
- * Co-author:   []
- * email:       []
+ * author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
  *
  * brief:       [SFX] - Pauses all background sound effects. 
- *
- *
- *
  *
 * ---------------------------------------------------------*/
 void PauseSFX() {
@@ -203,17 +148,10 @@ void PauseSFX() {
  * Copyright © 2021 DigiPen, All rights reserved.
  *
  * void ResumeMusic()
- * author:	    [Cheong Ming Lun]
- * email:	    [m.cheong@digipen.edu]
- * Co-author:	[]
- * email:	    []
- * Co-author:   []
- * email:       []
+ * author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
  *
  * brief:       [BGM] - Resumes all background music in the game
- *
- *
- *
  *
 * ---------------------------------------------------------*/
 void ResumeMusic() {
@@ -243,17 +181,10 @@ void ResumeSFX() {
  * Copyright © 2021 DigiPen, All rights reserved.
  *
  * void PauseAllSounds()
- * author:	    [Cheong Ming Lun]
- * email:	    [m.cheong@digipen.edu]
- * Co-author:	[]
- * email:	    []
- * Co-author:   []
- * email:       []
+ * author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
  *
  * brief:       [SFX & BGM] - Pause every sound in the game.
- *
- *
- *
  *
 * ---------------------------------------------------------*/
 void PauseAllSounds() {
@@ -263,17 +194,10 @@ void PauseAllSounds() {
  * Copyright © 2021 DigiPen, All rights reserved.
  *
  * void ResumeAllSounds()
- * author:	    [Cheong Ming Lun]
- * email:	    [m.cheong@digipen.edu]
- * Co-author:	[]
- * email:	    []
- * Co-author:   []
- * email:       []
+ * author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
  *
  * brief:       [SFX & BGM] - Resume every sound in the game.
- *
- *
- *
  *
 * ---------------------------------------------------------*/
 void ResumeAllSounds() {
@@ -282,60 +206,40 @@ void ResumeAllSounds() {
 /*---------------------------------------------------------
  * Copyright © 2021 DigiPen, All rights reserved.
  *
- * void SetSFXVolume()
- * author:	    [Cheong Ming Lun]
- * email:	    [m.cheong@digipen.edu]
- * Co-author:	[]
- * email:	    []
- * Co-author:   []
- * email:       []
+ * author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
  *
  * brief:       [SFX] - adjust the volume of sound effects. 
- *
- *
- *
  *
 * ---------------------------------------------------------*/
 void SetSFXVolume(float vol) {
 	CP_Sound_SetGroupVolume(CP_SOUND_GROUP_SFX, vol);
 	SFXVolume = vol;
 }
+
 /*---------------------------------------------------------
  * Copyright © 2021 DigiPen, All rights reserved.
  *
  * void SetMusicVolume()
- * author:	    [Cheong Ming Lun]
- * email:	    [m.cheong@digipen.edu]
- * Co-author:	[]
- * email:	    []
- * Co-author:   []
- * email:       []
+ * author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
  *
  * brief:       [BGM] - adjust the volume of background music.
- *
- *
- *
  *
 * ---------------------------------------------------------*/
 void SetMusicVolume(float vol) {
 	CP_Sound_SetGroupVolume(CP_SOUND_GROUP_MUSIC, vol);
 	BGMVolume = vol;
 }
+
 /*---------------------------------------------------------
  * Copyright © 2021 DigiPen, All rights reserved.
  *
  * void SetGlobalVolume()
- * author:	    [Cheong Ming Lun]
- * email:	    [m.cheong@digipen.edu]
- * Co-author:	[]
- * email:	    []
- * Co-author:   []
- * email:       []
+ * author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
  *
  * brief:       [BGM] - adjust the volume of every audio element in the game
- *
- *
- *
  *
 * ---------------------------------------------------------*/
 void SetGlobalVolume(float vol) {
@@ -349,15 +253,8 @@ void SetGlobalVolume(float vol) {
  * void bgm_control()
  * author:	    [Cheong Ming Lun]
  * email:	    [m.cheong@digipen.edu]
- * Co-author:	[]
- * email:	    []
- * Co-author:   []
- * email:       []
  *
  * brief:       [BGM] - sound control of different background music, depending on which screen it is currently on screen. 
- *
- *
- *
  *
 * ---------------------------------------------------------*/
 
@@ -411,17 +308,10 @@ void bgm_control(Screen_name* current_sc_name) {
  * Copyright © 2021 DigiPen, All rights reserved.
  *
  * void play_ballbounce_sfx()
- * author:	    [Cheong Ming Lun]
- * email:	    [m.cheong@digipen.edu]
- * Co-author:	[]
- * email:	    []
- * Co-author:   []
- * email:       []
+ * author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
  *
  * brief:       [SFX] - shortcut function for playing bouncy ball sound effect. 
- *
- *
- *
  *
 * ---------------------------------------------------------*/
 void play_ballbounce_sfx() {

@@ -1,3 +1,13 @@
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * file:	    SteefLibrary.h
+ * Author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
+ *
+ * brief:	Contains collision, physics, physics objects and vector functions and structs.
+ *
+ * ---------------------------------------------------------*/
 #include <stdio.h>
 #include <math.h>
 #include "cprocessing.h"

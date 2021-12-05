@@ -4,9 +4,10 @@
  * file:		Screen_control.h
  * author:	    [Bryan Boh]
  * email:	    [b.boh@digipen.edu]
- * Co-author:	[]
- * email:	    []
- *
+ * Co-author:	[Steven Koe]
+ * email:	    [steven.k@digipen.edu]
+ * Co-author:	[Goh Kiat Beng]
+ * email:	    [kiatbeng.goh@digipen.edu]
  * brief:	Contains the functions for screen flow control and screen creation and transition
  * 
 * ---------------------------------------------------------*/

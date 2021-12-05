@@ -91,8 +91,7 @@ bool titlecard = false;
 
 bool victory = false;
 
-// Volume Control 
-
+// Volume Control
 
 
 //Sprites
@@ -128,7 +127,6 @@ ButtonbgInfo decvolbuttonbackground;
 
 void game_init(void)
 {
-     
     Initialize_Sprites();
     CP_Font_Set(CP_Font_GetDefault());
 
@@ -202,7 +200,22 @@ void game_update(void)
     // Sound Control
     bgm_control(current_screen_name);
 }
-
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * void AddLine(void)
+ * author:	    []
+ * email:	    []
+ * Co-author:	[Cheong Ming Lun]
+ * email:	    [m.cheong@digipen.edu]
+ * Co-author:   []
+ * email:       []
+ *
+ * brief:   A function that saves and initializes lines. 
+ *          - It is dictated by the collision of the line and the no-draw zone. 
+ *          - If line collides to the no-draw zone, it does not save the line. 
+ *          Also inculdes detection logic if user draws line into a no-draw zone. 
+* ---------------------------------------------------------*/
 void AddLine(void) {
     
     if (CP_Input_MouseDown(MOUSE_BUTTON_1)) {
@@ -259,9 +272,6 @@ void AddLine(void) {
                     Current_screen.LineArray[Current_screen.LineArrayLengthCounter] = templine;
                 }
 
-
-                // TODO: Delete lines if colide. (move to fast into the box - box detection didnt detect , so to solve this we delete the line. 
-
             }
         }
     }
@@ -270,7 +280,22 @@ void AddLine(void) {
     colided_previous = colided; 
 }
 
-
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * void DrawAllShapes(void)
+ * author:	    []
+ * email:	    []
+ * Co-author:	[Cheong Ming Lun]
+ * email:	    [m.cheong@digipen.edu]
+ * Co-author:   []
+ * email:       []
+ *
+ * brief:       Iterates through Current_screen array 
+ *              Access information from each struct member stored in this array
+ *              Draw the relevant graphical elements with it's properties in set. 
+ *
+* ---------------------------------------------------------*/
 void DrawAllShapes(void)
 {
     // Draw Obstacles -> Draw no-draw zone
@@ -502,14 +527,16 @@ void DrawAllShapes(void)
 
         }
         else
-        {
+        {   
+            // Volume Boxes - 'lit' / active
             if (x->lit == true) {
                 CP_Settings_Fill(COLOR_PASTEL_GREEN);
                 CP_Settings_Stroke(COLOR_WHITE);
                 CP_Graphics_DrawRectAdvanced(x->boxGameObject.gameObject.position.x, x->boxGameObject.gameObject.position.y, x->boxGameObject.width, x->boxGameObject.height, x->boxGameObject.gameObject.angle, 1);
             }
             else 
-            {
+            {  
+             // Volume Boxes - 'unlit' / inactive
                 CP_Settings_Fill(COLOR_GREY);
                 CP_Settings_Stroke(COLOR_WHITE);
                 CP_Graphics_DrawRectAdvanced(x->boxGameObject.gameObject.position.x, x->boxGameObject.gameObject.position.y, x->boxGameObject.width, x->boxGameObject.height, x->boxGameObject.gameObject.angle, 1);
@@ -800,16 +827,26 @@ bool CheckAllButtons(void){
     }
     return false;
 }
-
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * void TriggerButtonEffects(ButtonObject * x)
+ * author:	    [Cheong Ming Lun]
+ * email:	    [m.cheong@digipen.edu]
+ * Co-author:	[Bryan Boh]
+ * email:	    [b.boh@digipen.edu]
+ * Co-author:   []
+ * email:       []
+ *
+ * brief:   switch case - for button effects, when particular buttons are pressed. 
+ *
+* ---------------------------------------------------------*/
 void TriggerButtonEffects(ButtonObject* x) {
     //check what is the buttons effect and run accordingly
 
-    /*int volume_BGM_active = 0;*/
-   /* int volume_SFX_active = 0;*/
-
-    bool vol_added; 
-    bool vol_decreased;
-    bool once = false;
+    bool vol_added = false;
+    bool vol_decreased = false;
+  /*  bool once = false;*/
 
     int index_to_delete_from_right = 0;
     int bars_lit_counter = 0;
@@ -837,37 +874,32 @@ void TriggerButtonEffects(ButtonObject* x) {
         {
             VolumeObject* v = &Current_screen.VolumeObjectArray[i];
 
-            if (v->lit == false)
+            // Updates the color of cell
+            if (v->lit == false)    // checks for first instance of cellt hat is grey. 
             {
-                if (vol_added == false && i < 5) {
-                    v->lit = true; 
-                    vol_added = true; 
+                if (vol_added == false) {
+                    v->lit = true;
+                    float rect_distance_from_1st = (float)i * 100;
+                    screen_array[Options].VolumeObjectArray[i] = CreateVolumeObject(newVector2(750 + rect_distance_from_1st, 300), 100, 50, CP_Color_Create(0, 0, 0, 0), true);
+                    vol_added = true;
                 }
             }
 
         }
 
-        // Effects on sound (add volume by 1 fold) - if not full
-        //                  (do not do anything)   - if full
-
         // Check how many bars are lit. 
         for (int check = 0; check < 5; check++)
         {
-            //printf("%d\n", check);
             VolumeObject* v = &Current_screen.VolumeObjectArray[check];
 
-            if (v->lit == true) // based on the first cell?
+            if (v->lit == true) 
             {
                 bars_lit_counter++;
-                //printf("bar lit counter increased. final value %d!\n", bars_lit_counter);
             }
         }
-
-        if (bars_lit_counter == 0) {
-            break; 
-        }
-
-        SetMusicVolume(0.2f * (float) (bars_lit_counter - 1)); // re-adjust based on the number of bars lit
+       
+        BGMVolume = 0.2f * (float)bars_lit_counter; 
+        SetMusicVolume(BGMVolume); // re-adjust based on the number of bars lit
         break; 
     case Decrease_Volume_BGM :
 
@@ -875,131 +907,115 @@ void TriggerButtonEffects(ButtonObject* x) {
         index_to_delete_from_right = 0;
         bars_lit_counter = 0;
 
-        // Algorithm to check how many bars lit up
+        // Check - How many bars are lit. 
         for (int check = 0; check < 5; check++) 
         {
-            //printf("%d\n", check);
             VolumeObject* v = &Current_screen.VolumeObjectArray[check];
 
-            if (v->lit == true) // based on the first cell?
-            {
+            if (v->lit == true) 
+            {    
                 bars_lit_counter++; 
-                //printf("bar lit counter increased. final value %d!\n", bars_lit_counter);
             }
         }
-        
-        if (once == false) {
-            //printf("Number of Lit Bars: %d\n", bars_lit_counter);
-            once = true; 
-        }
+
 
         index_to_delete_from_right = bars_lit_counter - 1;  // bars_lit_counter = how many elements. (must account for which index to delete so -1)
+    
 
-        for (int i = 0; i < 5; i++)
-        {
+        // Update the color of cell (to delete = change green to grey)
+        for (int i = 0; i < 5; i++) {
             VolumeObject* v = &Current_screen.VolumeObjectArray[i];
 
-            //printf("%d\n", i);
+            if (v->lit == true && i == index_to_delete_from_right && vol_decreased == false) {
+                printf("Which cell index is getting deleted: %d\n", index_to_delete_from_right);
+                float rect_distance_from_1st = (float)i * 100;
+                screen_array[Options].VolumeObjectArray[i] = CreateVolumeObject(newVector2(750 + rect_distance_from_1st, 300), 100, 50, CP_Color_Create(0, 0, 0, 0), false);
+                v->lit = false; 
+                vol_decreased = true; 
+                bars_lit_counter--;
+                printf("Cell %d has been deleted\n", i);
+            }       
+        }
 
-            if (v->lit == true)
-            {
-                (v + index_to_delete_from_right)->lit = false;
-                printf("Deleted Element %d\n", i + index_to_delete_from_right);
-                index_to_delete_from_right--;
-            }
-
-        }
+        BGMVolume = 0.2f * (float)bars_lit_counter;
+        SetMusicVolume(BGMVolume); // re-adjust based on the number of bars lit
         
-        if (bars_lit_counter != 0) {
-            SetMusicVolume(0.2f * (float)(bars_lit_counter - 1)); // re-adjust based on the number of bars lit
-        }
-        else {
-            SetMusicVolume(0.0f);
-        }
-        
-        printf("Music set to level %d\n", bars_lit_counter - 1); // for debugging
         break; 
     case Increase_Volume_SFX :
 
         // Check how many bars are lit. 
-        for (int check = 0; check < 5; check++)
+        for (int i = 5; i < 10; i++)
         {
-            //printf("%d\n", check);
-            VolumeObject* v = &Current_screen.VolumeObjectArray[check];
+            VolumeObject* v = &Current_screen.VolumeObjectArray[i];
 
-            if (v->lit == true) // based on the first cell?
+            if (v->lit == false)    
             {
-                bars_lit_counter++;
-                //printf("bar lit counter increased. final value %d!\n", bars_lit_counter);
-            }
-        }
-
-        SetSFXVolume(0.2f * (float)(bars_lit_counter - 1)); // re-adjust based on the number of bars lit
-        play_ballbounce_sfx(); // sample for users
-        printf("Music set to level %d\n", bars_lit_counter - 1); // for debugging
-
-        vol_added = false;
-
-        for (int j = 5; j < 10; j++)
-        {
-            VolumeObject* v = &Current_screen.VolumeObjectArray[j];
-
-            if (v->lit == false)
-            {
-                if (vol_added == false && (j >= 5 && j <= 9)) {
+                if (vol_added == false) {
                     v->lit = true;
+                    float rect_distance_from_1st = (float)(i-5) * 100;
+                    screen_array[Options].VolumeObjectArray[i] = CreateVolumeObject(newVector2(750 + rect_distance_from_1st, 600), 100, 50, CP_Color_Create(0, 0, 0, 0), true);
                     vol_added = true;
                 }
             }
 
         }
+
+        // Check - How many bars are lit.  
+        for (int check = 5; check < 10; check++)
+        {
+            VolumeObject* v = &Current_screen.VolumeObjectArray[check];
+
+            if (v->lit == true)
+            {
+                bars_lit_counter++;
+            }
+        }
+
+        SFXVolume = 0.2f * (float)bars_lit_counter;
+        SetSFXVolume(SFXVolume); // re-adjust based on the number of bars lit
+        play_ballbounce_sfx();   // sample sound (for users to listen)
+
         break;
 
     case Decrease_Volume_SFX :
 
         vol_decreased = false;
-        bars_lit_counter = 0;
         index_to_delete_from_right = 0;
+        bars_lit_counter = 0;
 
-        // Algorithm to check how many bars lit up
+        // Check - How many bars are lit. 
         for (int check = 5; check < 10; check++)
         {
-            //printf("%d\n", check);
             VolumeObject* v = &Current_screen.VolumeObjectArray[check];
 
-            if (v->lit == true) // based on the first cell?
+            if (v->lit == true) 
             {
                 bars_lit_counter++;
-                printf("bar lit counter increased. final value %d!\n", bars_lit_counter);
             }
         }
 
-        if (once == false) {
-            //printf("Number of Lit Bars: %d\n", bars_lit_counter);
-            once = true;
-        }
 
-        index_to_delete_from_right = bars_lit_counter - 1;  // bars_lit_counter = how many elements. (must account for which index to delete so -1)
+        index_to_delete_from_right = 5 + bars_lit_counter - 1;  // bars_lit_counter = how many elements. (must account for which index to delete so -1)
 
-        for (int j = 5; j < 10; j++)
-        {
-            VolumeObject* v = &Current_screen.VolumeObjectArray[j];
 
-            if (v->lit == true)
-            {
-                if (vol_decreased == false) {
-                    (v + index_to_delete_from_right)->lit = false;
-                    vol_decreased = true;
-                }
+        // Update the color of cell (to delete = change green to grey)
+        for (int i = 5; i < 10; i++) {
+            VolumeObject* v = &Current_screen.VolumeObjectArray[i];
+
+            if (v->lit == true && i == index_to_delete_from_right && vol_decreased == false) {
+                printf("Which cell index is getting deleted: %d\n", index_to_delete_from_right);
+                float rect_distance_from_1st = (float)(i-5) * 100;
+                screen_array[Options].VolumeObjectArray[i] = CreateVolumeObject(newVector2(750 + rect_distance_from_1st, 600), 100, 50, CP_Color_Create(0, 0, 0, 0), false);
+                v->lit = false;
+                vol_decreased = true;
+                bars_lit_counter--;
+                printf("Cell %d has been deleted\n", i);
             }
-
         }
 
-        if (bars_lit_counter != 0) {
-            SetSFXVolume(0.2f * (float)(bars_lit_counter - 1)); // re-adjust based on the number of bars lit
-        }
-        play_ballbounce_sfx(); // sample for users
-        printf("Music set to level %d\n", bars_lit_counter - 1); // for debugging
+        SFXVolume = 0.2f * (float)bars_lit_counter;
+        SetSFXVolume(SFXVolume); // re-adjust based on the number of bars lit
+        play_ballbounce_sfx(); 
 
         break; 
         
@@ -1103,6 +1119,23 @@ void Initialize_Screen_Keys(void) {
 
 }
 
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * void Initialize_Screens(void)
+ * author:	    []
+ * email:	    []
+ * Co-author:	[Cheong Ming Lun]
+ * email:	    [m.cheong@digipen.edu]
+ * Co-author:   []
+ * email:       []
+ *
+ * brief:       Function for initializing each screen with its individual components
+ *
+ *
+ *
+ *
+* ---------------------------------------------------------*/
 void Initialize_Screens(void) {
     //create pause overlay;
     overlay_array[pause_overlay].ButtonObjectArrayLengthCounter = 0;
@@ -1331,7 +1364,23 @@ void Initialize_Screens(void) {
     AddScoringContainer(&screen_array[Level_10], createScoringContainer(newVector2(1400, 0), 0, 50, 50, 50));
     AddScoringContainer(&screen_array[Level_10], createScoringContainer(newVector2(1400, 950), 0, 50, 50, 50));
 }
-
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * void Initialize_Sprites(void)
+ * author:	    []
+ * email:	    []
+ * Co-author:	[Cheong Ming Lun]
+ * email:	    [m.cheong@digipen.edu]
+ * Co-author:   []
+ * email:       []
+ *
+ * brief:       Function for initializing screen images/art.
+ *
+ *
+ *
+ *
+* ---------------------------------------------------------*/
 void Initialize_Sprites(void) {
     L1 = CP_Image_Load("./Assets/Art/Level1.png");
     L2 = CP_Image_Load("./Assets/Art/Level2.png");
@@ -1433,14 +1482,26 @@ void AddVolumeMeter(Vector2 position) {
         CP_Graphics_DrawRect(rect_posx, rect_posy, width, height); 
     }
 }
-
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * void InitializeVolumeControl()
+ * author:	    [Cheong Ming Lun]
+ * email:	    [m.cheong@digipen.edu]
+ * Co-author:	[]
+ * email:	    []
+ * Co-author:   []
+ * email:       []
+ *
+ * brief:       Initialize 2 rows of 5 bars of volume meter bar w the use of arrays. 
+ *              [BGM bar]     - Uses elements 0 - 4
+ *              [SFX bar]     - Uses elements 5 - 9
+ *              Active bars   - pastel green colour
+ *              Inactive bars - grey colour
+* ---------------------------------------------------------*/
 void InitializeVolumeControl() {
     
     // Volume Meter -  BGM 
-    
-    // 2 meters of 5 elements. - total array of 10 elements to be accessed
-    // [BGM] - Elements 0 - 4, [SFX] - Elements 5 - 9
-    // [BGM] - 1 row, [SFX] - 1 row
     // 2 rows of volume meter to initialize
     for (int i = 0; i < 2; i++) {
         // 5 cols / cells of the volume meter to initalize
@@ -1448,15 +1509,27 @@ void InitializeVolumeControl() {
 
             if (i == 0) {
                 float rect_distance_from_1st = (float)j * 100; // consecutively initialize boxes side by side. 
-                screen_array[Options].VolumeObjectArray[j] = CreateVolumeObject(newVector2(750 + rect_distance_from_1st, 300), 100, 50, CP_Color_Create(0,0,0,0), true);
-               /* screen_array[Options].VolumeObjectArray[j] = CreateVolumeObject(newVector2(750 + rect_distance_from_1st, 300), 100, 50, COLOR_PASTEL_GREEN, true);*/
+                if (j < current_volume) 
+                {
+                    screen_array[Options].VolumeObjectArray[j] = CreateVolumeObject(newVector2(750 + rect_distance_from_1st, 300), 100, 50, CP_Color_Create(0, 0, 0, 0), true);
+                    printf("Initialized Green Cell\n");
+                } else
+                {
+                    screen_array[Options].VolumeObjectArray[j] = CreateVolumeObject(newVector2(750 + rect_distance_from_1st, 300), 100, 50, CP_Color_Create(0, 0, 0, 0), false);
+                    printf("Initialized Grey Cell\n");
+                }
             }
 
             
             if (i == 1) {
                 float rect_distance_from_1st = (float)j * 100; // consecutively initialize boxes side by side. 
-                screen_array[Options].VolumeObjectArray[5 + j] = CreateVolumeObject(newVector2(750 + rect_distance_from_1st, 600), 100, 50, CP_Color_Create(0, 0, 0, 0), true);
-                //screen_array[Options].VolumeObjectArray[j] = CreateVolumeObject(newVector2(750 + rect_distance_from_1st, 300), 100, 50, COLOR_PASTEL_GREEN, true);
+                if (j < current_volume) {
+                    screen_array[Options].VolumeObjectArray[5 + j] = CreateVolumeObject(newVector2(750 + rect_distance_from_1st, 600), 100, 50, CP_Color_Create(0, 0, 0, 0), true);
+                }
+                else
+                {
+                    screen_array[Options].VolumeObjectArray[5 + j] = CreateVolumeObject(newVector2(750 + rect_distance_from_1st, 600), 100, 50, CP_Color_Create(0, 0, 0, 0), false);
+                }
             }
          
         }

@@ -1,7 +1,7 @@
 /*---------------------------------------------------------
  * Copyright © 2021 DigiPen, All rights reserved.
  * 
- * file:	Screen_control.h
+ * file:		Screen_control.h
  * author:	    [Bryan Boh]
  * email:	    [b.boh@digipen.edu]
  * Co-author:	[]
@@ -51,8 +51,10 @@ float TimeElapse = 0;
  * Enum:	enum Screen_name
  * author:	    [Bryan Boh]
  * email:	    [b.boh@digipen.edu]
- * Co-author:	[]
- * email:	    []
+ * Co-author:	[Cheong Ming Lun]
+ * email:	    [m.cheong@digipen.edu]
+ * Co-author:   []
+ * email:       []
  *
  * brief:	Contains the name of all the screens
  *
@@ -169,8 +171,10 @@ typedef volumeObject volume[2];
  * Struct:	struct screen 
  * author:	    [Bryan Boh]
  * email:	    [b.boh@digipen.edu]
- * Co-author:	[]
- * email:	    []
+ * Co-author:	[Cheong Ming Lun]
+ * email:	    [m.cheong@digipen.edu]
+ * Co-author:   []
+ * email:       []
  *
  * brief:	defination of screen struct
  *

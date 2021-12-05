@@ -1,5 +1,17 @@
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * file:		GameObjects.h
+ * author:	    [Cheong Ming Lun]
+ * email:	    [m.cheong@digipen.edu]
+ * Co-author:	[]
+ * email:	    []
+ *
+ * brief:	Contains the functions for creating / initializing game objects into the game. 
+ *
+* ---------------------------------------------------------*/
+
 #pragma once
-//#include "SteefLibrary.h"
 #include "Screen_control.h"
 
 //#define Vector2 struct vector2 
@@ -18,7 +30,23 @@
 
 #define ScoringContainer struct scoringContainer
 
-
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * BoxGameObject createSuperBouncePlatform(Vector2 position, float angle, float width, float height, float bounce)
+ * author:	    [Cheong Ming Lun]
+ * email:	    [m.cheong@digipen.edu]
+ * Co-author:	[]
+ * email:	    []
+ * Co-author:   []
+ * email:       []
+ *
+ * brief:       Function to create an entry of a [super-bounce platform] object. 
+ *
+ *
+ *
+ *
+* ---------------------------------------------------------*/
 
 // Create Object : Super Bounce Platforms
 BoxGameObject createSuperBouncePlatform(Vector2 position, float angle, float width, float height, float bounce) {
@@ -38,7 +66,23 @@ BoxGameObject createSuperBouncePlatform(Vector2 position, float angle, float wid
 
 	return super_bounce;
 }
-
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * BoxGameObject createNoDrawZone(Vector2 position, float angle, float width, float height)
+ * author:	    [Cheong Ming Lun]
+ * email:	    [m.cheong@digipen.edu]
+ * Co-author:	[]
+ * email:	    []
+ * Co-author:   []
+ * email:       []
+ *
+ * brief:       Function to create an entry of a [no-draw zone] object. 
+ *
+ *
+ *
+ *
+* ---------------------------------------------------------*/
 // Create Object : No Draw Zone 
 BoxGameObject createNoDrawZone(Vector2 position, float angle, float width, float height) {
 	BoxGameObject no_draw; 
@@ -58,7 +102,23 @@ BoxGameObject createNoDrawZone(Vector2 position, float angle, float width, float
 
 }
 
-
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * ScoringContainerObject createScoringContainer(Vector2 position, float angle, float width, float height, int ballcount)
+ * author:	    [Cheong Ming Lun]
+ * email:	    [m.cheong@digipen.edu]
+ * Co-author:	[]
+ * email:	    []
+ * Co-author:   []
+ * email:       []
+ *
+ * brief:      Function to create an entry of a [scoring container] object. 
+ *
+ *
+ *
+ *
+* ---------------------------------------------------------*/
 // Create Object : Scoring Container 
 ScoringContainerObject createScoringContainer(Vector2 position, float angle, float width, float height, int ballcount) {
 	ScoringContainerObject scoring_container; 
@@ -82,7 +142,23 @@ ScoringContainerObject createScoringContainer(Vector2 position, float angle, flo
 
 	return scoring_container; 
 }
-
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * void AddScoringContainer(Screen* sc, ScoringContainer s1)
+ * author:	    [Cheong Ming Lun]
+ * email:	    [m.cheong@digipen.edu]
+ * Co-author:	[]
+ * email:	    []
+ * Co-author:   []
+ * email:       []
+ *
+ * brief:       Initializing an instance of [scoring container] object 
+ *				and storing it in [ScoringContainerArray] -> which stores all information of [scoring containers] in the game. 
+ *
+ *
+ *
+* ---------------------------------------------------------*/
 //add NodrawZone to screen
 void AddScoringContainer(Screen* sc, ScoringContainer s1) {
 	sc->ScoringContainerArray[sc->ScoringContainerArrayLengthCounter] = s1;
@@ -95,14 +171,46 @@ void AddBallSpawner(Screen* sc, BallSpawner bs1)
 	sc->BallSpawnerArray[sc->BallSpawnerArrayLengthCounter] = bs1;
 	sc->BallSpawnerArrayLengthCounter++;
 }
-
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * void AddBoxGameObject(Screen* sc, BoxGameObject b1)
+ * author:	    [Cheong Ming Lun]
+ * email:	    [m.cheong@digipen.edu]
+ * Co-author:	[]
+ * email:	    []
+ * Co-author:   []
+ * email:       []
+ *
+ * brief:       This boxgameobject serves as obstacles (such as walls)
+ *				Initializing an instance of [BoxGameObject] object 
+ *				and storing it in [BoxGameObjectArray] -> which stores all information of [Obstacles - BoxGameObject] in the game. 
+ *
+ *
+* ---------------------------------------------------------*/
 //Add BoxObject to screen
 void AddBoxGameObject(Screen* sc, BoxGameObject b1)
 {
 	sc->BoxGameObjectArray[sc->BoxGameObjectArrayLengthCounter] = b1;
 	sc->BoxGameObjectArrayLengthCounter++;
 }
-
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * void AddBouncePlatform(Screen* sc, BoxGameObject bp1)
+ * author:	    [Cheong Ming Lun]
+ * email:	    [m.cheong@digipen.edu]
+ * Co-author:	[]
+ * email:	    []
+ * Co-author:   []
+ * email:       []
+ *
+ * brief:       Initializing an instance of [super bounce platform] object 
+ *				and storing it in [SuperBouncPlatformArray] -> which stores all information of [super bounce platfomrs] in the game. 
+ *
+ *
+ *
+* ---------------------------------------------------------*/
 //Add Bounce platform to screen
 void AddBouncePlatform(Screen* sc, BoxGameObject bp1)
 {

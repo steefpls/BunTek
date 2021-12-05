@@ -4,6 +4,12 @@
  * file:	    SteefLibrary.h
  * Author:	    [Steven Koe]
  * email:	    [steven.k@digipen.edu]
+ * Co-author:	[Cheong Ming Lun]
+ * email:	    [m.cheong@digipen.edu]
+ * Co-author:	[Goh Kiat Beng]
+ * email:	    [kiatbeng.goh@digipen.edu]
+ * Co-author:	[Bryan Boh]
+ * email:	    [b.boh@digipen.edu]
  *
  * brief:	Contains collision, physics, physics objects and vector functions and structs.
  *
@@ -23,7 +29,6 @@
 #define Rotatedboxportalpair struct rotatedboxportalpair
 #define TeleportInfo struct teleportInfo
 #define GameObject struct gameObject
-#define Particle struct particle
 #define FrameTime CP_System_GetDt()
 
 //portal control: per second
@@ -40,7 +45,16 @@
 bool debug = false;
 float gravity = 200;
 
-
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * void draw_framerate(void)
+ * author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
+ *
+ * brief:       Debug function to draw framerate and frametime
+ *
+* ---------------------------------------------------------*/
 void draw_framerate(void)
 {
 	CP_Settings_TextSize(20);
@@ -54,12 +68,32 @@ void draw_framerate(void)
 	CP_Font_DrawText(buffer, 20, 20);
 }
 
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * struct vector2
+ * author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
+ *
+ * brief:       Struct for Vector2
+ *
+* ---------------------------------------------------------*/
 struct vector2
 {
 	float x;
 	float y;
 };
 
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * Vector2 newVector2(float x, float y)
+ * author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
+ *
+ * brief:       Function to create new Vector2
+ *
+* ---------------------------------------------------------*/
 Vector2 newVector2(float x, float y)
 {
 	Vector2 v2;
@@ -69,6 +103,16 @@ Vector2 newVector2(float x, float y)
 	return v2;
 }
 
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * struct gameObject
+ * author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
+ *
+ * brief:       Base struct for GameObject
+ *
+* ---------------------------------------------------------*/
 struct gameObject
 {
 	// Main properties
@@ -81,6 +125,16 @@ struct gameObject
 	float bounciness;
 };
 
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * struct boxGameObject
+ * author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
+ *
+ * brief:       Base struct for boxGameObject
+ *
+* ---------------------------------------------------------*/
 struct boxGameObject
 {
 	// Main properties
@@ -91,6 +145,16 @@ struct boxGameObject
 
 };
 
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * struct		scoringContainer
+ * author:	    [Cheong Ming Lun]
+ * email:	    [m.cheong@digipen.edu]
+ *
+ * brief:       Base struct for scoringContainer
+ *
+* ---------------------------------------------------------*/
 struct scoringContainer 
 {
 
@@ -102,6 +166,16 @@ struct scoringContainer
 
 };
 
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * struct		ballSpawner
+ * author:	    [Goh Kiat Beng]
+ * email:	    [kiatbeng.goh@digipen.edu]
+ *
+ * brief:       Base struct for ballSpawner
+ *
+* ---------------------------------------------------------*/
 struct ballSpawner {
 	BoxGameObject b;
 	float spawnrate; // Balls per second
@@ -113,6 +187,16 @@ struct ballSpawner {
 	float ballScaleSpread;
 };
 
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * struct ballSpawner CreateBallSpawner()
+ * author:	    [Goh Kiat Beng]
+ * email:	    [kiatbeng.goh@digipen.edu]
+ *
+ * brief:       Function to Create a Ball Spawner
+ *
+* ---------------------------------------------------------*/
 struct ballSpawner CreateBallSpawner(Vector2 position,float width, float height, float angle, float spawnrate, bool isSpawning, float spawnVel, float spreadAngle, CP_Image image) {
 	BallSpawner ba;
 	ba.b.gameObject.isActive = true;
@@ -138,6 +222,17 @@ enum {
 	teleported,
 };
 
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * struct		teleportInfo
+ * Co-author:	[Bryan Boh]
+ * email:	    [b.boh@digipen.edu]
+ *
+ * brief:       Base teleportInfo Struct
+ *
+* ---------------------------------------------------------*/
+
 struct teleportInfo {
 	int teleportStatus;
 	Vector2 original_resultant;
@@ -145,6 +240,16 @@ struct teleportInfo {
 	float original_radius;
 };
 
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * struct circleGameObject
+ * author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
+ *
+ * brief:       Struct for circleGameObject
+ *
+* ---------------------------------------------------------*/
 struct circleGameObject
 {
 	GameObject gameObject;
@@ -153,8 +258,16 @@ struct circleGameObject
 	TeleportInfo teleportinfo;
 };
 
-
-
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * struct circleGameObject CreateCircleGameObject()
+ * author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
+ *
+ * brief:       Function to create circleGameObject
+ *
+* ---------------------------------------------------------*/
 struct circleGameObject CreateCircleGameObject(Vector2 pos, Vector2 vel, float angle, CP_Color color, float radius, bool outline, float mass, float bounciness)
 {
 	CircleGameObject c;
@@ -174,6 +287,18 @@ struct circleGameObject CreateCircleGameObject(Vector2 pos, Vector2 vel, float a
 	return c;
 }
 
+
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * struct boxGameObject CreateBoxGameObject()
+ * author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
+ *
+ * brief:       Function to create boxGameObject
+ *
+* ---------------------------------------------------------*/
+
 struct boxGameObject CreateBoxGameObject(Vector2 position, float width, float height,float bounciness, float angle, CP_Image image, CP_Color color) {
 	BoxGameObject b;
 	b.gameObject.isActive = true;
@@ -187,6 +312,17 @@ struct boxGameObject CreateBoxGameObject(Vector2 position, float width, float he
 	return b;
 }
 
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * struct		circleportalpair
+ * Co-author:	[Bryan Boh]
+ * email:	    [b.boh@digipen.edu]
+ *
+ * brief:       Base circleportalpair Struct
+ *
+* ---------------------------------------------------------*/
+
 struct circleportalpair {
 	CircleGameObject portal_1;
 	CircleGameObject portal_2;
@@ -194,6 +330,17 @@ struct circleportalpair {
 	CP_Image image;
 };
 
+
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * struct circleportalpair Createcircleportalpair()
+ * Co-author:	[Bryan Boh]
+ * email:	    [b.boh@digipen.edu]
+ *
+ * brief:       Function to create a circleportalpair
+ *
+* ---------------------------------------------------------*/
 struct circleportalpair Createcircleportalpair(Vector2 Portal1_pos, Vector2 Portal2_pos, CP_Color color, CP_Image image, float radius, float Exit_vel_scale) {
 	Circleportalpair cpp;
 	cpp.portal_1 = CreateCircleGameObject(Portal1_pos, newVector2(0, 0), 0, color, radius, false, 0, 0);
@@ -203,72 +350,195 @@ struct circleportalpair Createcircleportalpair(Vector2 Portal1_pos, Vector2 Port
 	return cpp;
 }
 
-/*
-struct rotatedboxportalpair {
-	BoxGameObject portal_1;
-	BoxGameObject portal_2;
-};
-
-struct rotatedboxportalpair Createrotatedboxportalpair(BoxGameObject portal1, BoxGameObject portal2) {
-	Rotatedboxportalpair rbpp;
-	rbpp.portal_1 = portal1;
-	rbpp.portal_2 = portal2;
-	return rbpp;
-}
-*/
-
-struct particle
-{
-	GameObject gameObject;
-	float radius;
-
-};
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * float DistBetweenSquared(Vector2 v1, Vector2 v2)
+ * author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
+ *
+ * brief:       Returns squared distance between 2 points
+ *
+* ---------------------------------------------------------*/
 float DistBetweenSquared(Vector2 v1, Vector2 v2) {
 	return (v1.x - v2.x) * (v1.x - v2.x) + (v1.y - v2.y) * (v1.y - v2.y);
 }
 
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * float DistBetween(Vector2 v1, Vector2 v2)
+ * author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
+ *
+ * brief:       Returns distance between 2 points
+ *
+* ---------------------------------------------------------*/
 float DistBetween(Vector2 v1, Vector2 v2) {
 	return sqrtf((v1.x - v2.x) * (v1.x - v2.x) + (v1.y - v2.y) * (v1.y - v2.y));
 }
+
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * float DotProd(Vector2 v1, Vector2 v2)
+ * author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
+ *
+ * brief:       Returns Dot Product of two vectors
+ *
+* ---------------------------------------------------------*/
 float DotProd(Vector2 v1, Vector2 v2) {
 	return (v1.x * v2.x) + (v1.y * v2.y);
 }
+
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * Vector2 Normalize(Vector2 v1)
+ * author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
+ *
+ * brief:       Returns the normalized version of the vector
+ *
+* ---------------------------------------------------------*/
 Vector2 Normalize(Vector2 v1) {
 	float length = sqrtf(v1.x * v1.x + v1.y * v1.y);
 	return newVector2(v1.x / (length), v1.y / (length));
 }
+
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * Vector2 VectorAdd(Vector2 v1, Vector2 v2)
+ * author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
+ *
+ * brief:       Returns the sum of 2 vectors
+ *
+* ---------------------------------------------------------*/
 Vector2 VectorAdd(Vector2 v1, Vector2 v2) {
 
 	return newVector2(v1.x + v2.x, v1.y + v2.y);
 }
-//Returns v1-v2;
+
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * Vector2 VectorMinus(Vector2 v1, Vector2 v2)
+ * author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
+ *
+ * brief:       Returns v1-v2
+ *
+* ---------------------------------------------------------*/
 Vector2 VectorMinus(Vector2 v1, Vector2 v2) {
 	return newVector2(v1.x - v2.x, v1.y - v2.y);
 }
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * Vector2 VectorMultiply(Vector2 v1, float f1)
+ * author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
+ *
+ * brief:       Returns v1*f1
+ *
+* ---------------------------------------------------------*/
 Vector2 VectorMultiply(Vector2 v1, float f1) {
 	return newVector2(v1.x *f1, v1.y *f1);
 }
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * Vector2 VectorDivide(Vector2 v1, float f1)
+ * author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
+ *
+ * brief:       Returns v1/f1
+ *
+* ---------------------------------------------------------*/
 Vector2 VectorDivide(Vector2 v1, float f1) {
 	return newVector2(v1.x / f1, v1.y / f1);
 }
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * float VectorMagnitudeSq(Vector2 v1)
+ * author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
+ *
+ * brief:       Returns squared length of a vector
+ *
+* ---------------------------------------------------------*/
 float VectorMagnitudeSq(Vector2 v1) {
 	return v1.x * v1.x + v1.y * v1.y;
 }
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * float VectorMagnitude(Vector2 v1)
+ * author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
+ *
+ * brief:       Returns length of a vector
+ *
+* ---------------------------------------------------------*/
 float VectorMagnitude(Vector2 v1) {
 	return sqrtf( v1.x * v1.x + v1.y * v1.y);
 }
-Vector2 VectorProject(Vector2 v1, Vector2 v2) { //Finds projection of v1 on v2
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * Vector2 VectorProject(Vector2 v1, Vector2 v2)
+ * author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
+ *
+ * brief:       Returns projection of v1 on v2
+ *
+* ---------------------------------------------------------*/
+Vector2 VectorProject(Vector2 v1, Vector2 v2) { 
 	return VectorMultiply(v2, (DotProd(v1, v2) / VectorMagnitudeSq(v2)));
 }
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * float AngBet(Vector2 p1, Vector2 p2)
+ * author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
+ *
+ * brief:       Returns the angle of point 2 in relation to point 1, if p2 is on the right of p1, returns 0
+ *
+* ---------------------------------------------------------*/
 float AngBet(Vector2 p1, Vector2 p2) {
 	return atan2f(p1.y - p2.y, p1.x - p2.x);
 }
 
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * void AddForce(GameObject* g, Vector2 force)
+ * author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
+ *
+ * brief:       Returns the angle of point 2 in relation to point 1, if p2 is on the right of p1, returns 0
+ *
+* ---------------------------------------------------------*/
 void AddForce(GameObject* g, Vector2 force) {
 	g->velocity.x += force.x;
 	g->velocity.y += force.y;
 }
 
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * Vector2 TranslatePointOnBox(Vector2 BoxPosition, Vector2 BoxRotation, Vector2 Point, Vector2 Sign)
+ * author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
+ *
+ * brief:       Returns the world point of a specific point on the box
+ *
+* ---------------------------------------------------------*/
 Vector2 TranslatePointOnBox(Vector2 BoxPosition, Vector2 BoxRotation, Vector2 Point, Vector2 Sign)
 {
 	Vector2 LocalPoint = newVector2(Point.x * Sign.x, Point.y * Sign.y);
@@ -285,6 +555,17 @@ Vector2 TranslatePointOnBox(Vector2 BoxPosition, Vector2 BoxRotation, Vector2 Po
 
 	return WorldPoint;
 }
+
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * CircleCol(CircleGameObject* c1, CircleGameObject* c2, bool doPhysics)
+ * author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
+ *
+ * brief:       Checks if circle 1 collides with circle 2. Makes them bounce off of each other if doPhysics is true. Returns true if collision occurs
+ *
+* ---------------------------------------------------------*/
 
 //Call this function to check if a circle collides with another circle. Set bool doPhysics to true to make them bounce off each other.
 bool CircleCol(CircleGameObject* c1, CircleGameObject* c2, bool doPhysics)
@@ -402,6 +683,17 @@ bool CircleCol(CircleGameObject* c1, CircleGameObject* c2, bool doPhysics)
 
 }
 
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * CirclePointCol(CircleGameObject* c1, Vector2 p1, bool doPhysics)
+ * author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
+ *
+ * brief:       Checks if circle 1 collides with point 1. Makes circle bounce off of point if doPhysics is true. Returns true if collision occurs
+ *
+* ---------------------------------------------------------*/
+
 // Call this function to check if a circle collides with a point. Set bool doPhysics to true to make the circle bounce off the point. Useful for buttons and UI, but remember to set doPhysics to false.
 bool CirclePointCol(CircleGameObject* c1, Vector2 p1, bool doPhysics) {
 	float c1X = c1->gameObject.position.x;
@@ -495,6 +787,17 @@ bool CirclePointCol(CircleGameObject* c1, Vector2 p1, bool doPhysics) {
 	}
 	return collided;
 }
+
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * CircleRectCol(CircleGameObject* c1, BoxGameObject* b1, bool doPhysics)
+ * author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
+ *
+ * brief:       Checks if circle 1 collides with box 1. Makes circle bounce off of box if doPhysics is true. Returns true if collision occurs
+ *
+* ---------------------------------------------------------*/
 
 // Call this function to check if a circle collides with a rotated or normal rect. Set bool doPhysics to true to make the cirlce bounce off the rect.
 bool CircleRectCol(CircleGameObject* c1, BoxGameObject* b1, bool doPhysics) {
@@ -755,6 +1058,17 @@ bool CircleRectCol(CircleGameObject* c1, BoxGameObject* b1, bool doPhysics) {
 	return false;
 }
 
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * bool PointRectCol(Vector2 p1, BoxGameObject* b1)
+ * author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
+ *
+ * brief:       Checks if box 1 collides with point 1. Returns true if collision occurs
+ *
+* ---------------------------------------------------------*/
+
 // Call this function to check if a point is colliding with a Box Game Object. Useful for buttons and UI.
 bool PointRectCol(Vector2 p1, BoxGameObject* b1) {
 	Vector2 boxTopLeft = b1->gameObject.position;
@@ -784,6 +1098,17 @@ bool PointRectCol(Vector2 p1, BoxGameObject* b1) {
 	return collided;
 }
 
+
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * bool RectRectCol(BoxGameObject* b1, BoxGameObject* b2)
+ * author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
+ *
+ * brief:       Checks if box 1 collides with box 2. Returns true if collision occurs
+ *
+* ---------------------------------------------------------*/
 bool RectRectCol(BoxGameObject* b1, BoxGameObject* b2) {
 	Vector2 box1TopLeft = b1->gameObject.position;
 	Vector2 box1TopRight = newVector2(box1TopLeft.x + b1->width * cosf(b1->gameObject.angle / 180 * PI), box1TopLeft.y + b1->width * sinf(b1->gameObject.angle / 180 * PI));
@@ -901,6 +1226,18 @@ bool RectRectCol(BoxGameObject* b1, BoxGameObject* b2) {
 	}
 }
 
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * void CirclePhys(CircleGameObject* c1)
+ * author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
+ *
+ * brief:       Applies gravity and physics on a ball
+ *
+* ---------------------------------------------------------*/
+
+// Do gravity on a specific circleGameObject
 void CirclePhys(CircleGameObject* c1) {
 	c1->gameObject.velocity.y += gravity * FrameTime;
 	//AddForce(&c1->gameObject, newVector2(0, gravity * FrameTime));
@@ -909,8 +1246,16 @@ void CirclePhys(CircleGameObject* c1) {
 	c1->gameObject.position.y += c1->gameObject.velocity.y * FrameTime;
 }
 
-
-
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * void Vector2 CenterOfBox(BoxGameObject* b1)
+ * author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
+ *
+ * brief:       Returns a point on the center of the box
+ *
+* ---------------------------------------------------------*/
 // Returns the middle of the boxobject
 Vector2 CenterOfBox(BoxGameObject* b1) {
 	Vector2 boxTopLeft = b1->gameObject.position;
@@ -919,7 +1264,16 @@ Vector2 CenterOfBox(BoxGameObject* b1) {
 	return newVector2((boxTopRight.x + boxBottomLeft.x) / 2, (boxTopRight.y + boxBottomLeft.y) / 2);
 }
 
-// Returns a unit vector that points to the right of the boxObject, changes based on boxobject's rotation
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * Vector2 BoxForward(BoxGameObject* b1)
+ * author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
+ *
+ * brief:       Returns a unit vector that points to the right of the boxObject, changes based on boxobject's rotation
+ *
+* ---------------------------------------------------------*/
 Vector2 BoxForward(BoxGameObject* b1) {
 	Vector2 boxTopLeft = b1->gameObject.position;
 	Vector2 boxTopRight = newVector2(boxTopLeft.x + b1->width * cosf(b1->gameObject.angle / 180 * PI), boxTopLeft.y + b1->width * sinf(b1->gameObject.angle / 180 * PI));
@@ -938,6 +1292,7 @@ void DrawBoxImage(BoxGameObject* b, int alpha) {
 	CP_Image_DrawAdvanced(b->image, Center.x, Center.y, b->width, b->height, alpha, b->gameObject.angle);
 }
 
+//Returns a randomly generated CP_Color
 CP_Color RandomColor() {
 	return CP_Color_Create(CP_Random_RangeInt(0, 255), CP_Random_RangeInt(0, 255), CP_Random_RangeInt(0, 255), 255);
 }

@@ -208,8 +208,8 @@ void game_update(void)
  * Copyright © 2021 DigiPen, All rights reserved.
  *
  * void AddLine(void)
- * author:	    []
- * email:	    []
+ * author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
  * Co-author:	[Cheong Ming Lun]
  * email:	    [m.cheong@digipen.edu]
  * Co-author:   []
@@ -547,6 +547,16 @@ void DrawAllShapes(void)
     }
 }
 
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * void CalculateAllPhysics(void)
+ * author:	    [Steven Koe]
+ * email:	    [steven.k@digipen.edu]
+ *
+ * brief:       Checks collision and does collision response, as well as applies physics to every physics object 
+ *
+* ---------------------------------------------------------*/
 void CalculateAllPhysics(void)
 {
     //Calculating circle physics

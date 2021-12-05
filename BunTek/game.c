@@ -927,13 +927,11 @@ void TriggerButtonEffects(ButtonObject* x) {
             VolumeObject* v = &Current_screen.VolumeObjectArray[i];
 
             if (v->lit == true && i == index_to_delete_from_right && vol_decreased == false) {
-                printf("Which cell index is getting deleted: %d\n", index_to_delete_from_right);
                 float rect_distance_from_1st = (float)i * 100;
                 screen_array[Options].VolumeObjectArray[i] = CreateVolumeObject(newVector2(750 + rect_distance_from_1st, 300), 100, 50, CP_Color_Create(0, 0, 0, 0), false);
                 v->lit = false; 
                 vol_decreased = true; 
                 bars_lit_counter--;
-                printf("Cell %d has been deleted\n", i);
             }       
         }
 
@@ -1003,13 +1001,11 @@ void TriggerButtonEffects(ButtonObject* x) {
             VolumeObject* v = &Current_screen.VolumeObjectArray[i];
 
             if (v->lit == true && i == index_to_delete_from_right && vol_decreased == false) {
-                printf("Which cell index is getting deleted: %d\n", index_to_delete_from_right);
                 float rect_distance_from_1st = (float)(i-5) * 100;
                 screen_array[Options].VolumeObjectArray[i] = CreateVolumeObject(newVector2(750 + rect_distance_from_1st, 600), 100, 50, CP_Color_Create(0, 0, 0, 0), false);
                 v->lit = false;
                 vol_decreased = true;
                 bars_lit_counter--;
-                printf("Cell %d has been deleted\n", i);
             }
         }
 

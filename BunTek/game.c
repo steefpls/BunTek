@@ -804,6 +804,7 @@ void CalculateAllPhysics(void)
     }
 }
 
+
 bool CheckAllButtons(void){
     //lerp buttons
     ButtonLerp(MousePos, &isoverlayActive, current_screen, current_overlay);
@@ -1439,6 +1440,18 @@ void Initialize_Sprites(void) {
     Spawner = CP_Image_Load("./Assets/Art/Spawner.png");
 }
 
+/*---------------------------------------------------------
+ * Copyright © 2021 DigiPen, All rights reserved.
+ *
+ * void UpdateAllSpawners(void)
+ * author:	    [Goh Kiat Beng]
+ * email:	    [kiatbeng.goh@digipen.edu]
+ * Co-author:	[Steven Koe]
+ * email:	    [steven.k@digipen.edu]
+ *
+ * brief        Update all Ballspawner Timers on the current screen, make them spawn a ball if necessary
+ *
+* ---------------------------------------------------------*/
 void UpdateAllSpawners(void)
 {
     for (int i = 0; i < current_screen->BallSpawnerArrayLengthCounter; i++) {

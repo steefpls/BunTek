@@ -14,7 +14,7 @@
  * documentation link:
  * https://github.com/DigiPen-Faculty/CProcessing/wiki
  * 
- * Copyright © 2020 DigiPen, All rights reserved.
+ * Copyright © 2021 DigiPen, All rights reserved.
 * ---------------------------------------------------------*/
 
 //#include "Screen_control.h"

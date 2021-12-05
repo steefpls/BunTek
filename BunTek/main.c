@@ -9,7 +9,7 @@
  * documentation link:
  * https://inside.digipen.edu/main/GSDP:GAM100/CProcessing
 *
- * Copyright © 2020 DigiPen, All rights reserved.
+ * Copyright © 2021 DigiPen, All rights reserved.
 * ---------------------------------------------------------*/
 #include <stdio.h>
 #include "cprocessing.h"

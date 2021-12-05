@@ -1,7 +1,7 @@
 /*---------------------------------------------------------
  * file:	game.c
- * author:	[]
- * email:	[]
+ * author:	[Steven Koe]
+ * email:	[steven.k@digipen.edu]
 *
  * brief:	Main entry point for the sample project
             * of the CProcessing library
